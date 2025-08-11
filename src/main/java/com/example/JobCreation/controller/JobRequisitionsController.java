@@ -1,0 +1,149 @@
+package com.example.JobCreation.controller;
+
+import com.example.JobCreation.dto.ApiResponse;
+import com.example.JobCreation.model.JobRequisitions;
+import com.example.JobCreation.service.JobRequisitionsService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.UUID;
+
+@RestController
+@RequestMapping("/api")
+public class JobRequisitionsController {
+    @Autowired
+    JobRequisitionsService jobRequisitionsService;
+
+    @GetMapping("/getreq")
+    public ResponseEntity<ApiResponse<List<JobRequisitions>>> getAll() {
+        List<JobRequisitions> jobRequisitionsList = jobRequisitionsService.getAll();
+
+        if (jobRequisitionsList.isEmpty()) {
+            ApiResponse<List<JobRequisitions>> apiResponse = new ApiResponse<>(
+                    false,
+                    "No job requisitions found",
+                    jobRequisitionsList
+            );
+            return new ResponseEntity<>(apiResponse, HttpStatus.NOT_FOUND);
+        }
+
+        ApiResponse<List<JobRequisitions>> apiResponse = new ApiResponse<>(
+                true,
+                "Active jobs found",
+                jobRequisitionsList
+        );
+        return new ResponseEntity<>(apiResponse, HttpStatus.OK);
+    }
+
+    @GetMapping("/getByStatus/{requisitionStatus}")
+    public ResponseEntity<ApiResponse<List<JobRequisitions>>> getByStatus(@PathVariable String requisitionStatus) {
+        List<JobRequisitions> jobRequisitionsList = jobRequisitionsService.findByRequisitionStatus( requisitionStatus);
+
+        if (jobRequisitionsList.isEmpty()) {
+            ApiResponse<List<JobRequisitions>> apiResponse = new ApiResponse<>(
+                    false,
+                    "No job requisitions found with status: " +  requisitionStatus,
+                    jobRequisitionsList
+            );
+            return new ResponseEntity<>(apiResponse, HttpStatus.NOT_FOUND);
+        }
+
+        ApiResponse<List<JobRequisitions>> apiResponse = new ApiResponse<>(
+                true,
+                "Jobs with status: " + requisitionStatus,
+                jobRequisitionsList
+        );
+        return new ResponseEntity<>(apiResponse, HttpStatus.OK);
+    }
+
+
+
+    @PostMapping("/create_requisitions")
+    public ResponseEntity<ApiResponse<JobRequisitions>> createRequisitions(@RequestBody JobRequisitions jobRequisitions){
+        try{
+            if (checkFields(jobRequisitions)) {
+                return ResponseEntity
+                        .badRequest()
+                        .body(new ApiResponse<>(false, "All fields are required", null));
+            }
+            JobRequisitions jobRequisitionsres = jobRequisitionsService.createRequisitions(jobRequisitions);
+            ApiResponse<JobRequisitions> apiResponse =new ApiResponse<>(true,"Created Successful", jobRequisitionsres);
+            return new ResponseEntity<>(apiResponse, HttpStatus.CREATED) ;
+        }catch (Exception e){
+            ApiResponse<JobRequisitions> apiResponse =new ApiResponse<>(false,"Failed to create"+e.getMessage(),null);
+            return new ResponseEntity<>(apiResponse, HttpStatus.BAD_REQUEST) ;
+        }
+
+    }
+
+    @PostMapping("/create_bulk_requisitions")
+    public ResponseEntity<?> createBulkRequistions(@RequestBody List<JobRequisitions> requisitionsList){
+        try {
+            if (requisitionsList == null || requisitionsList.isEmpty()) {
+                return ResponseEntity
+                        .badRequest()
+                        .body(new ApiResponse<>(false, "Requisitions list cannot be empty", null));
+            }
+
+            for (JobRequisitions jobRequisitions : requisitionsList) {
+                if (checkFields(jobRequisitions)) {
+                    return ResponseEntity
+                            .badRequest()
+                            .body(new ApiResponse<>(false, "All fields are required for each requisition", null));
+                }
+            }
+
+            List<JobRequisitions> createdRequisitions = jobRequisitionsService.createBulkRequistions(requisitionsList);
+            ApiResponse<List<JobRequisitions>> apiResponse = new ApiResponse<>(true, "Bulk Requisitions Created Successfully", createdRequisitions);
+            return new ResponseEntity<>(apiResponse, HttpStatus.CREATED);
+        } catch (Exception e) {
+            ApiResponse<List<JobRequisitions>> apiResponse = new ApiResponse<>(false, "Failed to create bulk requisitions: " + e.getMessage(), null);
+            return new ResponseEntity<>(apiResponse, HttpStatus.BAD_REQUEST);
+        }
+    }
+
+
+
+    @PutMapping("/update_requisitions")
+    public ResponseEntity<ApiResponse<JobRequisitions>> updateRequisitions(@RequestBody JobRequisitions jobRequisitions){
+        try{
+
+            if (checkFields(jobRequisitions)) {
+                return ResponseEntity
+                        .badRequest()
+                        .body(new ApiResponse<>(false, "All fields are required", null));
+            }
+            JobRequisitions jobRequisitionsres =jobRequisitionsService.updateRequisitions(jobRequisitions);
+            ApiResponse<JobRequisitions> apiResponse =new ApiResponse<>(true,"Updated Successful", jobRequisitionsres);
+            return  new ResponseEntity<>(apiResponse, HttpStatus.OK);
+        }catch (Exception e){
+            ApiResponse<JobRequisitions> apiResponse =new ApiResponse<>(false,"Failed to Update",null);
+            return  new ResponseEntity<>(apiResponse, HttpStatus.BAD_REQUEST);
+        }
+
+    }
+
+    @DeleteMapping("/delete_requisitions/{requisition_id}")
+    public ResponseEntity<ApiResponse<?>> deleteRequisitions(@PathVariable UUID requisition_id) {
+        try {
+            String res = jobRequisitionsService.deleteRequisitions(requisition_id);
+            ApiResponse<JobRequisitions> apiResponse =new ApiResponse<>(true,"Delete Successful",null);
+            return  new ResponseEntity<>(apiResponse,HttpStatus.OK);
+        }catch (Exception e){
+            ApiResponse<JobRequisitions> apiResponse =new ApiResponse<>(false,"Failed to Delete",null);
+            return  new ResponseEntity<>(apiResponse,HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    private boolean checkFields(JobRequisitions jobRequisitions) {
+        return jobRequisitions.getRequisition_title() == null || jobRequisitions.getRequisition_title().trim().isEmpty()
+                || jobRequisitions.getRequisition_description() == null || jobRequisitions.getRequisition_description().trim().isEmpty()
+                || jobRequisitions.getRegistration_start_date() == null
+                || jobRequisitions.getRegistration_end_date() == null
+                || jobRequisitions.getNo_of_positions() <= 0;
+    }
+
+}
