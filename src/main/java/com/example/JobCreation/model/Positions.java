@@ -45,7 +45,7 @@ public class Positions {
     private int probation_period;
 
 
-    private String document_required;
+    private String documents_required;
 
     @Column(precision = 5, scale =2)
     private BigDecimal min_credit_score;
@@ -66,7 +66,7 @@ public class Positions {
     public Positions() {
     }
 
-    public Positions(UUID position_id, UUID requisition_id, String position_title, String description, String position_code, String roles_responsibilities, int grade_id, String employment_type, int eligibility_age_min, int eligibility_age_max, String mandatory_qualification, String preferred_qualification, BigDecimal mandatory_experience, BigDecimal preferred_experience, int probation_period, String document_required, BigDecimal min_credit_score, String position_status, String created_by, LocalDateTime created_date, String updated_by, LocalDateTime updated_date) {
+    public Positions(UUID position_id, UUID requisition_id, String position_title, String description, String position_code, String roles_responsibilities, int grade_id, String employment_type, int eligibility_age_min, int eligibility_age_max, String mandatory_qualification, String preferred_qualification, BigDecimal mandatory_experience, BigDecimal preferred_experience, int probation_period, String documents_required, BigDecimal min_credit_score, String position_status, String created_by, LocalDateTime created_date, String updated_by, LocalDateTime updated_date) {
         this.position_id = position_id;
         this.requisition_id = requisition_id;
         this.position_title = position_title;
@@ -82,7 +82,7 @@ public class Positions {
         this.mandatory_experience = mandatory_experience;
         this.preferred_experience = preferred_experience;
         this.probation_period = probation_period;
-        this.document_required = document_required;
+        this.documents_required = documents_required;
         this.min_credit_score = min_credit_score;
         this.position_status = position_status;
         this.created_by = created_by;
@@ -211,12 +211,12 @@ public class Positions {
         this.probation_period = probation_period;
     }
 
-    public String getDocument_required() {
-        return document_required;
+    public String getDocuments_required() {
+        return documents_required;
     }
 
-    public void setDocument_required(String document_required) {
-        this.document_required = document_required;
+    public void setDocument_required(String documents_required) {
+        this.documents_required = documents_required;
     }
 
     public BigDecimal getMin_credit_score() {

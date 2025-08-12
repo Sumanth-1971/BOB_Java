@@ -15,19 +15,18 @@ public class JobPostingLocation {
     private UUID position_id;
 
     private Integer dept_id;
-    private Integer location_id;
+    private Long location_id;
 
 
     public JobPostingLocation() {
     }
-    public JobPostingLocation(Integer posting_location_id, UUID position_id, Integer dept_id, Integer location_id) {
+
+    public JobPostingLocation(Integer posting_location_id, UUID position_id, Integer dept_id, Long location_id) {
         this.posting_location_id = posting_location_id;
         this.position_id = position_id;
         this.dept_id = dept_id;
         this.location_id = location_id;
     }
-
-
     public Integer getPosting_location_id() {
         return posting_location_id;
     }
@@ -52,11 +51,11 @@ public class JobPostingLocation {
         this.dept_id = dept_id;
     }
 
-    public Integer getLocation_id() {
+    public Long getLocation_id() {
         return location_id;
     }
 
-    public void setLocation_id(Integer location_id) {
+    public void setLocation_id(Long location_id) {
         this.location_id = location_id;
     }
 }

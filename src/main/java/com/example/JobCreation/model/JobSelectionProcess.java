@@ -15,18 +15,17 @@ public class JobSelectionProcess {
 
     public JobSelectionProcess() {
     }
-
-    public JobSelectionProcess(int job_selection_id, UUID position_id, String selection_procedure) {
+    public JobSelectionProcess(Integer job_selection_id, UUID position_id, String selection_procedure) {
         this.job_selection_id = job_selection_id;
         this.position_id = position_id;
         this.selection_procedure = selection_procedure;
     }
 
-    public int getJob_selection_id() {
+    public Integer getJob_selection_id() {
         return job_selection_id;
     }
 
-    public void setJob_selection_id(int job_selection_id) {
+    public void setJob_selection_id(Integer job_selection_id) {
         this.job_selection_id = job_selection_id;
     }
 

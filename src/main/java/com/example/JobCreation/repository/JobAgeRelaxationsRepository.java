@@ -11,6 +11,7 @@ import java.util.UUID;
 
 public interface JobAgeRelaxationsRepository extends JpaRepository<JobAgeRelaxations,Integer> {
 
+    @Transactional
     @Query(value = "SELECT * FROM job_age_relaxations WHERE position_id = ?1", nativeQuery = true)
     JobAgeRelaxations findByPositionId(UUID positionId);
 
@@ -18,4 +19,6 @@ public interface JobAgeRelaxationsRepository extends JpaRepository<JobAgeRelaxat
     @Transactional
     @Query("UPDATE JobAgeRelaxations j SET j.age_relaxation_id = :ageRelaxationId WHERE j.position_id = :positionId")
     int updateByPositionId(@Param("positionId") UUID positionId, @Param("ageRelaxationId") int ageRelaxationId);
+
+
 }

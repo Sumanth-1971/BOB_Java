@@ -2,10 +2,11 @@ package com.example.JobCreation.controller;
 
 import com.example.JobCreation.dto.ApiResponse;
 import com.example.JobCreation.dto.JobPositionsDTO;
+import com.example.JobCreation.dto.ResponseDTO;
 import com.example.JobCreation.model.JobAgeRelaxations;
 import com.example.JobCreation.model.JobRequisitions;
 import com.example.JobCreation.model.Positions;
-import com.example.JobCreation.service.JobPositionsService;
+import com.example.JobCreation.service.JobPositionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.repository.Repository;
 import org.springframework.http.HttpStatus;
@@ -20,13 +21,13 @@ import java.util.UUID;
 public class JobPositionsController {
 
     @Autowired
-    private JobPositionsService jobPositionsService;
+    private JobPositionService jobPositionsService;
 
 
     @PostMapping("/create_positions")
     public ResponseEntity<?> createPositions(@RequestBody JobPositionsDTO positions){
         try{
-            JobPositionsDTO createdPosition = jobPositionsService.createPositions(positions);
+            JobPositionsDTO createdPosition = jobPositionsService.createPosition(positions);
             ApiResponse<JobPositionsDTO> apiResponse = new ApiResponse<>(true, "Position created successfully", createdPosition);
             return new ResponseEntity<>(apiResponse, HttpStatus.CREATED);
 
@@ -40,7 +41,7 @@ public class JobPositionsController {
     @PutMapping("/update_positions")
     public ResponseEntity<?> updatePosition( @RequestBody JobPositionsDTO positions){
         try{
-            JobPositionsDTO updatedPosition = jobPositionsService.updatePositions(positions);
+            JobPositionsDTO updatedPosition = jobPositionsService.updateJobposition(positions);
             ApiResponse<JobPositionsDTO> apiResponse = new ApiResponse<>(true, "Position updated successfully", updatedPosition);
             return new ResponseEntity<>(apiResponse, HttpStatus.OK);
         }catch (Exception e){
@@ -50,14 +51,14 @@ public class JobPositionsController {
     }
 
     @GetMapping("/getpos")
-    public List<Positions> getall(){
+    public List<JobPositionsDTO> getall(){
 
-        return jobPositionsService.getall();
+        return jobPositionsService.findAllPositions();
     }
     @PostMapping("/create_Bulk_positions")
     public ResponseEntity<?> createBulkPositions(@RequestBody List<JobPositionsDTO> positionsList) {
         try {
-            List<JobPositionsDTO> createdPositions = jobPositionsService.CreateBulkPositions(positionsList);
+            List<JobPositionsDTO> createdPositions = jobPositionsService.createBulkPostions(positionsList);
             ApiResponse<List<JobPositionsDTO>> apiResponse = new ApiResponse<>(true, "Positions created successfully", createdPositions);
             return new ResponseEntity<>(apiResponse, HttpStatus.CREATED);
         } catch (Exception e) {
@@ -66,20 +67,16 @@ public class JobPositionsController {
         }
     }
 
-    @GetMapping("/getposnew")
-    public List<JobPositionsDTO> getAllPositions() {
-        return jobPositionsService. getAllPositions();
-    }
 
     @GetMapping("/getbyreq/{requistion_id}")
-    public List<Positions> getByreqId(UUID requistion_id){
-        return jobPositionsService.getAllByReqId(requistion_id);
+    public List<JobPositionsDTO> getByreqId(UUID requistion_id){
+        return jobPositionsService.findByReqId(requistion_id);
     }
 
     @GetMapping("/getByPositionId/{position_id}")
     public ResponseEntity<?> getById(@PathVariable UUID position_id){
         try {
-            JobPositionsDTO position = jobPositionsService.getByPositionId(position_id);
+            ResponseDTO position = jobPositionsService.findByPositionId(position_id);
             if (position != null) {
                 return new ResponseEntity<>(position, HttpStatus.OK);
             } else {
@@ -95,7 +92,7 @@ public class JobPositionsController {
     @DeleteMapping("/delete_position/{position_id}")
     public ResponseEntity<?> deletePosition(@PathVariable UUID position_id) {
         try {
-            String result = jobPositionsService.deletePosition(position_id);
+            String result = jobPositionsService.delectByPositionId(position_id);
             ApiResponse<String> apiResponse = new ApiResponse<>(true, "Position deleted successfully", result);
             return new ResponseEntity<>(apiResponse, HttpStatus.OK);
         } catch (Exception e) {

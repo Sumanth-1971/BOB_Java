@@ -5,8 +5,7 @@ import jakarta.persistence.Column;
 import java.math.BigDecimal;
 import java.util.UUID;
 
-public class JobPositionsDTO {
-
+public class ResponseDTO {
     private UUID position_id;
     private UUID requisition_id;
     private String position_title;
@@ -34,16 +33,14 @@ public class JobPositionsDTO {
     @Column(precision = 5, scale =2)
     private BigDecimal min_credit_score;
 
-    /*
-        //age_relaxation - table
-        private Integer age_relaxation_id;
 
-        //Application_Fee - table
-        private Integer application_fee_id;
-    */
+
     //posting-location - table
     private Integer dept_id;
     private Long location_id;
+    private Long country_id;
+    private Long city_id;
+    private Long state_id;
 
     //job Vacancies
     private Integer special_cat_id;
@@ -54,14 +51,12 @@ public class JobPositionsDTO {
     private String selection_procedure;
 
 
-
-
     private String position_status;
 
-    public JobPositionsDTO() {
+    public ResponseDTO() {
     }
 
-    public JobPositionsDTO(UUID position_id, UUID requisition_id, String position_title, String position_code, String description, String roles_responsibilities, Integer grade_id, String employment_type, Integer eligibility_age_min, Integer eligibility_age_max, String mandatory_qualification, String preferred_qualification, BigDecimal mandatory_experience, BigDecimal preferred_experience, Integer probation_period, String documents_required, BigDecimal min_credit_score, Integer dept_id, Long location_id, Integer special_cat_id, Integer reservation_cat_id, Integer no_of_vacancies, String selection_procedure, String position_status) {
+    public ResponseDTO(UUID position_id, UUID requisition_id, String position_title, String position_code, String description, String roles_responsibilities, Integer grade_id, String employment_type, Integer eligibility_age_min, Integer eligibility_age_max, String mandatory_qualification, String preferred_qualification, BigDecimal mandatory_experience, BigDecimal preferred_experience, Integer probation_period, String documents_required, BigDecimal min_credit_score, Integer dept_id, Long location_id, Long country_id, Long city_id, Long state_id, Integer special_cat_id, Integer reservation_cat_id, Integer no_of_vacancies, String selection_procedure, String position_status) {
         this.position_id = position_id;
         this.requisition_id = requisition_id;
         this.position_title = position_title;
@@ -81,6 +76,9 @@ public class JobPositionsDTO {
         this.min_credit_score = min_credit_score;
         this.dept_id = dept_id;
         this.location_id = location_id;
+        this.country_id = country_id;
+        this.city_id = city_id;
+        this.state_id = state_id;
         this.special_cat_id = special_cat_id;
         this.reservation_cat_id = reservation_cat_id;
         this.no_of_vacancies = no_of_vacancies;
@@ -238,6 +236,30 @@ public class JobPositionsDTO {
 
     public void setLocation_id(Long location_id) {
         this.location_id = location_id;
+    }
+
+    public Long getCountry_id() {
+        return country_id;
+    }
+
+    public void setCountry_id(Long country_id) {
+        this.country_id = country_id;
+    }
+
+    public Long getCity_id() {
+        return city_id;
+    }
+
+    public void setCity_id(Long city_id) {
+        this.city_id = city_id;
+    }
+
+    public Long getState_id() {
+        return state_id;
+    }
+
+    public void setState_id(Long state_id) {
+        this.state_id = state_id;
     }
 
     public Integer getSpecial_cat_id() {

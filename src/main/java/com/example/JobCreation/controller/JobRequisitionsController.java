@@ -1,6 +1,7 @@
 package com.example.JobCreation.controller;
 
 import com.example.JobCreation.dto.ApiResponse;
+import com.example.JobCreation.dto.JobPostingDTO;
 import com.example.JobCreation.model.JobRequisitions;
 import com.example.JobCreation.service.JobRequisitionsService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -124,6 +125,25 @@ public class JobRequisitionsController {
             return  new ResponseEntity<>(apiResponse, HttpStatus.BAD_REQUEST);
         }
 
+    }
+
+    @PostMapping("/job_postings")
+    public ResponseEntity<ApiResponse<?>> createJobPostings(@RequestBody JobPostingDTO jobPostings) {
+        try {
+            if (jobPostings == null || jobPostings.getJob_postings() == null || jobPostings.getJob_postings().isEmpty() || jobPostings.getRequisition_id() == null || jobPostings.getRequisition_id().isEmpty()) {
+                return ResponseEntity
+                        .badRequest()
+                        .body(new ApiResponse<>(false, "Job postings list cannot be empty", null));
+            }
+
+            String response = jobRequisitionsService.createJobPostings(jobPostings);
+
+            ApiResponse<String> apiResponse = new ApiResponse<>(true, "Job postings created successfully", response);
+            return new ResponseEntity<>(apiResponse, HttpStatus.CREATED);
+        } catch (Exception e) {
+            ApiResponse<String> apiResponse = new ApiResponse<>(false, "Failed to create job postings: " + e.getMessage(), null);
+            return new ResponseEntity<>(apiResponse, HttpStatus.BAD_REQUEST);
+        }
     }
 
     @DeleteMapping("/delete_requisitions/{requisition_id}")
