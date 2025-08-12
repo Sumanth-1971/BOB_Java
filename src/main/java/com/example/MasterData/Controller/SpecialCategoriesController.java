@@ -1,0 +1,72 @@
+package com.example.MasterData.Controller;
+
+
+import com.example.MasterData.Model.SpecialCategories;
+import com.example.MasterData.Service.SpecialCategoriesService;
+import com.example.MasterData.dto.ApiResponse;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+@RestController
+@RequestMapping("/api/special-categories")
+public class SpecialCategoriesController {
+
+    @Autowired
+    private SpecialCategoriesService specialCategoriesService;
+
+
+    @GetMapping("/all")
+    public ResponseEntity<ApiResponse<List<SpecialCategories>>> getAllSpecialCategories(){
+        try{
+            List<SpecialCategories> cities=specialCategoriesService.getAllSpecialCategories();
+            ApiResponse<List<SpecialCategories>> response=new ApiResponse<>(true,"DATA FIELDS FETCHED SUCCESSFULLY!",cities);
+            return new ResponseEntity<>(response, HttpStatus.OK);
+        }catch (Exception e){
+            ApiResponse<List<SpecialCategories>> response=new ApiResponse<>(false,"DATA FIELDS NOT FETCHED!",null);
+            return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
+    }
+
+    @PostMapping("/add")
+    public ResponseEntity<ApiResponse<SpecialCategories>> createSpecialCategories(@RequestBody SpecialCategories specialCategories){
+
+        try{
+            SpecialCategories msg=specialCategoriesService.createSpecialCategory(specialCategories);
+            ApiResponse<SpecialCategories> response=new ApiResponse<>(true,"DATA FIELDS CREATED SUCCESSFULLY!",msg);
+            return new ResponseEntity<>(response, HttpStatus.OK);
+        }catch (Exception e){
+            ApiResponse<SpecialCategories> response=new ApiResponse<>(false,"DATA FIELDS NOT CREATED!"+e.getMessage(),null);
+            return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @PutMapping("/update/{id}")
+    public ResponseEntity<ApiResponse<SpecialCategories>> updateSpecialCategories(@PathVariable Long id,@RequestBody SpecialCategories specialCategories){
+        try{
+            SpecialCategories msg=specialCategoriesService.updateSpecialCategory(id,specialCategories);
+            ApiResponse<SpecialCategories> response=new ApiResponse<>(true,"DATA FIELD UPDATED SUCCESSFULLY!",msg);
+            return new ResponseEntity<>(response, HttpStatus.OK);
+        }catch (Exception e){
+            ApiResponse<SpecialCategories> response=new ApiResponse<>(false,"DATA FIELDS NOT UPDATED!"+e.getMessage(),null);
+            return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<ApiResponse<SpecialCategories>> deleteSpecialCategories(@PathVariable Long id){
+        try{
+            SpecialCategories specialCategories=specialCategoriesService.deleteCategory(id);
+            ApiResponse<SpecialCategories> response=new ApiResponse<>(true,"DATA FIELD UPDATED SUCCESSFULLY!",specialCategories);
+            return new ResponseEntity<>(response, HttpStatus.OK);
+        }catch (Exception e){
+            ApiResponse<SpecialCategories> response=new ApiResponse<>(false,"DATA FIELDS NOT UPDATED! "+e.getMessage(),null);
+            return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
+    }
+}
