@@ -1,31 +1,29 @@
-package com.example.CandidateDetails.Model;
+package com.example.JobCreation.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
+
 
 import java.util.UUID;
 
 @Entity
 @Table(name = "job_posting_location")
 public class JobPostingLocation {
-    @Id
-    private Integer posting_location_id;
 
-    private UUID posting_id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer posting_location_id ;
+    private UUID position_id;
 
     private Integer dept_id;
+    private Long location_id;
 
-    private Integer location_id;
-
-    public JobPostingLocation() {
-    }
-
-    public JobPostingLocation(Integer posting_location_id, UUID posting_id, Integer dept_id, Integer location_id) {
+    public JobPostingLocation(Integer posting_location_id, UUID position_id, Integer dept_id, Long location_id) {
         this.posting_location_id = posting_location_id;
-        this.posting_id = posting_id;
+        this.position_id = position_id;
         this.dept_id = dept_id;
         this.location_id = location_id;
+    }
+    public JobPostingLocation() {
     }
 
     public Integer getPosting_location_id() {
@@ -36,12 +34,12 @@ public class JobPostingLocation {
         this.posting_location_id = posting_location_id;
     }
 
-    public UUID getPosting_id() {
-        return posting_id;
+    public UUID getPosition_id() {
+        return position_id;
     }
 
-    public void setPosting_id(UUID posting_id) {
-        this.posting_id = posting_id;
+    public void setPosition_id(UUID position_id) {
+        this.position_id = position_id;
     }
 
     public Integer getDept_id() {
@@ -52,11 +50,11 @@ public class JobPostingLocation {
         this.dept_id = dept_id;
     }
 
-    public Integer getLocation_id() {
+    public Long getLocation_id() {
         return location_id;
     }
 
-    public void setLocation_id(Integer location_id) {
+    public void setLocation_id(Long location_id) {
         this.location_id = location_id;
     }
 }
