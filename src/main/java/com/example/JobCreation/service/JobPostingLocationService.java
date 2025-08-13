@@ -64,7 +64,7 @@ public class JobPostingLocationService {
     }
 
     public Long findCityBylocationId(Long locationId) {
-        return locationRepository.findcityIdByLocationId( locationId);
+        return locationRepository.findcityIdByLocationId(locationId);
     }
     public Long findStateByCityId(Long cityId) {
         return cityRepository.findStateIdByCityId(cityId);

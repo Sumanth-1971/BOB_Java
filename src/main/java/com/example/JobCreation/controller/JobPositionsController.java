@@ -106,4 +106,26 @@ public class JobPositionsController {
             return new ResponseEntity<>(apiResponse, HttpStatus.BAD_REQUEST);
         }
     }
+
+    @GetMapping("/active_jobs")
+    public ResponseEntity<ApiResponse<?>> getActiveJobs() {
+        List<Positions> activeJobs = jobPositionsService.getActiveJobs();
+
+        if (activeJobs.isEmpty()) {
+            ApiResponse<List<Positions>> apiResponse = new ApiResponse<>(
+                    false,
+                    "No active jobs found",
+                    activeJobs
+            );
+            return new ResponseEntity<>(apiResponse, HttpStatus.NOT_FOUND);
+        }
+
+        ApiResponse<List<Positions>> apiResponse = new ApiResponse<>(
+                true,
+                "Active jobs found",
+                activeJobs
+        );
+        return new ResponseEntity<>(apiResponse, HttpStatus.OK);
+    }
+
 }

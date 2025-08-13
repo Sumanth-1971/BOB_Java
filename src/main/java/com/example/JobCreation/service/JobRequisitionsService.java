@@ -49,6 +49,19 @@ public class JobRequisitionsService {
 
 
     public JobRequisitions updateRequisitions(JobRequisitions jobRequisitions){
+        JobRequisitions jobRequisitions1 = jobRequisitionsRepository.findById(jobRequisitions.getRequisition_id())
+                .orElseThrow(() -> new RuntimeException("Requisition not found with ID: " + jobRequisitions.getRequisition_id()));
+        jobRequisitions1.setRequisition_id(jobRequisitions.getRequisition_id());
+
+        jobRequisitions1.setRequisition_title(jobRequisitions.getRequisition_title());
+        jobRequisitions1.setRequisition_description(jobRequisitions.getRequisition_description());
+
+        jobRequisitions1.setRegistration_start_date(jobRequisitions.getRegistration_start_date());
+        jobRequisitions1.setRegistration_end_date(jobRequisitions.getRegistration_end_date());
+        jobRequisitions1.setRequisition_comments(jobRequisitions.getRequisition_comments());
+        jobRequisitions1.setNo_of_positions(jobRequisitions.getNo_of_positions());
+
+
         jobRequisitions.setUpdated_date(LocalDateTime.now());
         return jobRequisitionsRepository.save(jobRequisitions);
     }
@@ -80,14 +93,25 @@ public class JobRequisitionsService {
                     JobRequisitions jobRequisitions = jobRequisitionsRepository.findById(jobRequisitionsId).orElse(null);
                     if (jobRequisitions != null) {
                         jobRequisitions.setJob_postings(result);
+                        jobRequisitions.setRequisition_approval("Published");
                         jobRequisitionsRepository.save(jobRequisitions);
                     }
                 }
-
             }
             return "Job postings created successfully " ;
         }catch (Exception e) {
             throw new Exception("Failed to create job postings: " + e.getMessage());
         }
+
+
+    }
+    public boolean existsById(UUID id) {
+        return jobRequisitionsRepository.existsById(id);
+    }
+
+    public List<JobRequisitions> getActiveRequisitions() {
+        LocalDate today = LocalDate.now();
+        return jobRequisitionsRepository.findAll().stream()
+                .filter(job -> job.getRequisition_status().equals("Published") || job.getRequisition_status().equals("Approved")).toList();
     }
 }

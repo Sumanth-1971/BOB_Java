@@ -33,7 +33,9 @@ public class JobPositionService{
     @Autowired
     private JobPositionsRepository jobPositionsRepository;
 
-    //repository for city, state, country
+    //microservices
+    @Autowired
+    private JobRequisitionsService jobRequisitionsService;
 
 
 
@@ -125,21 +127,22 @@ public class JobPositionService{
         // status
         positionsDTO.setPosition_status(positions.getPosition_status());
 
-        if ((jobPostingLocation ==null) ) {
+        if (jobPostingLocation ==null ) {
             positionsDTO.setLocation_id(null);
             positionsDTO.setDept_id(null);
+            positionsDTO.setCity_id(null);
+            positionsDTO.setState_id(null);
+            positionsDTO.setCountry_id(null);
         } else {
             positionsDTO.setLocation_id(jobPostingLocation.getLocation_id());
             positionsDTO.setDept_id(jobPostingLocation.getDept_id());
+            Long cityId = jobPostingLocationService.findCityBylocationId(jobPostingLocation.getLocation_id());
+            long stateId = jobPostingLocationService.findStateByCityId(cityId);
+            long countryId = jobPostingLocationService.findCountryByStateId(stateId);
+            positionsDTO.setCity_id(cityId);
+            positionsDTO.setState_id(stateId);
+            positionsDTO.setCountry_id(countryId);
         }
-
-        //Extra fields for ResponseDTO\
-        Long cityId =jobPostingLocationService.findCityBylocationId(positionsDTO.getLocation_id());
-        long stateId = jobPostingLocationService.findStateByCityId(cityId);
-        long countryId = jobPostingLocationService.findCountryByStateId(stateId);
-        positionsDTO.setCity_id(cityId);
-        positionsDTO.setState_id(stateId);
-        positionsDTO.setCountry_id(countryId);
 
         //job selection process
         if ((jobSelectionProcess == null)) {
@@ -345,5 +348,17 @@ public class JobPositionService{
         } else {
             return "Position not found";
         }
+    }
+
+    public List<Positions> getActiveJobs() {
+        List<JobRequisitions> activeRequisitions = jobRequisitionsService.getActiveRequisitions();
+        List<Positions> activePositions = new ArrayList<>();
+        for( JobRequisitions requisition : activeRequisitions) {
+            List<Positions> positions = jobPositionsRepository.findAllByRequisitionId(requisition.getRequisition_id());
+            for (Positions position : positions) {
+               activePositions.add(position);
+            }
+        }
+        return activePositions;
     }
 }

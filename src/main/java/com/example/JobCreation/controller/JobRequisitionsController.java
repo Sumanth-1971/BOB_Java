@@ -70,6 +70,7 @@ public class JobRequisitionsController {
                         .badRequest()
                         .body(new ApiResponse<>(false, "All fields are required", null));
             }
+
             JobRequisitions jobRequisitionsres = jobRequisitionsService.createRequisitions(jobRequisitions);
             ApiResponse<JobRequisitions> apiResponse =new ApiResponse<>(true,"Created Successful", jobRequisitionsres);
             return new ResponseEntity<>(apiResponse, HttpStatus.CREATED) ;
@@ -117,6 +118,11 @@ public class JobRequisitionsController {
                         .badRequest()
                         .body(new ApiResponse<>(false, "All fields are required", null));
             }
+            if(jobRequisitionsService.existsById(jobRequisitions.getRequisition_id()) == false){
+                return ResponseEntity
+                        .badRequest()
+                        .body(new ApiResponse<>(false, "Requisition ID does not exist", null));
+            }
             JobRequisitions jobRequisitionsres =jobRequisitionsService.updateRequisitions(jobRequisitions);
             ApiResponse<JobRequisitions> apiResponse =new ApiResponse<>(true,"Updated Successful", jobRequisitionsres);
             return  new ResponseEntity<>(apiResponse, HttpStatus.OK);
@@ -125,6 +131,27 @@ public class JobRequisitionsController {
             return  new ResponseEntity<>(apiResponse, HttpStatus.BAD_REQUEST);
         }
 
+    }
+
+    @GetMapping("/active_requisitions")
+    public ResponseEntity<ApiResponse<?>>  getActiveRequisitions() {
+        List<JobRequisitions> activeJobs = jobRequisitionsService.getActiveRequisitions();
+
+        if (activeJobs.isEmpty()) {
+            ApiResponse<List<JobRequisitions>> apiResponse = new ApiResponse<>(
+                    false,
+                    "No active jobs found",
+                    activeJobs
+            );
+            return new ResponseEntity<>(apiResponse, HttpStatus.NOT_FOUND);
+        }
+
+        ApiResponse<List<JobRequisitions>> apiResponse = new ApiResponse<>(
+                true,
+                "Active jobs found",
+                activeJobs
+        );
+        return new ResponseEntity<>(apiResponse, HttpStatus.OK);
     }
 
     @PostMapping("/job_postings")
