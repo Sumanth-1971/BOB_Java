@@ -84,4 +84,19 @@ public class CandidatesController {
     public String offer(@RequestBody Offerdto offerdto) throws MessagingException, UnsupportedEncodingException {
         return candidateService.offer(offerdto);
     }
+
+    @GetMapping("/get-candidates/{status}")
+    public List<CandidateDetails> getCandidateByStatus(@PathVariable String status) {
+        return candidateService.getCandidateByApplicationStatus(status);
+    }
+
+    @GetMapping("/get-candidates/{status}/count")
+    public Integer getCountByStatus(@PathVariable String status) {
+        return candidateService.countCandidatesByStatus(status);
+    }
+
+    @GetMapping("/all")
+    public List<CandidateDetails> getAllCandidates(){
+        return candidateService.getAllCandidateDetails();
+    }
 }

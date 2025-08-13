@@ -15,4 +15,8 @@ public interface StateRepository extends JpaRepository<State, Long> {
 
     @Query(value = "SELECT * FROM state WHERE city_id = :cityId", nativeQuery = true)
     List<State> findByCityId(@Param("cityId") Integer cityId);
+
+
+    @Query(value = "SELECT country_id j FROM state j WHERE  j.state_id= :stateId", nativeQuery = true)
+    Long findCountryIdByStateId(@Param("stateId") Long stateId);
 }

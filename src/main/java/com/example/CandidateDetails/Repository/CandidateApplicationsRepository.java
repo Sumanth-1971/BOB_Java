@@ -18,7 +18,15 @@ public interface CandidateApplicationsRepository extends JpaRepository<Candidate
     @Query(value = "SELECT * FROM candidate_applications WHERE candidate_id = :candidateId", nativeQuery = true)
     List<CandidateApplications> findByCandidateIdNative(@Param("candidateId") UUID candidateId);
 
+//    @Query(value = "SELECT * FROM candidate_applications WHERE candidate_id = :candidateId AND position_id = :positionId", nativeQuery = true)
+//    Optional<CandidateApplications> findByCandidateIdAndPositionId(@Param("candidateId") UUID candidateId, @Param("positionId") UUID positionId);
+
+
     @Query(value = "SELECT * FROM candidate_applications WHERE candidate_id = :candidateId AND position_id = :positionId", nativeQuery = true)
-    Optional<CandidateApplications> findByCandidateIdAndPositionId(@Param("candidateId") UUID candidateId, @Param("positionId") UUID positionId);
+    List<CandidateApplications> findByCandidateIdAndPositionId(@Param("candidateId") UUID candidateId, @Param("positionId") UUID positionId);
+
+    @Query(value = "SELECT * FROM candidate_applications WHERE application_status = :status", nativeQuery = true)
+    List<CandidateApplications> findByApplicationStatus(String status);
+
 
 }

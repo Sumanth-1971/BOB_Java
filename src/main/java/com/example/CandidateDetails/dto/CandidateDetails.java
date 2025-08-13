@@ -15,9 +15,13 @@ public class CandidateDetails {
 
     private String username;
 
-//    private Map<Integer,String> country_details;
-//
-//    private Map<Integer,String> state_details;
+    private Map<Long,String> country_details;
+
+    private Map<Long,String> state_details;
+
+    private Map<Long,String> location_details;
+
+    private Map<Long,String> city_details;
 
     private String email;
 
@@ -45,30 +49,14 @@ public class CandidateDetails {
     public CandidateDetails() {
     }
 
-//    public CandidateDetails(UUID candidate_id, String full_name, String username, Map<Integer, String> country_details, Map<Integer, String> state_details, String email, String gender, String phone, Integer reservation_category_id, Integer special_category_id, Integer highest_qualification, BigDecimal total_experience, String address, String comments, String application_status, List<FileInfo> fileInfo) {
-//        this.candidate_id = candidate_id;
-//        this.full_name = full_name;
-//        this.username = username;
-//        this.country_details = country_details;
-//        this.state_details = state_details;
-//        this.email = email;
-//        this.gender = gender;
-//        this.phone = phone;
-//        this.reservation_category_id = reservation_category_id;
-//        this.special_category_id = special_category_id;
-//        this.highest_qualification = highest_qualification;
-//        this.total_experience = total_experience;
-//        this.address = address;
-//        this.comments = comments;
-//        this.application_status = application_status;
-//        this.fileInfo = fileInfo;
-//    }
-
-
-    public CandidateDetails(UUID candidate_id, String full_name, String username, String email, String gender, String phone, Integer reservation_category_id, Integer special_category_id, Integer highest_qualification, BigDecimal total_experience, String address, String comments, String application_status, List<FileInfo> fileInfo) {
+    public CandidateDetails(UUID candidate_id, String full_name, String username, Map<Long, String> country_details, Map<Long, String> state_details, Map<Long, String> location_details, Map<Long, String> city_details, String email, String gender, String phone, Integer reservation_category_id, Integer special_category_id, Integer highest_qualification, BigDecimal total_experience, String address, String comments, String application_status, List<FileInfo> fileInfo) {
         this.candidate_id = candidate_id;
         this.full_name = full_name;
         this.username = username;
+        this.country_details = country_details;
+        this.state_details = state_details;
+        this.location_details = location_details;
+        this.city_details = city_details;
         this.email = email;
         this.gender = gender;
         this.phone = phone;
@@ -106,21 +94,37 @@ public class CandidateDetails {
         this.username = username;
     }
 
-//    public Map<Integer, String> getCountry_details() {
-//        return country_details;
-//    }
-//
-//    public void setCountry_details(Map<Integer, String> country_details) {
-//        this.country_details = country_details;
-//    }
-//
-//    public Map<Integer, String> getState_details() {
-//        return state_details;
-//    }
-//
-//    public void setState_details(Map<Integer, String> state_details) {
-//        this.state_details = state_details;
-//    }
+    public Map<Long, String> getCountry_details() {
+        return country_details;
+    }
+
+    public void setCountry_details(Map<Long, String> country_details) {
+        this.country_details = country_details;
+    }
+
+    public Map<Long, String> getState_details() {
+        return state_details;
+    }
+
+    public void setState_details(Map<Long, String> state_details) {
+        this.state_details = state_details;
+    }
+
+    public Map<Long, String> getLocation_details() {
+        return location_details;
+    }
+
+    public void setLocation_details(Map<Long, String> location_details) {
+        this.location_details = location_details;
+    }
+
+    public Map<Long, String> getCity_details() {
+        return city_details;
+    }
+
+    public void setCity_details(Map<Long, String> city_details) {
+        this.city_details = city_details;
+    }
 
     public String getEmail() {
         return email;

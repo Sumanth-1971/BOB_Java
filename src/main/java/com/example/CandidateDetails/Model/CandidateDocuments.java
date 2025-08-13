@@ -2,12 +2,14 @@ package com.example.CandidateDetails.Model;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Entity
-public class Candidate_documents {
+@Table(name="candidate_documents")
+public class CandidateDocuments {
 
     @Id
     private UUID document_id;
@@ -25,10 +27,10 @@ public class Candidate_documents {
 
     private LocalDateTime uploaded_date;
 
-    public Candidate_documents() {
+    public CandidateDocuments() {
     }
 
-    public Candidate_documents(UUID document_id, UUID candidate_id, String document_type, UUID application_id, String file_name, String file_url, LocalDateTime uploaded_date) {
+    public CandidateDocuments(UUID document_id, UUID candidate_id, String document_type, UUID application_id, String file_name, String file_url, LocalDateTime uploaded_date) {
         this.document_id = document_id;
         this.candidate_id = candidate_id;
         this.document_type = document_type;

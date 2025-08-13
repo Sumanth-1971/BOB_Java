@@ -1,6 +1,7 @@
 package com.example.CandidateDetails.Repository;
 
 import com.example.CandidateDetails.Model.JobPostingLocation;
+import com.example.CandidateDetails.Model.Location;
 import com.example.CandidateDetails.Model.State;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -13,6 +14,8 @@ import java.util.UUID;
 @Repository
 public interface JobPostingLocationRepository extends JpaRepository<JobPostingLocation, Long> {
 
-    @Query(value = "SELECT * FROM job_posting_location WHERE position_id = :positionId", nativeQuery = true)
-    List<JobPostingLocation> findByPositionId(@Param("positionId") UUID positionId);
+    @Query(value = "SELECT jl.location_id FROM job_posting_location jl WHERE jl.position_id = :positionId", nativeQuery = true)
+    List<Long> findByPositionId(@Param("positionId") UUID positionId);
+
+
 }
