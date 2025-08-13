@@ -2,11 +2,9 @@ package com.example.CandidateDetails.Service;
 
 import com.example.CandidateDetails.Model.*;
 import com.example.CandidateDetails.Repository.*;
-import com.example.CandidateDetails.dto.CandidateDetails;
-import com.example.CandidateDetails.dto.FileInfo;
-import com.example.CandidateDetails.dto.Interviewdto;
-import com.example.CandidateDetails.dto.Offerdto;
+import com.example.CandidateDetails.dto.*;
 import jakarta.mail.MessagingException;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -107,97 +105,13 @@ public class CandidateService {
 
     @Transactional
     public String scheduleInterview(Interviewdto interviewdto) {
-//        if (interviewdto.getCandidate_id() == null || interviewdto.getUserId() == null || interviewdto.getPosition_id() == null) {
-//            return "Invalid input data: Candidate, User, or Position ID is missing.";
-//        }
-//
-//        UUID candidateId = interviewdto.getCandidate_id();
-//        UUID positionId = interviewdto.getPosition_id();
-//        Integer userId = interviewdto.getUserId();
-//
-//        Candidates candidate = candidateRepository.findById(candidateId)
-//                .orElse(null);
-//        if (candidate == null) {
-//            return "Candidate not found!";
-//        }
-//
-//        Users interviewer = usersRepository.findByRole("Interviewer")
-//                .stream()
-//                .findFirst()
-//                .orElse(null);
-//
-//        String positionTitle = positionRepository.findById(positionId)
-//                .map(Position::getPosition_title)
-//                .orElse("Unknown Position");
-//
-//        List<Users> usersList= usersRepository.findByRole("Interviewer");
-//        String interviewerName =usersList.get(0).getName();
-//        String interviewerEmail = usersList.get(0).getEmail();
-//        String candidateName = candidate.getFull_name();
-//        String candidateEmail = candidate.getEmail();
-//
-//        Map<String, Object> emailData = new HashMap<>();
-//        emailData.put("INTERVIEWER_NAME", interviewerName);
-//        emailData.put("CANDIDATE_NAME", candidateName);
-//        emailData.put("POSITION_TITLE", positionTitle);
-//        emailData.put("DATE", interviewdto.getDate().toString());
-//        emailData.put("TIME", interviewdto.getInterview_time().toString());
-//
-//        // 4. Send emails
-//        boolean candidateMailSent = sendEmailWithRetryMechanism(
-//                candidateEmail,
-//                "Interview Scheduled for " + positionTitle,
-//                "Candidate",
-//                emailData
-//        );
-//
-//        boolean interviewerMailSent = sendEmailWithRetryMechanism(
-//                interviewerEmail,
-//                "Interview Scheduled: " + candidateName + " for " + positionTitle,
-//                "Interviewer",
-//                emailData
-//        );
-//
-//        if (candidateMailSent && interviewerMailSent) {
-//            CandidateApplications candidateApplications = candidateApplicationsRepository
-//                    .findByCandidateIdAndPositionId(candidateId, positionId).get(0);
-//
-//            if (candidateApplications != null) {
-//                candidateApplications.setUpdated_date(LocalDateTime.now());
-//                candidateApplications.setApplication_status("Scheduled");
-//                candidateApplicationsRepository.save(candidateApplications);
-//            } else {
-//
-//                return "Warning: Candidate application not found for status update.";
-//            }
-//
-//            Interviews interview = new Interviews();
-//            interview.setCandidate_id(candidateId);
-//            interview.setPosition_id(positionId);
-//            interview.setType("Online");
-//            if (interviewdto.getDate() == null || interviewdto.getInterview_time() == null) {
-//                throw new IllegalArgumentException("Date or Interview Time is missing!");
-//            }
-//            LocalDateTime scheduleTime = LocalDateTime.of(
-//                    interviewdto.getDate(),
-//                    interviewdto.getInterview_time()
-//            );
-//            interview.setSchedule_at(scheduleTime);
-//            interview.setInterviewer(interviewerName);
-//            interview.setStatus("Scheduled");
-//            interviewerRepository.save(interview);
-//
-//            return "Interview Scheduled!";
-//        }
-//        return "Failed to send one or both interview scheduling emails!";
 
-        if (interviewdto.getCandidate_id() == null || interviewdto.getUserId() == null || interviewdto.getPosition_id() == null) {
+        if (interviewdto.getCandidate_id() == null|| interviewdto.getPosition_id() == null) {
             return "Invalid input data: Candidate, User, or Position ID is missing.";
         }
 
         UUID candidateId = interviewdto.getCandidate_id();
         UUID positionId = interviewdto.getPosition_id();
-        Integer userId = interviewdto.getUserId();
 
         Candidates candidate = candidateRepository.findById(candidateId).orElse(null);
         if (candidate == null) {
@@ -298,56 +212,7 @@ public class CandidateService {
         return false;
     }
 
-//    public String offer(Offerdto offerdto) throws MessagingException, UnsupportedEncodingException {
-//
-//        try {
-//
-//            Candidates candidates = candidateRepository.findById(offerdto.getCandidate_id()).orElse(null);
-//            Map<String, Object> offerDetails = new HashMap<>();
-//            offerDetails.put("COMPANY_NAME", "BANK OF BARODA!");
-//            offerDetails.put("CANDIDATE_NAME", candidates.getFull_name());
-//            offerDetails.put("POSITION_TITLE", positionRepository.findById(offerdto.getPosition_id()).get().getPosition_title());
-//
-//
-//            String email = candidates.getEmail();
-////            String email="sumanthsangam2@gmail.com";
-//            String path = offerdto.getOffer_letter_path();
-//
-//
-////            String path="C:\\Users\\sumanth.sangam\\Downloads\\Academic_CV_Template.pdf";
-//            boolean candidateOfferLetterSSent = sendEmailWithAttachmentRetry(email, "Offer Letter!", "OfferLetter", offerDetails, path);
-//
-//            CandidateApplications candidateApplications=candidateApplicationsRepository.findByCandidateIdAndPositionId(offerdto.getCandidate_id(), offerdto.getPosition_id()).get(0);
-//            if (candidateApplications == null) {
-//                return "Candidate application not found!";
-//            }
-//
-//            UUID application_id=candidateApplications.getApplication_id();
-//            CandidateDocuments candidateDocuments=new CandidateDocuments();
-//            candidateDocuments.setDocument_id(UUID.randomUUID());
-//            candidateDocuments.setCandidate_id(offerdto.getCandidate_id());
-//            candidateDocuments.setDocument_type("Offer Letter");
-//            candidateDocuments.setApplication_id(application_id);
-//            candidateDocuments.setFile_name(offerdto.getCandidate_id().toString()+".pdf");
-//            candidateDocuments.setFile_url(path);
-//            candidateDocuments.setUploaded_date(LocalDateTime.now());
-//            candidateDocumentsRepository.save(candidateDocuments);
-//            if (candidateOfferLetterSSent) {
-////                candidateApplications.setApplication_status("Offered");
-//                CandidateApplications candidateApplications1 = candidateApplicationsRepository.findByCandidateIdAndPositionId(offerdto.getCandidate_id(), offerdto.getPosition_id()).get(0);
-//                candidateApplications1.setUpdated_date(LocalDateTime.now());
-//                candidateApplications1.setApplication_status("Offered");
-//                candidateApplicationsRepository.save(candidateApplications1);
-//
-//
-//                return "Offer sent!";
-//            }
-//
-//            return "Failed to send offer letter mail";
-//        } catch (Exception e) {
-//            return "Failed to send email due to" + e.getMessage();
-//        }
-//    }
+
 
     public String offer(Offerdto offerdto) throws MessagingException, UnsupportedEncodingException {
         try {
@@ -382,20 +247,23 @@ public class CandidateService {
             offerDetails.put("COMPANY_NAME", "BANK OF BARODA!");
             offerDetails.put("CANDIDATE_NAME", candidates.getFull_name());
             offerDetails.put("POSITION_TITLE", positionTitle);
+            offerDetails.put("PATH", offerdto.getOffer_letter_path());
 
             String email = candidates.getEmail();
             String path = offerdto.getOffer_letter_path();
-
+            System.out.println("Offer Letter Path: " + path);
 //            String path="C:\\Users\\sumanth.sangam\\Downloads\\Academic_CV_Template.pdf"
 
+
             // 6. Send email with retry
-            boolean candidateOfferLetterSent = sendEmailWithAttachmentRetry(
+            boolean candidateOfferLetterSent = sendEmailWithRetryMechanism(
                     email,
                     "Offer Letter!",
                     "OfferLetter",
-                    offerDetails,
-                    path
+                    offerDetails
             );
+
+
 
             if (!candidateOfferLetterSent) {
                 return "Failed to send offer letter email.";
@@ -475,9 +343,6 @@ public class CandidateService {
         List<CandidateDetails> candidateDetailsList = new ArrayList<>();
         for (CandidateApplications candidateApplications : candidateApplicationsRepository.findAll()) {
             CandidateDetails candidateDetails = new CandidateDetails();
-//            List<Long> locationIds= jobPostingLocationRepository.findByPositionId(position_id);
-//            Location location=locationRepository.findById(locationIds.get(0)).orElse(null);
-//            candidateDetails.setLocation_details(Map.of(location.getLocation_id(), location.getLocation_name()));
             candidateDetails.setCandidate_id(candidateApplications.getCandidate_id());
             candidateDetails.setFull_name(candidateRepository.findById(candidateApplications.getCandidate_id()).get().getFull_name());
             candidateDetails.setUsername(candidateRepository.findById(candidateApplications.getCandidate_id()).get().getUsername());
@@ -496,5 +361,128 @@ public class CandidateService {
         }
         return candidateDetailsList;
     }
+
+    public Interviews getInterviewDetailsByInterviewId(Integer interview_id){
+        return interviewerRepository.findById(interview_id).orElse(null);
+    }
+
+    public Interviews getInterviewDetailsByPositionAndCandidateId(UUID positionId, UUID candidateId) {
+//        Interviews interviews=interviewerRepository.findByPositionIdAndCandidateId2(positionId,candidateId).get();
+        System.out.println("Fetching interview details for Position ID: " + positionId + " and Candidate ID: " + candidateId);
+        List<Interviews> interviews=interviewerRepository.findAll().stream().filter(interview->interview.getCandidate_id().equals(candidateId) && interview.getPosition_id().equals(positionId )).toList();
+        return interviews.get(0);
+    }
+//
+//
+//    public String getStatus(InterviewDetails interviewDetails){
+//        Interviews interviews=interviewerRepository.findByCandidateIdAndPositionId(interviewDetails.getCandidate_id(), interviewDetails.getPosition_id()).get();
+//
+//        if(interviewDetails.getStatus().equals("Scheduled")){
+//            return scheduleInterview(new Interviewdto(
+//                    interviewDetails.getCandidate_id(),
+//                    interviewDetails.getDate(),
+//                    interviewDetails.getTime(),
+//                    interviewDetails.getPosition_id()
+//            ));
+//        }
+//        else if (interviewDetails.getStatus().equals("Rescheduled")){
+//            UUID candidate_id=interviewDetails.getCandidate_id();
+//            Candidates candidates=candidateRepository.findById(candidate_id).orElse(null);
+//            if(candidates==null){
+//                return "Candidate not found!";
+//            }
+//            String candidateName = candidates.getFull_name();
+//            String candidateEmail = candidates.getEmail();
+//            UUID position_id=interviewDetails.getPosition_id();
+//            Users users=usersRepository.findByRole("Interviewer").get(0);
+//            Position position=positionRepository.findById(position_id).orElse(null);
+//            if(position==null){
+//                return "Position not found!";
+//            }
+//            String positionTitle = position.getPosition_title();
+//            Map<String, Object> emailData = new HashMap<>();
+//            emailData.put("INTERVIEWER_NAME", users.getName());
+//            emailData.put("CANDIDATE_NAME", candidateName);
+//            emailData.put("POSITION_TITLE", positionTitle);
+//            emailData.put("DATE", interviewDetails.getDate().toString());
+//            emailData.put("TIME", interviewDetails.getTime().toString());
+//            boolean candidateMailSent = sendEmailWithRetryMechanism(
+//                    candidateEmail,
+//                    "Interview Scheduled for " + positionTitle,
+//                    "Candidate",
+//                    emailData
+//            );
+//
+//            boolean interviewerMailSent = sendEmailWithRetryMechanism(
+//                    users.getEmail(),
+//                    "Interview Scheduled: " + candidateName + " for " + positionTitle,
+//                    "Interviewer",
+//                    emailData
+//            );
+//
+//            if (!candidateMailSent || !interviewerMailSent) {
+//                return "Failed to send one or both interview scheduling emails!";
+//            }
+//            Interviews interviews1=interviews;
+//                LocalDateTime scheduleTime = LocalDateTime.of(
+//                        interviewDetails.getDate(),
+//                        interviewDetails.getTime()
+//                );
+//                interviews1.setSchedule_at(scheduleTime);
+//                interviews1.setStatus("Rescheduled");
+//                interviewerRepository.save(interviews1);
+//                return "Interview Rescheduled!";
+//        }
+//        else {
+//            if(interviews!=null){
+//                return "No interview found for the given candidate and position!";
+//            }
+//            UUID candidate_id=interviewDetails.getCandidate_id();
+//            Candidates candidates=candidateRepository.findById(candidate_id).orElse(null);
+//            if(candidates==null){
+//                return "Candidate not found!";
+//            }
+//            String candidateName = candidates.getFull_name();
+//            String candidateEmail = candidates.getEmail();
+//            UUID position_id=interviewDetails.getPosition_id();
+//            Users users=usersRepository.findByRole("Interviewer").get(0);
+//            Position position=positionRepository.findById(position_id).orElse(null);
+//            if(position==null){
+//                return "Position not found!";
+//            }
+//            String positionTitle = position.getPosition_title();
+//            Map<String, Object> emailData = new HashMap<>();
+//            emailData.put("INTERVIEWER_NAME", users.getName());
+//            emailData.put("CANDIDATE_NAME", candidateName);
+//            emailData.put("POSITION_TITLE", positionTitle);
+//            emailData.put("DATE", interviewDetails.getDate().toString());
+//            emailData.put("TIME", interviewDetails.getTime().toString());
+//            Interviews interviews1= interviews;
+//            if(interviews1!=null){
+//                boolean candidateMailSent = sendEmailWithRetryMechanism(
+//                        candidateEmail,
+//                        "Interview Scheduled for " + positionTitle,
+//                        "Candidate",
+//                        emailData
+//                );
+//
+//                boolean interviewerMailSent = sendEmailWithRetryMechanism(
+//                        users.getEmail(),
+//                        "Interview Scheduled: " + candidateName + " for " + positionTitle,
+//                        "Interviewer",
+//                        emailData
+//                );
+//
+//                if (!candidateMailSent || !interviewerMailSent) {
+//                    return "Failed to send one or both interview scheduling emails!";
+//                }
+//                interviews1.setStatus("Cancelled");
+//                interviewerRepository.save(interviews1);
+//                return "Interview Cancelled!";
+//            }
+//        }
+//        return "Invalid Status!";
+//    }
+
 
 }

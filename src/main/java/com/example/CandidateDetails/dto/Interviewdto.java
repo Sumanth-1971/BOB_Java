@@ -25,11 +25,10 @@ public class Interviewdto {
     public Interviewdto() {
     }
 
-     public Interviewdto(UUID candidate_id, LocalDate date, LocalTime interview_time, Integer userId, UUID position_id) {
+     public Interviewdto(UUID candidate_id, LocalDate date, LocalTime interview_time, UUID position_id) {
           this.candidate_id = candidate_id;
           this.date = date;
           this.interview_time = interview_time;
-          this.userId = userId;
           this.position_id = position_id;
      }
 

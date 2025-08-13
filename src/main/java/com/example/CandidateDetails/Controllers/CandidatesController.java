@@ -1,12 +1,10 @@
 package com.example.CandidateDetails.Controllers;
 
 import com.example.CandidateDetails.Model.Candidates;
+import com.example.CandidateDetails.Model.Interviews;
 import com.example.CandidateDetails.Service.CandidateService;
 import com.example.CandidateDetails.Service.MailService;
-import com.example.CandidateDetails.dto.ApiResponse;
-import com.example.CandidateDetails.dto.CandidateDetails;
-import com.example.CandidateDetails.dto.Interviewdto;
-import com.example.CandidateDetails.dto.Offerdto;
+import com.example.CandidateDetails.dto.*;
 import jakarta.mail.MessagingException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -99,4 +97,21 @@ public class CandidatesController {
     public List<CandidateDetails> getAllCandidates(){
         return candidateService.getAllCandidateDetails();
     }
+
+
+    @GetMapping("/interview/details/{candidate_id}/{position_id}")
+    public Interviews getInterviewDetailsByCandidateIdAndPositionId(@PathVariable UUID candidate_id, @PathVariable UUID position_id) {
+        return candidateService.getInterviewDetailsByPositionAndCandidateId(candidate_id, position_id);
+    }
+//
+//    @PutMapping("/update-interview-status")
+//    public ResponseEntity<String> updateInterviewStatus(@RequestBody InterviewDetails interviewDetails) {
+//        try {
+//            candidateService.getStatus(interviewDetails);
+//            return new ResponseEntity<>("Interview status updated successfully", HttpStatus.OK);
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//            return new ResponseEntity<>("Error updating interview status: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+//        }
+//    }
 }
