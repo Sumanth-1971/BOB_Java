@@ -44,8 +44,10 @@
 		<dependency>
 			<groupId>org.postgresql</groupId>
 			<artifactId>postgresql</artifactId>
-			<scope>runtime</scope>
+			<version>42.7.7</version> <!-- use the latest version -->
 		</dependency>
+
+
 
 		<dependency>
 			<groupId>org.springdoc</groupId>

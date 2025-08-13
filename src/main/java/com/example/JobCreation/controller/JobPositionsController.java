@@ -3,15 +3,13 @@ package com.example.JobCreation.controller;
 import com.example.JobCreation.dto.ApiResponse;
 import com.example.JobCreation.dto.JobPositionsDTO;
 import com.example.JobCreation.dto.ResponseDTO;
-import com.example.JobCreation.model.JobAgeRelaxations;
-import com.example.JobCreation.model.JobRequisitions;
 import com.example.JobCreation.model.Positions;
 import com.example.JobCreation.service.JobPositionService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.repository.Repository;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.UUID;
@@ -27,6 +25,7 @@ public class JobPositionsController {
     @PostMapping("/create_positions")
     public ResponseEntity<?> createPositions(@RequestBody JobPositionsDTO positions){
         try{
+            System.out.println(positions.getSelection_procedure());
             JobPositionsDTO createdPosition = jobPositionsService.createPosition(positions);
             ApiResponse<JobPositionsDTO> apiResponse = new ApiResponse<>(true, "Position created successfully", createdPosition);
             return new ResponseEntity<>(apiResponse, HttpStatus.CREATED);
@@ -51,7 +50,7 @@ public class JobPositionsController {
     }
 
     @GetMapping("/getpos")
-    public List<JobPositionsDTO> getall(){
+    public List<JobPositionsDTO> getAllPosition(){
 
         return jobPositionsService.findAllPositions();
     }
@@ -67,10 +66,16 @@ public class JobPositionsController {
         }
     }
 
-
-    @GetMapping("/getbyreq/{requistion_id}")
-    public List<JobPositionsDTO> getByreqId(UUID requistion_id){
-        return jobPositionsService.findByReqId(requistion_id);
+    @GetMapping("/getbyreq/{requisition_id}")
+    public ResponseEntity<?>  getByreqId(@PathVariable UUID requisition_id){
+        List<JobPositionsDTO> jobPositionsDTOList = jobPositionsService.findByReqId(requisition_id);
+        if (jobPositionsDTOList != null && !jobPositionsDTOList.isEmpty()) {
+            ApiResponse<List<JobPositionsDTO>> apiResponse = new ApiResponse<>(true, "Positions found for the given requisition ID", jobPositionsDTOList);
+            return new ResponseEntity<>(apiResponse, HttpStatus.OK);
+        } else {
+            ApiResponse<String> apiResponse = new ApiResponse<>(false, "No positions found for the given requisition ID", null);
+            return new ResponseEntity<>(apiResponse,HttpStatus.NOT_FOUND);
+        }
     }
 
     @GetMapping("/getByPositionId/{position_id}")
@@ -78,7 +83,8 @@ public class JobPositionsController {
         try {
             ResponseDTO position = jobPositionsService.findByPositionId(position_id);
             if (position != null) {
-                return new ResponseEntity<>(position, HttpStatus.OK);
+                ApiResponse<ResponseDTO> apiResponse = new ApiResponse<>(true, "Position found", position);
+                return new ResponseEntity<>(apiResponse, HttpStatus.OK);
             } else {
                 ApiResponse<String> apiResponse = new ApiResponse<>(false, "Position not found", null);
                 return new ResponseEntity<>(apiResponse, HttpStatus.NOT_FOUND);
