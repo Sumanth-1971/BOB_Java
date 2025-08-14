@@ -34,7 +34,6 @@ public class JobPositionsController {
             ApiResponse<String> apiResponse = new ApiResponse<>(false, "Failed to create position: " + e.getMessage(), null);
             return new ResponseEntity<>(apiResponse, HttpStatus.BAD_REQUEST);
         }
-
     }
 
     @PutMapping("/update_positions")
@@ -54,7 +53,8 @@ public class JobPositionsController {
 
         return jobPositionsService.findAllPositions();
     }
-    @PostMapping("/create_Bulk_positions")
+
+    @PostMapping("/create_bulk_positions")
     public ResponseEntity<?> createBulkPositions(@RequestBody List<JobPositionsDTO> positionsList) {
         try {
             List<JobPositionsDTO> createdPositions = jobPositionsService.createBulkPostions(positionsList);

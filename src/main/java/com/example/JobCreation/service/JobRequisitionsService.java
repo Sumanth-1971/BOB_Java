@@ -76,7 +76,6 @@ public class JobRequisitionsService {
         }catch (Exception e){
             return "Deleted Unsuccessful"+e.getMessage() ;
         }
-
     }
 
     public String createJobPostings(JobPostingDTO jobPostings) throws Exception {
@@ -93,12 +92,23 @@ public class JobRequisitionsService {
                     JobRequisitions jobRequisitions = jobRequisitionsRepository.findById(jobRequisitionsId).orElse(null);
                     if (jobRequisitions != null) {
                         jobRequisitions.setJob_postings(result);
-                        jobRequisitions.setRequisition_approval("Published");
+                        jobRequisitions.setRequisition_status("Approved");
+                        jobRequisitions.setRequisition_approval("Direct Approval");
+                        jobRequisitionsRepository.save(jobRequisitions);
+                    }
+                }
+            } else if (jobPostings.getApproval_status().equals("Workflow") ){
+                for (UUID jobRequisitionsId : jobPostings.getRequisition_id()) {
+                    JobRequisitions jobRequisitions = jobRequisitionsRepository.findById(jobRequisitionsId).orElse(null);
+                    if (jobRequisitions != null) {
+                        jobRequisitions.setJob_postings(result);
+                        jobRequisitions.setRequisition_status("Pending");
+                        jobRequisitions.setRequisition_approval("Workflow");
                         jobRequisitionsRepository.save(jobRequisitions);
                     }
                 }
             }
-            return "Job postings created successfully " ;
+            return "Job postings created successfully ";
         }catch (Exception e) {
             throw new Exception("Failed to create job postings: " + e.getMessage());
         }
