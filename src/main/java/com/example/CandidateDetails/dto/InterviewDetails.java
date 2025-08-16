@@ -16,18 +16,17 @@ public class InterviewDetails {
 
     private String status;
 
-    private Integer interview_id;
+//    private Integer interview_id;
 
     public InterviewDetails() {
     }
 
-    public InterviewDetails(UUID candidate_id, LocalDate date, LocalTime time, UUID position_id, String status, Integer interview_id) {
+    public InterviewDetails(UUID candidate_id, LocalDate date, LocalTime time, UUID position_id, String status) {
         this.candidate_id = candidate_id;
         this.date = date;
         this.time = time;
         this.position_id = position_id;
         this.status = status;
-        this.interview_id = interview_id;
     }
 
     public UUID getCandidate_id() {
@@ -70,11 +69,4 @@ public class InterviewDetails {
         this.status = status;
     }
 
-    public Integer getInterview_id() {
-        return interview_id;
-    }
-
-    public void setInterview_id(Integer interview_id) {
-        this.interview_id = interview_id;
-    }
 }

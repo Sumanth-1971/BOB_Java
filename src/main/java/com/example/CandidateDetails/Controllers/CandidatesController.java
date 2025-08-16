@@ -99,19 +99,24 @@ public class CandidatesController {
     }
 
 
-    @GetMapping("/interview/details/{candidate_id}/{position_id}")
-    public Interviews getInterviewDetailsByCandidateIdAndPositionId(@PathVariable UUID candidate_id, @PathVariable UUID position_id) {
-        return candidateService.getInterviewDetailsByPositionAndCandidateId(candidate_id, position_id);
+    @PostMapping("/interviews")
+    public Interviews getInterviewDetailsByCandidateId(@RequestBody InfoDto infoDto){
+        return candidateService.getInterviewsByCandidateAndPositionId(infoDto.getCandidate_id(),infoDto.getPosition_id());
     }
-//
-//    @PutMapping("/update-interview-status")
-//    public ResponseEntity<String> updateInterviewStatus(@RequestBody InterviewDetails interviewDetails) {
-//        try {
-//            candidateService.getStatus(interviewDetails);
-//            return new ResponseEntity<>("Interview status updated successfully", HttpStatus.OK);
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//            return new ResponseEntity<>("Error updating interview status: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
-//        }
+
+//    @GetMapping("/interview/details/{candidate_id}/{position_id}")
+//    public Interviews getInterviewDetailsByCandidateIdAndPositionId(@PathVariable UUID candidate_id, @PathVariable UUID position_id) {
+//        return candidateService.getInterviewDetailsByPositionAndCandidateId(candidate_id, position_id);
 //    }
+//
+    @PutMapping("/update-interview-status")
+    public ResponseEntity<String> updateInterviewStatus(@RequestBody InterviewDetails interviewDetails) {
+        try {
+            candidateService.getStatus(interviewDetails);
+            return new ResponseEntity<>("Interview status updated successfully", HttpStatus.OK);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ResponseEntity<>("Error updating interview status: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
 }

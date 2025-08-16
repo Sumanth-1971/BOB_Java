@@ -4,7 +4,6 @@ import com.example.CandidateDetails.Model.*;
 import com.example.CandidateDetails.Repository.*;
 import com.example.CandidateDetails.dto.*;
 import jakarta.mail.MessagingException;
-import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -40,7 +39,7 @@ public class CandidateService {
     @Autowired
     private PositionRepository positionRepository;
     @Autowired
-    private InterviewerRepository interviewerRepository;
+    private InterviewsRepository interviewerRepository;
     @Autowired
     private CityRepository cityRepository;
 
@@ -105,101 +104,105 @@ public class CandidateService {
 
     @Transactional
     public String scheduleInterview(Interviewdto interviewdto) {
+        try {
+            if (interviewdto.getCandidate_id() == null || interviewdto.getPosition_id() == null) {
+                return "Invalid input data: Candidate, User, or Position ID is missing.";
+            }
 
-        if (interviewdto.getCandidate_id() == null|| interviewdto.getPosition_id() == null) {
-            return "Invalid input data: Candidate, User, or Position ID is missing.";
+            UUID candidateId = interviewdto.getCandidate_id();
+            UUID positionId = interviewdto.getPosition_id();
+
+            Candidates candidate = candidateRepository.findById(candidateId).orElse(null);
+            if (candidate == null) {
+                return "Candidate not found!";
+            }
+
+            List<Users> interviewers = usersRepository.findByRole("Interviewer");
+            if (interviewers.isEmpty()) {
+                return "No interviewer found!";
+            }
+
+            Users interviewer = interviewers.get(0);
+            String interviewerName = interviewer.getName();
+            String interviewerEmail = interviewer.getEmail();
+
+            String positionTitle = positionRepository.findById(positionId)
+                    .map(Position::getPosition_title)
+                    .orElse("Unknown Position");
+
+            String candidateName = candidate.getFull_name();
+            String candidateEmail = candidate.getEmail();
+
+            // Fetch application and validate status
+            List<CandidateApplications> applications = candidateApplicationsRepository
+                    .findByCandidateIdAndPositionId(candidateId, positionId);
+
+            if (applications.isEmpty()) {
+                return "No candidate application found for the selected position.";
+            }
+
+            CandidateApplications candidateApplication = applications.get(0);
+
+            if (!candidateApplication.getApplication_status().equalsIgnoreCase("Shortlisted")) {
+                return "Interview can only be scheduled for shortlisted candidates.";
+            }
+
+            // Send emails
+            Map<String, Object> emailData = new HashMap<>();
+            emailData.put("INTERVIEWER_NAME", interviewerName);
+            emailData.put("CANDIDATE_NAME", candidateName);
+            emailData.put("POSITION_TITLE", positionTitle);
+            emailData.put("DATE", interviewdto.getDate().toString());
+            emailData.put("TIME", interviewdto.getInterview_time().toString());
+
+            boolean candidateMailSent = sendEmailWithRetryMechanism(
+                    candidateEmail,
+                    "Interview Scheduled for " + positionTitle,
+                    "Candidate",
+                    emailData
+            );
+
+            boolean interviewerMailSent = sendEmailWithRetryMechanism(
+                    interviewerEmail,
+                    "Interview Scheduled: " + candidateName + " for " + positionTitle,
+                    "Interviewer",
+                    emailData
+            );
+
+            if (!candidateMailSent || !interviewerMailSent) {
+                return "Failed to send one or both interview scheduling emails!";
+            }
+
+            // Update application status
+            candidateApplication.setUpdated_date(LocalDateTime.now());
+            candidateApplication.setApplication_status("Scheduled");
+            candidateApplicationsRepository.save(candidateApplication);
+
+            // Save interview
+            if (interviewdto.getDate() == null || interviewdto.getInterview_time() == null) {
+                throw new IllegalArgumentException("Date or Interview Time is missing!");
+            }
+
+            LocalDateTime scheduleTime = LocalDateTime.of(
+                    interviewdto.getDate(),
+                    interviewdto.getInterview_time()
+            );
+
+            Interviews interview = new Interviews();
+            interview.setCandidate_id(candidateId);
+            interview.setPosition_id(positionId);
+            interview.setType("Online");
+            interview.setSchedule_at(scheduleTime);
+            interview.setInterviewer(interviewerName);
+            interview.setStatus("Scheduled");
+
+            interviewerRepository.save(interview);
+
+            return "Interview Scheduled!";
         }
-
-        UUID candidateId = interviewdto.getCandidate_id();
-        UUID positionId = interviewdto.getPosition_id();
-
-        Candidates candidate = candidateRepository.findById(candidateId).orElse(null);
-        if (candidate == null) {
-            return "Candidate not found!";
+        catch (Exception e){
+            return "Interview not scheduled"+e.getMessage();
         }
-
-        List<Users> interviewers = usersRepository.findByRole("Interviewer");
-        if (interviewers.isEmpty()) {
-            return "No interviewer found!";
-        }
-
-        Users interviewer = interviewers.get(0);
-        String interviewerName = interviewer.getName();
-        String interviewerEmail = interviewer.getEmail();
-
-        String positionTitle = positionRepository.findById(positionId)
-                .map(Position::getPosition_title)
-                .orElse("Unknown Position");
-
-        String candidateName = candidate.getFull_name();
-        String candidateEmail = candidate.getEmail();
-
-        // Fetch application and validate status
-        List<CandidateApplications> applications = candidateApplicationsRepository
-                .findByCandidateIdAndPositionId(candidateId, positionId);
-
-        if (applications.isEmpty()) {
-            return "No candidate application found for the selected position.";
-        }
-
-        CandidateApplications candidateApplication = applications.get(0);
-
-        if (!candidateApplication.getApplication_status().equalsIgnoreCase("Shortlisted")) {
-            return "Interview can only be scheduled for shortlisted candidates.";
-        }
-
-        // Send emails
-        Map<String, Object> emailData = new HashMap<>();
-        emailData.put("INTERVIEWER_NAME", interviewerName);
-        emailData.put("CANDIDATE_NAME", candidateName);
-        emailData.put("POSITION_TITLE", positionTitle);
-        emailData.put("DATE", interviewdto.getDate().toString());
-        emailData.put("TIME", interviewdto.getInterview_time().toString());
-
-        boolean candidateMailSent = sendEmailWithRetryMechanism(
-                candidateEmail,
-                "Interview Scheduled for " + positionTitle,
-                "Candidate",
-                emailData
-        );
-
-        boolean interviewerMailSent = sendEmailWithRetryMechanism(
-                interviewerEmail,
-                "Interview Scheduled: " + candidateName + " for " + positionTitle,
-                "Interviewer",
-                emailData
-        );
-
-        if (!candidateMailSent || !interviewerMailSent) {
-            return "Failed to send one or both interview scheduling emails!";
-        }
-
-        // Update application status
-        candidateApplication.setUpdated_date(LocalDateTime.now());
-        candidateApplication.setApplication_status("Scheduled");
-        candidateApplicationsRepository.save(candidateApplication);
-
-        // Save interview
-        if (interviewdto.getDate() == null || interviewdto.getInterview_time() == null) {
-            throw new IllegalArgumentException("Date or Interview Time is missing!");
-        }
-
-        LocalDateTime scheduleTime = LocalDateTime.of(
-                interviewdto.getDate(),
-                interviewdto.getInterview_time()
-        );
-
-        Interviews interview = new Interviews();
-        interview.setCandidate_id(candidateId);
-        interview.setPosition_id(positionId);
-        interview.setType("Online");
-        interview.setSchedule_at(scheduleTime);
-        interview.setInterviewer(interviewerName);
-        interview.setStatus("Scheduled");
-
-        interviewerRepository.save(interview);
-
-        return "Interview Scheduled!";
     }
 
     private boolean sendEmailWithRetryMechanism(String toEmail, String subject, String template, Map<String, Object> variables) {
@@ -306,8 +309,25 @@ public class CandidateService {
         List<CandidateDetails> candidateDetailsList = new ArrayList<>();
 
         for (CandidateApplications candidateApplications : candidateApplicationsRepository.findAll()) {
+            CandidateDetails candidateDetails = new CandidateDetails();
+            UUID position_id=candidateApplications.getPosition_id();
             if (candidateApplications.getApplication_status().equals(status)) {
-                CandidateDetails candidateDetails = new CandidateDetails();
+                List<Long> locationIds = jobPostingLocationRepository.findByPositionId(position_id);
+                if (!locationIds.isEmpty()) {
+                    locationRepository.findById(locationIds.get(0)).ifPresent(location -> {
+                        candidateDetails.setLocation_details(Map.of(location.getLocation_id(), location.getLocation_name()));
+                        cityRepository.findById(location.getCity_id()).ifPresent(city -> {
+                            candidateDetails.setCity_details(Map.of(city.getCity_id(), city.getCity_name()));
+                            stateRepository.findById(city.getState_id()).ifPresent(state -> {
+                                candidateDetails.setState_details(Map.of(state.getState_id(), state.getState_name()));
+                                countryRepository.findById(state.getCountry_id()).ifPresent(country ->
+                                        candidateDetails.setCountry_details(Map.of(country.getCountry_id(), country.getCountry_name()))
+                                );
+                            });
+                        });
+                    });
+                }
+
                 candidateDetails.setCandidate_id(candidateApplications.getCandidate_id());
                 candidateDetails.setFull_name(candidateRepository.findById(candidateApplications.getCandidate_id()).get().getFull_name());
                 candidateDetails.setUsername(candidateRepository.findById(candidateApplications.getCandidate_id()).get().getUsername());
@@ -343,6 +363,22 @@ public class CandidateService {
         List<CandidateDetails> candidateDetailsList = new ArrayList<>();
         for (CandidateApplications candidateApplications : candidateApplicationsRepository.findAll()) {
             CandidateDetails candidateDetails = new CandidateDetails();
+            UUID position_id=candidateApplications.getPosition_id();
+            List<Long> locationIds = jobPostingLocationRepository.findByPositionId(position_id);
+            if (!locationIds.isEmpty()) {
+                locationRepository.findById(locationIds.get(0)).ifPresent(location -> {
+                    candidateDetails.setLocation_details(Map.of(location.getLocation_id(), location.getLocation_name()));
+                    cityRepository.findById(location.getCity_id()).ifPresent(city -> {
+                        candidateDetails.setCity_details(Map.of(city.getCity_id(), city.getCity_name()));
+                        stateRepository.findById(city.getState_id()).ifPresent(state -> {
+                            candidateDetails.setState_details(Map.of(state.getState_id(), state.getState_name()));
+                            countryRepository.findById(state.getCountry_id()).ifPresent(country ->
+                                    candidateDetails.setCountry_details(Map.of(country.getCountry_id(), country.getCountry_name()))
+                            );
+                        });
+                    });
+                });
+            }
             candidateDetails.setCandidate_id(candidateApplications.getCandidate_id());
             candidateDetails.setFull_name(candidateRepository.findById(candidateApplications.getCandidate_id()).get().getFull_name());
             candidateDetails.setUsername(candidateRepository.findById(candidateApplications.getCandidate_id()).get().getUsername());
@@ -366,123 +402,134 @@ public class CandidateService {
         return interviewerRepository.findById(interview_id).orElse(null);
     }
 
-    public Interviews getInterviewDetailsByPositionAndCandidateId(UUID positionId, UUID candidateId) {
-//        Interviews interviews=interviewerRepository.findByPositionIdAndCandidateId2(positionId,candidateId).get();
-        System.out.println("Fetching interview details for Position ID: " + positionId + " and Candidate ID: " + candidateId);
-        List<Interviews> interviews=interviewerRepository.findAll().stream().filter(interview->interview.getCandidate_id().equals(candidateId) && interview.getPosition_id().equals(positionId )).toList();
-        return interviews.get(0);
+
+    public Interviews getInterviewsByCandidateAndPositionId(UUID candidate_id,UUID position_id){
+//        List<Interviews> interviewsList=getInterviewListByCandidateId(candidate_id);
+//        List<Interviews> interviewsList1=interviewsList.stream()
+//                .filter(interviews -> interviews.getPosition_id().equals(position_id))
+//                .toList();
+//        return interviewsList1;
+    try{
+        List<Interviews> interviewsList=interviewerRepository.findByCandidateIdAndPositionIdNative(candidate_id,position_id);
+        return interviewsList.get(0);
+    }catch (Exception e){
+        System.out.println(e.getMessage());
+        return null;
+    }
+
     }
 //
 //
-//    public String getStatus(InterviewDetails interviewDetails){
-//        Interviews interviews=interviewerRepository.findByCandidateIdAndPositionId(interviewDetails.getCandidate_id(), interviewDetails.getPosition_id()).get();
-//
-//        if(interviewDetails.getStatus().equals("Scheduled")){
-//            return scheduleInterview(new Interviewdto(
-//                    interviewDetails.getCandidate_id(),
-//                    interviewDetails.getDate(),
-//                    interviewDetails.getTime(),
-//                    interviewDetails.getPosition_id()
-//            ));
-//        }
-//        else if (interviewDetails.getStatus().equals("Rescheduled")){
-//            UUID candidate_id=interviewDetails.getCandidate_id();
-//            Candidates candidates=candidateRepository.findById(candidate_id).orElse(null);
-//            if(candidates==null){
-//                return "Candidate not found!";
-//            }
-//            String candidateName = candidates.getFull_name();
-//            String candidateEmail = candidates.getEmail();
-//            UUID position_id=interviewDetails.getPosition_id();
-//            Users users=usersRepository.findByRole("Interviewer").get(0);
-//            Position position=positionRepository.findById(position_id).orElse(null);
-//            if(position==null){
-//                return "Position not found!";
-//            }
-//            String positionTitle = position.getPosition_title();
-//            Map<String, Object> emailData = new HashMap<>();
-//            emailData.put("INTERVIEWER_NAME", users.getName());
-//            emailData.put("CANDIDATE_NAME", candidateName);
-//            emailData.put("POSITION_TITLE", positionTitle);
-//            emailData.put("DATE", interviewDetails.getDate().toString());
-//            emailData.put("TIME", interviewDetails.getTime().toString());
-//            boolean candidateMailSent = sendEmailWithRetryMechanism(
-//                    candidateEmail,
-//                    "Interview Scheduled for " + positionTitle,
-//                    "Candidate",
-//                    emailData
-//            );
-//
-//            boolean interviewerMailSent = sendEmailWithRetryMechanism(
-//                    users.getEmail(),
-//                    "Interview Scheduled: " + candidateName + " for " + positionTitle,
-//                    "Interviewer",
-//                    emailData
-//            );
-//
-//            if (!candidateMailSent || !interviewerMailSent) {
-//                return "Failed to send one or both interview scheduling emails!";
-//            }
-//            Interviews interviews1=interviews;
-//                LocalDateTime scheduleTime = LocalDateTime.of(
-//                        interviewDetails.getDate(),
-//                        interviewDetails.getTime()
-//                );
-//                interviews1.setSchedule_at(scheduleTime);
-//                interviews1.setStatus("Rescheduled");
-//                interviewerRepository.save(interviews1);
-//                return "Interview Rescheduled!";
-//        }
-//        else {
-//            if(interviews!=null){
-//                return "No interview found for the given candidate and position!";
-//            }
-//            UUID candidate_id=interviewDetails.getCandidate_id();
-//            Candidates candidates=candidateRepository.findById(candidate_id).orElse(null);
-//            if(candidates==null){
-//                return "Candidate not found!";
-//            }
-//            String candidateName = candidates.getFull_name();
-//            String candidateEmail = candidates.getEmail();
-//            UUID position_id=interviewDetails.getPosition_id();
-//            Users users=usersRepository.findByRole("Interviewer").get(0);
-//            Position position=positionRepository.findById(position_id).orElse(null);
-//            if(position==null){
-//                return "Position not found!";
-//            }
-//            String positionTitle = position.getPosition_title();
-//            Map<String, Object> emailData = new HashMap<>();
-//            emailData.put("INTERVIEWER_NAME", users.getName());
-//            emailData.put("CANDIDATE_NAME", candidateName);
-//            emailData.put("POSITION_TITLE", positionTitle);
-//            emailData.put("DATE", interviewDetails.getDate().toString());
-//            emailData.put("TIME", interviewDetails.getTime().toString());
-//            Interviews interviews1= interviews;
-//            if(interviews1!=null){
-//                boolean candidateMailSent = sendEmailWithRetryMechanism(
-//                        candidateEmail,
-//                        "Interview Scheduled for " + positionTitle,
-//                        "Candidate",
-//                        emailData
-//                );
-//
-//                boolean interviewerMailSent = sendEmailWithRetryMechanism(
-//                        users.getEmail(),
-//                        "Interview Scheduled: " + candidateName + " for " + positionTitle,
-//                        "Interviewer",
-//                        emailData
-//                );
-//
-//                if (!candidateMailSent || !interviewerMailSent) {
-//                    return "Failed to send one or both interview scheduling emails!";
-//                }
-//                interviews1.setStatus("Cancelled");
-//                interviewerRepository.save(interviews1);
-//                return "Interview Cancelled!";
-//            }
-//        }
-//        return "Invalid Status!";
-//    }
+    public String getStatus(InterviewDetails interviewDetails){
+
+        if(interviewDetails.getStatus().equals("Scheduled")){
+            return scheduleInterview(new Interviewdto(
+                    interviewDetails.getCandidate_id(),
+                    interviewDetails.getDate(),
+                    interviewDetails.getTime(),
+                    interviewDetails.getPosition_id()
+            ));
+        }
+        else if (interviewDetails.getStatus().equals("Rescheduled")){
+            Interviews interviews=interviewerRepository.findByCandidateIdAndPositionIdNative(interviewDetails.getCandidate_id(), interviewDetails.getPosition_id()).get(0);
+            UUID candidate_id=interviewDetails.getCandidate_id();
+            Candidates candidates=candidateRepository.findById(candidate_id).orElse(null);
+            if(candidates==null){
+                return "Candidate not found!";
+            }
+            String candidateName = candidates.getFull_name();
+            String candidateEmail = candidates.getEmail();
+            UUID position_id=interviewDetails.getPosition_id();
+            Users users=usersRepository.findByRole("Interviewer").get(0);
+            Position position=positionRepository.findById(position_id).orElse(null);
+            if(position==null){
+                return "Position not found!";
+            }
+            String positionTitle = position.getPosition_title();
+            Map<String, Object> emailData = new HashMap<>();
+            emailData.put("INTERVIEWER_NAME", users.getName());
+            emailData.put("CANDIDATE_NAME", candidateName);
+            emailData.put("POSITION_TITLE", positionTitle);
+            emailData.put("DATE", interviewDetails.getDate().toString());
+            emailData.put("TIME", interviewDetails.getTime().toString());
+            boolean candidateMailSent = sendEmailWithRetryMechanism(
+                    candidateEmail,
+                    "Interview Scheduled for " + positionTitle,
+                    "CandidateRescheduled",
+                    emailData
+            );
+
+            boolean interviewerMailSent = sendEmailWithRetryMechanism(
+                    users.getEmail(),
+                    "Interview Scheduled: " + candidateName + " for " + positionTitle,
+                    "InterviewerRescheduled",
+                    emailData
+            );
+
+            if (!candidateMailSent || !interviewerMailSent) {
+                return "Failed to send one or both interview scheduling emails!";
+            }
+            Interviews interviews1=interviews;
+                LocalDateTime scheduleTime = LocalDateTime.of(
+                        interviewDetails.getDate(),
+                        interviewDetails.getTime()
+                );
+                interviews1.setSchedule_at(scheduleTime);
+                interviews1.setStatus("Rescheduled");
+                interviewerRepository.save(interviews1);
+                return "Interview Rescheduled!";
+        }
+        else {
+            Interviews interviews=interviewerRepository.findByCandidateIdAndPositionIdNative(interviewDetails.getCandidate_id(), interviewDetails.getPosition_id()).get(0);
+            if(interviews==null){
+                return "No interview found for the given candidate and position!";
+            }
+            UUID candidate_id=interviewDetails.getCandidate_id();
+            Candidates candidates=candidateRepository.findById(candidate_id).orElse(null);
+            if(candidates==null){
+                return "Candidate not found!";
+            }
+            String candidateName = candidates.getFull_name();
+            String candidateEmail = candidates.getEmail();
+            UUID position_id=interviewDetails.getPosition_id();
+            Users users=usersRepository.findByRole("Interviewer").get(0);
+            Position position=positionRepository.findById(position_id).orElse(null);
+            if(position==null){
+                return "Position not found!";
+            }
+            String positionTitle = position.getPosition_title();
+            Map<String, Object> emailData = new HashMap<>();
+            emailData.put("INTERVIEWER_NAME", users.getName());
+            emailData.put("CANDIDATE_NAME", candidateName);
+            emailData.put("POSITION_TITLE", positionTitle);
+            emailData.put("DATE", interviewDetails.getDate().toString());
+            emailData.put("TIME", interviewDetails.getTime().toString());
+            Interviews interviews1= interviews;
+            if(interviews1!=null){
+                boolean candidateMailSent = sendEmailWithRetryMechanism(
+                        candidateEmail,
+                        "Interview Scheduled for " + positionTitle,
+                        "CandidateCancelled",
+                        emailData
+                );
+
+                boolean interviewerMailSent = sendEmailWithRetryMechanism(
+                        users.getEmail(),
+                        "Interview Scheduled: " + candidateName + " for " + positionTitle,
+                        "Interviewer",
+                        emailData
+                );
+
+                if (!candidateMailSent || !interviewerMailSent) {
+                    return "Failed to send one or both interview scheduling emails!";
+                }
+                interviews1.setStatus("Cancelled");
+                interviewerRepository.save(interviews1);
+                return "Interview Cancelled!";
+            }
+        }
+        return "Invalid Status!";
+    }
 
 
 }
