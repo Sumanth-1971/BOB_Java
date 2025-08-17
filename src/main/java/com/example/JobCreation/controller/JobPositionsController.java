@@ -108,11 +108,11 @@ public class JobPositionsController {
     }
 
     @GetMapping("/active_jobs")
-    public ResponseEntity<ApiResponse<?>> getActiveJobs() {
-        List<Positions> activeJobs = jobPositionsService.getActiveJobs();
+    public ResponseEntity<?> getActiveJobs() {
+        List<JobPositionsDTO> activeJobs = jobPositionsService.getActiveJobs();
 
         if (activeJobs.isEmpty()) {
-            ApiResponse<List<Positions>> apiResponse = new ApiResponse<>(
+            ApiResponse<List<JobPositionsDTO>> apiResponse = new ApiResponse<>(
                     false,
                     "No active jobs found",
                     activeJobs
@@ -120,12 +120,29 @@ public class JobPositionsController {
             return new ResponseEntity<>(apiResponse, HttpStatus.NOT_FOUND);
         }
 
-        ApiResponse<List<Positions>> apiResponse = new ApiResponse<>(
+        ApiResponse<List<JobPositionsDTO>> apiResponse = new ApiResponse<>(
                 true,
                 "Active jobs found",
                 activeJobs
         );
         return new ResponseEntity<>(apiResponse, HttpStatus.OK);
+    }
+
+    @GetMapping("/getbyjobtitleandlocation/{job_title}/{location}")
+    public ResponseEntity<?> getByJobTitleAndLocation(@PathVariable String job_title, @PathVariable Long location) {
+        try {
+            List<JobPositionsDTO> jobPositions = jobPositionsService.findByJobTitleAndLocation(job_title, location);
+            if (jobPositions != null && !jobPositions.isEmpty()) {
+                ApiResponse<List<JobPositionsDTO>> apiResponse = new ApiResponse<>(true, "Positions found for the given job title and location", jobPositions);
+                return new ResponseEntity<>(apiResponse, HttpStatus.OK);
+            } else {
+                ApiResponse<String> apiResponse = new ApiResponse<>(false, "No positions found for the given job title and location", null);
+                return new ResponseEntity<>(apiResponse, HttpStatus.NOT_FOUND);
+            }
+        } catch (Exception e) {
+            ApiResponse<String> apiResponse = new ApiResponse<>(false, "Error retrieving positions: " + e.getMessage(), null);
+            return new ResponseEntity<>(apiResponse, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
 }

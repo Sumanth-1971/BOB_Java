@@ -350,15 +350,34 @@ public class JobPositionService{
         }
     }
 
-    public List<Positions> getActiveJobs() {
+    @Transactional
+    public List<JobPositionsDTO> getActiveJobs() {
         List<JobRequisitions> activeRequisitions = jobRequisitionsService.getActiveRequisitions();
-        List<Positions> activePositions = new ArrayList<>();
+        List<JobPositionsDTO> activePositions = new ArrayList<>();
         for( JobRequisitions requisition : activeRequisitions) {
             List<Positions> positions = jobPositionsRepository.findAllByRequisitionId(requisition.getRequisition_id());
             for (Positions position : positions) {
-               activePositions.add(position);
+                if (position.getPosition_status().equals("Active")) {
+                    JobPostingLocation jobPostingLocation = jobPostingLocationService.getByPositionIdPostingLocation(position.getPosition_id());
+                    JobSelectionProcess jobSelectionProcess = jobSelectionProcessService.getByPositionIdSelectionProcess(position.getPosition_id());
+                    JobVacancies jobVacancies = jobVacanciesService.getByPositionIdJobVacancies(position.getPosition_id());
+                    JobPositionsDTO jobPositionsDTO = setValuesDTO(position, jobPostingLocation, jobVacancies, jobSelectionProcess);
+                    activePositions.add(jobPositionsDTO);
+                }
             }
         }
         return activePositions;
+    }
+
+    @Transactional
+    public List<JobPositionsDTO> findByJobTitleAndLocation(String jobTitle, Long location) {
+        List<JobPositionsDTO> positionsList = getActiveJobs();
+        List<JobPositionsDTO> filteredPositions = new ArrayList<>();
+        for (JobPositionsDTO position : positionsList) {
+            if (position.getPosition_title().equalsIgnoreCase(jobTitle) && position.getLocation_id() != null && position.getLocation_id().equals(location)) {
+                filteredPositions.add(position);
+            }
+        }
+        return filteredPositions;
     }
 }
