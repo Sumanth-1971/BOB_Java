@@ -16,7 +16,8 @@ public class CorsConfig {
                         .allowedOrigins(
                                 "http://localhost:3000",
                                 "https://bobrec.sentrifugo.com",
-                                "https://bobcan.sentrifugo.com"
+                                "https://bobcan.sentrifugo.com",
+                                "http://docs.sentrifugo.com:8080"
                         ) // Frontend origins
                         .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
                         .allowedHeaders("*")
