@@ -79,13 +79,13 @@ public class JobRequisitionsService {
     }
 
     public String createJobPostings(JobPostingDTO jobPostings) throws Exception {
-
         try {
             for (UUID jobRequisitionsId : jobPostings.getRequisition_id()) {
                 if (!jobRequisitionsRepository.existsById(jobRequisitionsId)) {
                     return "Requisition with ID " + jobRequisitionsId + " does not exist.";
                 }
             }
+
             String result = jobPostings.getJob_postings().stream().collect(Collectors.joining(","));
             if( jobPostings.getApproval_status().equals("Direct Approval") ) {
                 for (UUID jobRequisitionsId : jobPostings.getRequisition_id()) {
