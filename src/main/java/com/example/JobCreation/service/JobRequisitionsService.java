@@ -206,7 +206,7 @@ public class JobRequisitionsService {
         workflowApprovalEntity.setEntityType(AppConstants.JOB_REQUISITIONS);
         workflowApprovalEntity.setEntityId(requisitionId);
 //        workflowApprovalEntity.
-        workflowApprovalEntityRepository.save(workflowApprovalEntity);
+//        workflowApprovalEntityRepository.save(workflowApprovalEntity);
     }
 
 
