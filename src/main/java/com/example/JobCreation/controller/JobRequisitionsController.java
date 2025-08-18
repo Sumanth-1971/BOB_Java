@@ -2,8 +2,10 @@ package com.example.JobCreation.controller;
 
 import com.example.JobCreation.dto.ApiResponse;
 import com.example.JobCreation.dto.JobPostingDTO;
+import com.example.JobCreation.dto.JobRequisitionApprovalRequest;
 import com.example.JobCreation.model.JobRequisitions;
 import com.example.JobCreation.service.JobRequisitionsService;
+import com.example.JobCreation.util.AppConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -182,6 +184,30 @@ public class JobRequisitionsController {
         }catch (Exception e){
             ApiResponse<JobRequisitions> apiResponse =new ApiResponse<>(false,"Failed to Delete",null);
             return  new ResponseEntity<>(apiResponse,HttpStatus.BAD_REQUEST);
+        }
+    }
+
+
+    @PostMapping("/approval_submission")
+    public ResponseEntity<ApiResponse<?>> approvalSubmission(@RequestBody JobRequisitionApprovalRequest jobRequisitionApprovalRequest){
+        try {
+            String result = "[";
+            for (UUID requisitionId : jobRequisitionApprovalRequest.getRequisition_id_list()) {
+                result +="{requisitionId="+requisitionId+",approval_status='";
+                result += jobRequisitionsService.approvalSubmission(requisitionId,
+                        jobRequisitionApprovalRequest.getApproval_status(),
+                        jobRequisitionApprovalRequest.getUser_id(),
+                        jobRequisitionApprovalRequest.getComments(),
+                        jobRequisitionApprovalRequest.getUser_role());
+                result +="'},";
+            }
+            result = result.substring(0, result.length() - 1);
+            result +="]";
+            ApiResponse<String> apiResponse = new ApiResponse<>(true, "Approval/Denial submission successful", result);
+            return new ResponseEntity<>(apiResponse, HttpStatus.OK);
+        }catch (Exception e) {
+            ApiResponse<String> apiResponse = new ApiResponse<>(false, "Failed to submit approval/denial: " + e.getMessage(), null);
+            return new ResponseEntity<>(apiResponse, HttpStatus.BAD_REQUEST);
         }
     }
 

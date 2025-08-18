@@ -7,6 +7,7 @@ public class JobPostingDTO {
     private List<UUID> requisition_id;
     private List<String> job_postings;
     private String approval_status;
+    private String user_id;
 
     public JobPostingDTO() {
     }
@@ -33,4 +34,14 @@ public class JobPostingDTO {
     public void setApproval_status(String approval_status) {
         this.approval_status = approval_status;
     }
+
+    public String getUser_id() {
+        return user_id;
+    }
+
+    public void setUser_id(String user_id) {
+        this.user_id = user_id;
+    }
+
+
 }

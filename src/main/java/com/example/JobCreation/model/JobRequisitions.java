@@ -1,8 +1,6 @@
 package com.example.JobCreation.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 
 
 import java.time.LocalDate;
@@ -49,6 +47,13 @@ public class JobRequisitions {
         this.others = others;
         this.no_of_positions = no_of_positions;
         this.job_postings = job_postings;
+    }
+
+
+    @PrePersist
+    @PreUpdate
+    public void updateTimestamp() {
+        this.updated_date = java.time.LocalDateTime.now();
     }
 
     public JobRequisitions() {
@@ -182,4 +187,6 @@ public class JobRequisitions {
     public void setOthers(String others) {
         this.others = others;
     }
+
+
 }
