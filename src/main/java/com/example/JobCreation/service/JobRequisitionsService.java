@@ -108,6 +108,7 @@ public class JobRequisitionsService {
                     }
                 }
             }
+
             return "Job postings created successfully ";
         }catch (Exception e) {
             throw new Exception("Failed to create job postings: " + e.getMessage());
