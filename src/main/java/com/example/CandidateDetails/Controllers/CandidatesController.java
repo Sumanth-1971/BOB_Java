@@ -119,4 +119,44 @@ public class CandidatesController {
             return new ResponseEntity<>("Error updating interview status: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
+    @PostMapping("/apply/job")
+    public ResponseEntity<String> applyInterview(ApplyInterviewdto applyInterviewdto){
+        try{
+            String str=candidateService.applyInterview(applyInterviewdto.getCandidate_id(),applyInterviewdto.getPosition_id());
+            if(str.equals("Applied for interview!")){
+                return new ResponseEntity<>(str,HttpStatus.OK);
+            }
+            else{
+                throw new Exception(str);
+            }
+        }catch (Exception e){
+            return new ResponseEntity<>("Couldn't add the data due to"+e.getMessage(),HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+    //Adding data to candidate table
+    @PutMapping("/update_candidate")
+    public ResponseEntity<ApiResponse<?>> createCandidate(@RequestBody CandidatesDTO candidate) {
+        try {
+            CandidatesDTO createdCandidate = candidateService.updateCandidate(candidate);
+            ApiResponse<?> response = new ApiResponse<>(true, "Candidate created successfully", createdCandidate);
+            return new ResponseEntity<>(response, HttpStatus.CREATED);
+        } catch (Exception e) {
+            e.printStackTrace();
+            ApiResponse<?> response = new ApiResponse<>(false, "Couldn't create candidate due to: " + e.getMessage(), null);
+            return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+
+    @GetMapping("getapplied_postions/{candidate_id}")
+    public ResponseEntity<List<ResponseDTO>> getDetailsByCandidateId(@PathVariable UUID candidate_id){
+
+        try{
+            List<ResponseDTO> positionDTOList=candidateService.getAllDetailsByCandidateId(candidate_id);
+            return new ResponseEntity<>(positionDTOList,HttpStatus.OK);
+        }catch (Exception e){
+            return new ResponseEntity<>(null,HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
 }

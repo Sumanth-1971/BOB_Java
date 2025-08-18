@@ -1,5 +1,6 @@
 package com.example.CandidateDetails.Service;
 
+import com.example.CandidateDetails.Feign.FeignPositionDTO;
 import com.example.CandidateDetails.Model.*;
 import com.example.CandidateDetails.Repository.*;
 import com.example.CandidateDetails.dto.*;
@@ -45,6 +46,9 @@ public class CandidateService {
 
     @Autowired
     private CountryRepository countryRepository;
+
+    @Autowired
+    private FeignPositionDTO feignPositionDTO;
 
     public List<CandidateDetails> getCandidateDetailsByPositionId(UUID position_id) {
         List<CandidateApplications> candidateApplicationsList = candidateApplicationsRepository.findByPositionId(position_id);
@@ -254,17 +258,10 @@ public class CandidateService {
 
             String email = candidates.getEmail();
             String path = offerdto.getOffer_letter_path();
-            System.out.println("Offer Letter Path: " + path);
-//            String path="C:\\Users\\sumanth.sangam\\Downloads\\Academic_CV_Template.pdf"
 
 
-            // 6. Send email with retry
-            boolean candidateOfferLetterSent = sendEmailWithRetryMechanism(
-                    email,
-                    "Offer Letter!",
-                    "OfferLetter",
-                    offerDetails
-            );
+
+            boolean candidateOfferLetterSent= sendEmailWithAttachmentRetry(email,"Offer Letter!","OfferLetter",offerDetails,path);
 
 
 
@@ -295,9 +292,10 @@ public class CandidateService {
     }
 
 
-    public boolean sendEmailWithAttachmentRetry(String toEmail, String subject, String template, Map<String, Object> variables, String attachment) throws MessagingException, UnsupportedEncodingException {
+
+    public boolean sendEmailWithAttachmentRetry(String toEmail, String subject, String template, Map<String, Object> variables, String path) throws MessagingException, UnsupportedEncodingException {
         for (int i = 0; i < 3; i++) {
-            String res = mailService.sendEmailWithAttachment(toEmail, subject, attachment, variables, template);
+            String res = mailService.sendEmailWithAttachment(toEmail, subject, path, variables, template);
             if (res.equals("Mail Sent with attachment!")) {
                 return true;
             }
@@ -532,4 +530,69 @@ public class CandidateService {
     }
 
 
+    public String applyInterview(UUID candidateId, UUID positionId) {
+        try {
+            CandidateApplications candidateApplications = new CandidateApplications();
+            candidateApplications.setApplication_id(UUID.randomUUID());
+            candidateApplications.setCandidate_id(candidateId);
+            candidateApplications.setPosition_id(positionId);
+            candidateApplications.setApplication_status("Shortlisted");
+            LocalDateTime time = LocalDateTime.now();
+
+            candidateApplications.setApplication_date(time);
+            candidateApplications.setUpdated_date(time);
+            candidateApplicationsRepository.save(candidateApplications);
+            return "Applied for interview!";
+        }catch (Exception e){
+            return "Couldn't Apply!";
+        }
+    }
+
+
+    public List<ResponseDTO> getAllDetailsByCandidateId(UUID candidate_id){
+        List<CandidateApplications> candidateApplicationsList=candidateApplicationsRepository.findByCandidateIdNative(candidate_id);
+        List<ResponseDTO> positionDTOList=new ArrayList<>();
+        for (CandidateApplications candidateApplications:candidateApplicationsList){
+            ApiResponse<ResponseDTO> responseDTOS=feignPositionDTO.getById(candidateApplications.getPosition_id());
+            ResponseDTO responseDTO=responseDTOS.getData();
+            positionDTOList.add(responseDTO);
+        }
+        return positionDTOList;
+    }
+
+    public CandidatesDTO updateCandidate(CandidatesDTO candidate) {
+        try {
+            Candidates existingCandidate = candidateRepository.findById(candidate.getCandidate_id())
+                    .orElseThrow(() -> new RuntimeException("Candidate not found"));
+
+            // Update candidate details
+            existingCandidate.setFull_name(candidate.getFull_name());
+            existingCandidate.setDate_of_birth(candidate.getDate_of_birth());
+            existingCandidate.setPhone(candidate.getPhone());
+            existingCandidate.setId_proof(candidate.getId_proof());
+            existingCandidate.setGender(candidate.getGender());
+            existingCandidate.setNationality_id(candidate.getNationality_id());
+            existingCandidate.setReservation_category_id(1); // Assuming 1 is the default value for reservation category
+            existingCandidate.setSpecial_category_id(1); // Assuming 1 is the default value for special category
+            existingCandidate.setHighest_qualification_id(null);
+            existingCandidate.setAddress(candidate.getAddress());
+            existingCandidate.setTotal_experience(candidate.getTotal_experience());
+            existingCandidate.setComments(candidate.getComments());
+            existingCandidate.setSkills(candidate.getSkills());
+            existingCandidate.setCurrent_designation(candidate.getCurrent_designation());
+            existingCandidate.setCurrent_employer(candidate.getCurrent_employer());
+            existingCandidate.setFile_url(candidate.getFile_url());
+            existingCandidate.setEducation_qualification(candidate.getEducation_qualification());
+
+            // Save updated candidate
+            Candidates updatedCandidate = candidateRepository.save(existingCandidate);
+
+            // Convert to DTO and return
+            return new CandidatesDTO(updatedCandidate);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new RuntimeException("Couldn't create candidate due to: " + e.getMessage());
+        }
+    }
 }

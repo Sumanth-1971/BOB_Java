@@ -1,27 +1,17 @@
-package com.example.CandidateDetails.Model;
+package com.example.CandidateDetails.dto;
 
+import com.example.CandidateDetails.Model.Candidates;
 import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.UUID;
 
-@Entity
-@Table(name = "candidates")
-public class Candidates {
-
-    @Id
+public class CandidatesDTO {
     private UUID candidate_id;
 
     private String full_name;
 
-    private String username;
-
-    private String password_hash;
 
     private String email;
 
@@ -43,32 +33,23 @@ public class Candidates {
     @Column(precision = 4,scale = 1)
     private BigDecimal total_experience;
 
-    @Column(name = "address", columnDefinition = "TEXT")
     private String address;
 
-    @Column(name = "comments", columnDefinition = "text")
     private String comments;
 
-    private LocalDateTime created_date;
-
-    @Column(name = "skills", columnDefinition = "text")
     private String skills;
 
     private String current_designation;
     private String current_employer;
-
-    @Column(name = "file_url", columnDefinition = "text")
     private String file_url;
     private String education_qualification;
 
-    public Candidates() {
+    public CandidatesDTO() {
     }
 
-    public Candidates(UUID candidate_id, String full_name, String username, String password_hash, String email, String phone, LocalDate date_of_birth, String gender, String id_proof, Integer nationality_id, Integer reservation_category_id, Integer special_category_id, Integer highest_qualification_id, BigDecimal total_experience, String address, String comments, LocalDateTime created_date, String skills, String current_designation, String current_employer, String file_url, String education_qualification) {
+    public CandidatesDTO(UUID candidate_id, String full_name, String email, String phone, LocalDate date_of_birth, String gender, String id_proof, Integer nationality_id, Integer reservation_category_id, Integer special_category_id, Integer highest_qualification_id, BigDecimal total_experience, String address, String comments, String skills, String current_designation, String current_employer, String file_url, String education_qualification) {
         this.candidate_id = candidate_id;
         this.full_name = full_name;
-        this.username = username;
-        this.password_hash = password_hash;
         this.email = email;
         this.phone = phone;
         this.date_of_birth = date_of_birth;
@@ -81,12 +62,33 @@ public class Candidates {
         this.total_experience = total_experience;
         this.address = address;
         this.comments = comments;
-        this.created_date = created_date;
         this.skills = skills;
         this.current_designation = current_designation;
         this.current_employer = current_employer;
         this.file_url = file_url;
         this.education_qualification = education_qualification;
+    }
+
+    public CandidatesDTO(Candidates updatedCandidate) {
+        this.candidate_id = updatedCandidate.getCandidate_id();
+        this.full_name = updatedCandidate.getFull_name();
+        this.email = updatedCandidate.getEmail();
+        this.phone = updatedCandidate.getPhone();
+        this.date_of_birth = updatedCandidate.getDate_of_birth();
+        this.gender = updatedCandidate.getGender();
+        this.id_proof = updatedCandidate.getId_proof();
+        this.nationality_id = updatedCandidate.getNationality_id();
+        this.reservation_category_id = updatedCandidate.getReservation_category_id();
+        this.special_category_id = updatedCandidate.getSpecial_category_id();
+        this.highest_qualification_id = updatedCandidate.getHighest_qualification_id();
+        this.total_experience = updatedCandidate.getTotal_experience();
+        this.address = updatedCandidate.getAddress();
+        this.comments = updatedCandidate.getComments();
+        this.skills = updatedCandidate.getSkills();
+        this.current_designation = updatedCandidate.getCurrent_designation();
+        this.current_employer = updatedCandidate.getCurrent_employer();
+        this.file_url = updatedCandidate.getFile_url();
+        this.education_qualification = updatedCandidate.getEducation_qualification();
     }
 
     public UUID getCandidate_id() {
@@ -103,30 +105,6 @@ public class Candidates {
 
     public void setFull_name(String full_name) {
         this.full_name = full_name;
-    }
-
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    public String getPassword_hash() {
-        return password_hash;
-    }
-
-    public void setPassword_hash(String password_hash) {
-        this.password_hash = password_hash;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
     }
 
     public String getPhone() {
@@ -217,31 +195,36 @@ public class Candidates {
         this.comments = comments;
     }
 
-    public LocalDateTime getCreated_date() {
-        return created_date;
-    }
-
-    public void setCreated_date(LocalDateTime created_date) {
-        this.created_date = created_date;
-    }
-
     public String getSkills() {
         return skills;
     }
+
     public void setSkills(String skills) {
         this.skills = skills;
     }
+
     public String getCurrent_designation() {
         return current_designation;
     }
+
     public void setCurrent_designation(String current_designation) {
         this.current_designation = current_designation;
     }
+
     public String getCurrent_employer() {
         return current_employer;
     }
+
     public void setCurrent_employer(String current_employer) {
         this.current_employer = current_employer;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
     }
 
     public String getFile_url() {
