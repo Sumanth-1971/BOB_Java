@@ -12,55 +12,75 @@ import java.util.UUID;
 @Entity
 @Table(name = "positions")
 public class Positions {
-    @Id
-    private UUID position_id;
 
-    private UUID requisition_id;
+        @Id
+        @Column(name = "position_id", columnDefinition = "uuid")
+        private UUID position_id;
 
-    private String position_title;
+        @Column(name = "requisition_id", columnDefinition = "uuid")
+        private UUID requisition_id;
 
-    private String description;
+        @Column(name = "position_title" )
+        private String position_title;
 
-    private String position_code;
+        @Column(name = "description", columnDefinition = "text")
+        private String description;
 
-    private String roles_responsibilities;
+        @Column(name = "position_code")
+        private String position_code;
 
-    private int grade_id;
+        @Column(name = "roles_responsibilities", columnDefinition = "text")
+        private String roles_responsibilities;
 
-    private String employment_type;
+        @Column(name = "grade_id")
+        private Integer grade_id;
 
-    private int eligibility_age_min;
+        @Column(name = "employment_type")
+        private String employment_type;
 
-    private int eligibility_age_max;
+        @Column(name = "eligibility_age_min")
+        private Integer eligibility_age_min;
 
-    private String mandatory_qualification;
+        @Column(name = "eligibility_age_max")
+        private Integer eligibility_age_max;
 
-    private String preferred_qualification;
-    @Column(precision = 4, scale = 1)
-    private BigDecimal mandatory_experience;
+        @Column(name = "mandatory_qualification", columnDefinition = "text")
+        private String mandatory_qualification;
 
-    @Column(precision = 4, scale = 1)
-    private BigDecimal preferred_experience;
+        @Column(name = "preferred_qualification", columnDefinition = "text")
+        private String preferred_qualification;
 
-    private int probation_period;
+        @Column(name = "mandatory_experience")
+        private BigDecimal mandatory_experience;
+
+        @Column(name = "preferred_experience")
+        private BigDecimal preferred_experience;
+
+        @Column(name = "probation_period")
+        private Integer probation_period;
+
+        @Column(name = "documents_required", columnDefinition = "text")
+        private String documents_required;
+
+        @Column(name = "min_credit_score")
+        private BigDecimal min_credit_score;
+
+        @Column(name = "position_status")
+        private String position_status;
+
+        @Column(name = "created_by")
+        private String created_by;
+
+        @Column(name = "created_date")
+        private LocalDateTime created_date;
+
+        @Column(name = "updated_by")
+        private String updated_by;
+
+        @Column(name = "updated_date")
+        private LocalDateTime updated_date;
 
 
-    private String documents_required;
-
-    @Column(precision = 5, scale =2)
-    private BigDecimal min_credit_score;
-
-
-    private String position_status;
-
-    private String created_by;
-
-    private LocalDateTime created_date;
-
-
-    private String updated_by;
-
-    private LocalDateTime updated_date;
 
 
     public Positions() {

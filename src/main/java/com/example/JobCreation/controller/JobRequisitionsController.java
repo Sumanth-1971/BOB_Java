@@ -2,8 +2,10 @@ package com.example.JobCreation.controller;
 
 import com.example.JobCreation.dto.ApiResponse;
 import com.example.JobCreation.dto.JobPostingDTO;
+import com.example.JobCreation.dto.JobPostingUpdateDTO;
 import com.example.JobCreation.model.JobRequisitions;
 import com.example.JobCreation.service.JobRequisitionsService;
+import jdk.jfr.Description;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -40,7 +42,9 @@ public class JobRequisitionsController {
     }
 
     @GetMapping("/getByStatus/{requisitionStatus}")
+    @Description("Get job requisitions by status")
     public ResponseEntity<ApiResponse<List<JobRequisitions>>> getByStatus(@PathVariable String requisitionStatus) {
+
         List<JobRequisitions> jobRequisitionsList = jobRequisitionsService.findByRequisitionStatus( requisitionStatus);
 
         if (jobRequisitionsList.isEmpty()) {
@@ -59,8 +63,6 @@ public class JobRequisitionsController {
         );
         return new ResponseEntity<>(apiResponse, HttpStatus.OK);
     }
-
-
 
     @PostMapping("/create_requisitions")
     public ResponseEntity<ApiResponse<JobRequisitions>> createRequisitions(@RequestBody JobRequisitions jobRequisitions){
@@ -107,8 +109,6 @@ public class JobRequisitionsController {
         }
     }
 
-
-
     @PutMapping("/update_requisitions")
     public ResponseEntity<ApiResponse<JobRequisitions>> updateRequisitions(@RequestBody JobRequisitions jobRequisitions){
         try{
@@ -136,7 +136,6 @@ public class JobRequisitionsController {
     @GetMapping("/active_requisitions")
     public ResponseEntity<ApiResponse<?>>  getActiveRequisitions() {
         List<JobRequisitions> activeJobs = jobRequisitionsService.getActiveRequisitions();
-
         if (activeJobs.isEmpty()) {
             ApiResponse<List<JobRequisitions>> apiResponse = new ApiResponse<>(
                     false,
@@ -152,25 +151,6 @@ public class JobRequisitionsController {
                 activeJobs
         );
         return new ResponseEntity<>(apiResponse, HttpStatus.OK);
-    }
-
-    @PostMapping("/job_postings")
-    public ResponseEntity<ApiResponse<?>> createJobPostings(@RequestBody JobPostingDTO jobPostings) {
-        try {
-            if (jobPostings == null || jobPostings.getJob_postings() == null || jobPostings.getJob_postings().isEmpty() || jobPostings.getRequisition_id() == null || jobPostings.getRequisition_id().isEmpty()) {
-                return ResponseEntity
-                        .badRequest()
-                        .body(new ApiResponse<>(false, "Job postings list cannot be empty", null));
-            }
-
-            String response = jobRequisitionsService.createJobPostings(jobPostings);
-
-            ApiResponse<String> apiResponse = new ApiResponse<>(true, "Job postings created successfully", response);
-            return new ResponseEntity<>(apiResponse, HttpStatus.CREATED);
-        } catch (Exception e) {
-            ApiResponse<String> apiResponse = new ApiResponse<>(false, "Failed to create job postings: " + e.getMessage(), null);
-            return new ResponseEntity<>(apiResponse, HttpStatus.BAD_REQUEST);
-        }
     }
 
     @DeleteMapping("/delete_requisitions/{requisition_id}")
@@ -191,6 +171,71 @@ public class JobRequisitionsController {
                 || jobRequisitions.getRegistration_start_date() == null
                 || jobRequisitions.getRegistration_end_date() == null
                 || jobRequisitions.getNo_of_positions() <= 0;
+    }
+
+    //job posting
+    @PostMapping("/job_postings")
+    public ResponseEntity<ApiResponse<?>> createJobPostings(@RequestBody JobPostingDTO jobPostings) {
+        try {
+            if (jobPostings == null || jobPostings.getJob_postings() == null || jobPostings.getJob_postings().isEmpty() || jobPostings.getRequisition_id() == null || jobPostings.getRequisition_id().isEmpty()) {
+                return ResponseEntity
+                        .badRequest()
+                        .body(new ApiResponse<>(false, "Job postings list cannot be empty", null));
+            }
+
+            String response = jobRequisitionsService.createJobPostings(jobPostings);
+
+            ApiResponse<String> apiResponse = new ApiResponse<>(true, "Job postings created successfully", response);
+            return new ResponseEntity<>(apiResponse, HttpStatus.CREATED);
+        } catch (Exception e) {
+            ApiResponse<String> apiResponse = new ApiResponse<>(false, "Failed to create job postings: " + e.getMessage(), null);
+            return new ResponseEntity<>(apiResponse, HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @PutMapping("/approve_job_postings")
+    public ResponseEntity<ApiResponse<?>> updateJobPostings(@RequestBody JobPostingUpdateDTO jobPostings) {
+        try {
+            if (jobPostings == null || jobPostings.getRequisitionId() == null || jobPostings.getStatus() == null || jobPostings.getRole() == null){
+                return ResponseEntity
+                        .badRequest()
+                        .body(new ApiResponse<>(false, "Job postings list cannot be empty", null));
+            }
+
+            String response = jobRequisitionsService.updateJobPostings(jobPostings);
+
+            ApiResponse<String> apiResponse = new ApiResponse<>(true, "Job postings updated successfully", response);
+            return new ResponseEntity<>(apiResponse, HttpStatus.OK);
+        } catch (Exception e) {
+            ApiResponse<String> apiResponse = new ApiResponse<>(false, "Failed to update job postings: " + e.getMessage(), null);
+            return new ResponseEntity<>(apiResponse, HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @GetMapping("/need_approval/{role}")
+    public ResponseEntity<ApiResponse<List<JobRequisitions>>> getJobPostingsNeedApproval(@PathVariable String role) {
+        try {
+            List<JobRequisitions> jobRequisitionsList = jobRequisitionsService.getJobPostingsNeedApproval(role);
+
+            if (jobRequisitionsList.isEmpty()) {
+                ApiResponse<List<JobRequisitions>> apiResponse = new ApiResponse<>(
+                        false,
+                        "No job postings found that need approval for role: " + role,
+                        jobRequisitionsList
+                );
+                return new ResponseEntity<>(apiResponse, HttpStatus.NOT_FOUND);
+            }
+
+            ApiResponse<List<JobRequisitions>> apiResponse = new ApiResponse<>(
+                    true,
+                    "Job postings found that need approval for role: " + role,
+                    jobRequisitionsList
+            );
+            return new ResponseEntity<>(apiResponse, HttpStatus.OK);
+        } catch (Exception e) {
+            ApiResponse<List<JobRequisitions>> apiResponse = new ApiResponse<>(false, "Failed to retrieve job postings: " + e.getMessage(), null);
+            return new ResponseEntity<>(apiResponse, HttpStatus.BAD_REQUEST);
+        }
     }
 
 }

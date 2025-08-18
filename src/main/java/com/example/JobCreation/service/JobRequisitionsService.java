@@ -1,6 +1,7 @@
 package com.example.JobCreation.service;
 
 import com.example.JobCreation.dto.JobPostingDTO;
+import com.example.JobCreation.dto.JobPostingUpdateDTO;
 import com.example.JobCreation.model.JobRequisitions;
 import com.example.JobCreation.repository.JobRequisitionsRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,15 +17,18 @@ import java.util.stream.Collectors;
 public class JobRequisitionsService {
 
     @Autowired
-    JobRequisitionsRepository jobRequisitionsRepository;
+    private JobRequisitionsRepository jobRequisitionsRepository;
 
     public List<JobRequisitions>  getAll(){
-        return jobRequisitionsRepository.findAll();
+        return jobRequisitionsRepository.findAll().stream().filter(
+                jobRequisition -> jobRequisition.getIsactive() == 1).collect(Collectors.toList());
     }
 
     public List<JobRequisitions> findByRequisitionStatus(String requisitionStatus){
-        return jobRequisitionsRepository.findByRequisitionStatus(requisitionStatus);
+        return jobRequisitionsRepository.findByRequisitionStatus(requisitionStatus)
+                .stream().filter(jobRequisition -> jobRequisition.getIsactive()==1).collect(Collectors.toList());
     }
+
     public JobRequisitions createRequisitions(JobRequisitions jobRequisitions){
         jobRequisitions.setRequisition_code("JREQ-" +(1000+ jobRequisitionsRepository.count()));
         jobRequisitions.setRequisition_id(UUID.randomUUID());
@@ -34,7 +38,6 @@ public class JobRequisitionsService {
         jobRequisitions.setUpdated_date(tme);
         return jobRequisitionsRepository.save(jobRequisitions);
     }
-
     public List<JobRequisitions> createBulkRequistions(List<JobRequisitions> jobRequisitionsList) {
         LocalDateTime tme = LocalDateTime.now();
         for (JobRequisitions jobRequisitions : jobRequisitionsList) {
@@ -46,8 +49,6 @@ public class JobRequisitionsService {
         }
         return jobRequisitionsRepository.saveAll(jobRequisitionsList);
     }
-
-
     public JobRequisitions updateRequisitions(JobRequisitions jobRequisitions){
         JobRequisitions jobRequisitions1 = jobRequisitionsRepository.findById(jobRequisitions.getRequisition_id())
                 .orElseThrow(() -> new RuntimeException("Requisition not found with ID: " + jobRequisitions.getRequisition_id()));
@@ -65,19 +66,22 @@ public class JobRequisitionsService {
         jobRequisitions.setUpdated_date(LocalDateTime.now());
         return jobRequisitionsRepository.save(jobRequisitions);
     }
-
     public String deleteRequisitions(UUID id) {
         try {
             if (!jobRequisitionsRepository.existsById(id)) {
                 return "Requisition not found";
             }
-            jobRequisitionsRepository.deleteById(id);
+            //SOFT DELETING
+            JobRequisitions jobRequisitions = jobRequisitionsRepository.findById(id).orElseThrow(() -> new RuntimeException("Requisition not found with ID: " + id));
+            jobRequisitions.setIsactive(0);
+            jobRequisitions.setUpdated_date(LocalDateTime.now());
+            jobRequisitionsRepository.save(jobRequisitions);
+            //jobRequisitionsRepository.deleteById(id);
             return "Deleted Successful";
         }catch (Exception e){
             return "Deleted Unsuccessful"+e.getMessage() ;
         }
     }
-
     public String createJobPostings(JobPostingDTO jobPostings) throws Exception {
         try {
             for (UUID jobRequisitionsId : jobPostings.getRequisition_id()) {
@@ -102,7 +106,7 @@ public class JobRequisitionsService {
                     JobRequisitions jobRequisitions = jobRequisitionsRepository.findById(jobRequisitionsId).orElse(null);
                     if (jobRequisitions != null) {
                         jobRequisitions.setJob_postings(result);
-                        jobRequisitions.setRequisition_status("Pending");
+                        jobRequisitions.setRequisition_status("Pending L1 Approval");
                         jobRequisitions.setRequisition_approval("Workflow");
                         jobRequisitionsRepository.save(jobRequisitions);
                     }
@@ -113,16 +117,67 @@ public class JobRequisitionsService {
         }catch (Exception e) {
             throw new Exception("Failed to create job postings: " + e.getMessage());
         }
-
-
     }
     public boolean existsById(UUID id) {
-        return jobRequisitionsRepository.existsById(id);
+        // Check if a job requisition with the given ID exists
+        if (id == null) {
+            return false; // or throw an exception, depending on your design choice
+        }
+        JobRequisitions jobRequisitions = jobRequisitionsRepository.findById(id).orElse(null);
+        return (jobRequisitions != null && jobRequisitions.getIsactive() == 1)? true :false;
     }
-
     public List<JobRequisitions> getActiveRequisitions() {
         LocalDate today = LocalDate.now();
         return jobRequisitionsRepository.findAll().stream()
-                .filter(job -> job.getRequisition_status().equals("Published") || job.getRequisition_status().equals("Approved")).toList();
+                .filter(job -> job.getIsactive()==1 && (job.getRequisition_status().equals("Published") || job.getRequisition_status().equals("Approved"))).toList();
     }
+
+    public String updateJobPostings(JobPostingUpdateDTO jobPostings) {
+        try {
+            for (UUID jobRequisitionsId : jobPostings.getRequisitionId()) {
+                if (!jobRequisitionsRepository.existsById(jobRequisitionsId)) {
+                    return "Requisition with ID " + jobRequisitionsId + " does not exist.";
+                }
+            }
+
+            for (UUID jobRequisitionsId : jobPostings.getRequisitionId()) {
+                JobRequisitions jobRequisitions = jobRequisitionsRepository.findById(jobRequisitionsId).orElse(null);
+                if (jobRequisitions != null && jobRequisitions.getIsactive() == 1) {
+                    if (jobPostings.getStatus().equalsIgnoreCase("Rejected")) {
+                        // Rejecting the job posting
+                        jobRequisitions.setRequisition_status("Rejected");
+                        jobRequisitions.setRequisition_approval_notes(jobPostings.getDescription());
+                    } else if (jobPostings.getStatus().equalsIgnoreCase("Approved") && jobPostings.getRole().equals("L1")) {
+                        // Updating the job posting for L1 approval
+                        jobRequisitions.setRequisition_status("Pending L2 Approval");
+                        jobRequisitions.setRequisition_approval_notes(jobPostings.getDescription());
+
+                    } else if (jobPostings.getStatus().equalsIgnoreCase("Approved") && jobPostings.getRole().equals("L2")) {
+                        // Updating the job posting for L2 approval
+                        jobRequisitions.setRequisition_status("Approved");
+                        jobRequisitions.setRequisition_approval_notes(jobPostings.getDescription());
+                    }
+                    jobRequisitions.setUpdated_by(jobPostings.getUserId());
+                    jobRequisitions.setUpdated_date(LocalDateTime.now());
+                    jobRequisitionsRepository.save(jobRequisitions);
+                }
+            }
+            return "Job postings updated successfully";
+        } catch (Exception e) {
+            return "Failed to update job postings: " + e.getMessage();
+        }
+    }
+
+    public List<JobRequisitions> getJobPostingsNeedApproval(String role) {
+        if (role.equals("L1")) {
+            return jobRequisitionsRepository.findByRequisitionStatus("Pending L1 Approval").stream().filter(
+                    jobRequisition -> jobRequisition.getIsactive() == 1).collect(Collectors.toList());
+        } else if (role.equals("L2")) {
+            return jobRequisitionsRepository.findByRequisitionStatus("Pending L2 Approval").stream()
+                    .filter(jobRequisition -> jobRequisition.getIsactive() == 1).collect(Collectors.toList());
+        } else {
+            return List.of(); // Return an empty list for other roles
+        }
+    }
+
 }

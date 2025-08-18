@@ -18,7 +18,7 @@
 	<description>spring boot application Job Creation</description>
 
 	<!-- Change packaging from JAR to WAR -->
-<!--	<packaging>war</packaging>-->
+	<packaging>war</packaging>
 
 	<properties>
 		<java.version>17</java.version>
@@ -43,11 +43,11 @@
 		</dependency>
 
 		<!-- Tomcat provided by server -->
-<!--		<dependency>-->
-<!--			<groupId>org.springframework.boot</groupId>-->
-<!--			<artifactId>spring-boot-starter-tomcat</artifactId>-->
-<!--			<scope>provided</scope>-->
-<!--		</dependency>-->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-tomcat</artifactId>
+			<scope>provided</scope>
+		</dependency>
 
 		<dependency>
 			<groupId>org.postgresql</groupId>

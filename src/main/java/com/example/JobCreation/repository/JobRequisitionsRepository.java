@@ -14,8 +14,11 @@ import java.util.UUID;
 @Repository
 public interface JobRequisitionsRepository extends JpaRepository<JobRequisitions, UUID> {
 
+    //@Query(value = "SELECT * FROM job_requisitions WHERE requisition_status = :status", nativeQuery = true)
     @Query(value = "SELECT * FROM job_requisitions WHERE requisition_status = :status", nativeQuery = true)
     List<JobRequisitions> findByRequisitionStatus(@Param("status") String status);
+
+
 
 
 }
