@@ -3,7 +3,7 @@ package com.example.CandidateDetails.Mapper;
 import com.example.CandidateDetails.Model.Candidates;
 import com.example.CandidateDetails.Model.Interviews;
 import com.example.CandidateDetails.Model.Position;
-import com.example.CandidateDetails.Util;
+import com.example.CandidateDetails.util.Util;
 import com.example.CandidateDetails.dto.InterviewResponse;
 
 public class InterviewMapper {

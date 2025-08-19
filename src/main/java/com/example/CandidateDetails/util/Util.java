@@ -1,4 +1,4 @@
-package com.example.CandidateDetails;
+package com.example.CandidateDetails.util;
 
 public class Util {
     public static String nullcheckString(String value) {
