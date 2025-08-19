@@ -542,9 +542,9 @@ public class CandidateService {
             candidateApplications.setApplication_date(time);
             candidateApplications.setUpdated_date(time);
             candidateApplicationsRepository.save(candidateApplications);
-            return "Applied for interview!";
+            return "Applied for Job!";
         }catch (Exception e){
-            return "Couldn't Apply!";
+            return " Couldn't Apply!";
         }
     }
 

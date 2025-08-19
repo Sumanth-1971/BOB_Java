@@ -35,7 +35,7 @@ public class CandidateDetails {
 
     private Integer highest_qualification;
 
-    private BigDecimal total_experience;
+    private String total_experience;
 
     private String address;
 
@@ -49,7 +49,7 @@ public class CandidateDetails {
     public CandidateDetails() {
     }
 
-    public CandidateDetails(UUID candidate_id, String full_name, String username, Map<Long, String> country_details, Map<Long, String> state_details, Map<Long, String> location_details, Map<Long, String> city_details, String email, String gender, String phone, Integer reservation_category_id, Integer special_category_id, Integer highest_qualification, BigDecimal total_experience, String address, String comments, String application_status, List<FileInfo> fileInfo) {
+    public CandidateDetails(UUID candidate_id, String full_name, String username, Map<Long, String> country_details, Map<Long, String> state_details, Map<Long, String> location_details, Map<Long, String> city_details, String email, String gender, String phone, Integer reservation_category_id, Integer special_category_id, Integer highest_qualification, String total_experience, String address, String comments, String application_status, List<FileInfo> fileInfo) {
         this.candidate_id = candidate_id;
         this.full_name = full_name;
         this.username = username;
@@ -174,14 +174,12 @@ public class CandidateDetails {
         this.highest_qualification = highest_qualification;
     }
 
-    public BigDecimal getTotal_experience() {
+    public String getTotal_experience() {
         return total_experience;
     }
-
-    public void setTotal_experience(BigDecimal total_experience) {
+    public void setTotal_experience(String total_experience) {
         this.total_experience = total_experience;
     }
-
     public String getAddress() {
         return address;
     }

@@ -21,8 +21,9 @@ public class CandidateDetailsApplication extends SpringBootServletInitializer {
 		return builder.sources(CandidateDetailsApplication.class);
 	}
 }
-//package com.example.CandidateDetails;
 
+//package com.example.CandidateDetails;
+//
 //import org.springframework.boot.SpringApplication;
 //import org.springframework.boot.autoconfigure.SpringBootApplication;
 //import org.springframework.cloud.openfeign.EnableFeignClients;

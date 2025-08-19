@@ -30,8 +30,8 @@ public class CandidatesDTO {
     private Integer special_category_id;
 
     private Integer highest_qualification_id;
-    @Column(precision = 4,scale = 1)
-    private BigDecimal total_experience;
+
+    private String total_experience;
 
     private String address;
 
@@ -47,7 +47,7 @@ public class CandidatesDTO {
     public CandidatesDTO() {
     }
 
-    public CandidatesDTO(UUID candidate_id, String full_name, String email, String phone, LocalDate date_of_birth, String gender, String id_proof, Integer nationality_id, Integer reservation_category_id, Integer special_category_id, Integer highest_qualification_id, BigDecimal total_experience, String address, String comments, String skills, String current_designation, String current_employer, String file_url, String education_qualification) {
+    public CandidatesDTO(UUID candidate_id, String full_name, String email, String phone, LocalDate date_of_birth, String gender, String id_proof, Integer nationality_id, Integer reservation_category_id, Integer special_category_id, Integer highest_qualification_id, String total_experience, String address, String comments, String skills, String current_designation, String current_employer, String file_url, String education_qualification) {
         this.candidate_id = candidate_id;
         this.full_name = full_name;
         this.email = email;
@@ -171,14 +171,12 @@ public class CandidatesDTO {
         this.highest_qualification_id = highest_qualification_id;
     }
 
-    public BigDecimal getTotal_experience() {
+    public String getTotal_experience() {
         return total_experience;
     }
-
-    public void setTotal_experience(BigDecimal total_experience) {
+    public void setTotal_experience(String total_experience) {
         this.total_experience = total_experience;
     }
-
     public String getAddress() {
         return address;
     }

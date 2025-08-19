@@ -40,8 +40,9 @@ public class Candidates {
     private Integer special_category_id;
 
     private Integer highest_qualification_id;
-    @Column(precision = 4,scale = 1)
-    private BigDecimal total_experience;
+
+    @Column(name = "total_experience", columnDefinition = "text")
+    private String total_experience;
 
     @Column(name = "address", columnDefinition = "TEXT")
     private String address;
@@ -64,7 +65,7 @@ public class Candidates {
     public Candidates() {
     }
 
-    public Candidates(UUID candidate_id, String full_name, String username, String password_hash, String email, String phone, LocalDate date_of_birth, String gender, String id_proof, Integer nationality_id, Integer reservation_category_id, Integer special_category_id, Integer highest_qualification_id, BigDecimal total_experience, String address, String comments, LocalDateTime created_date, String skills, String current_designation, String current_employer, String file_url, String education_qualification) {
+    public Candidates(UUID candidate_id, String full_name, String username, String password_hash, String email, String phone, LocalDate date_of_birth, String gender, String id_proof, Integer nationality_id, Integer reservation_category_id, Integer special_category_id, Integer highest_qualification_id, String total_experience, String address, String comments, LocalDateTime created_date, String skills, String current_designation, String current_employer, String file_url, String education_qualification) {
         this.candidate_id = candidate_id;
         this.full_name = full_name;
         this.username = username;
@@ -193,14 +194,12 @@ public class Candidates {
         this.highest_qualification_id = highest_qualification_id;
     }
 
-    public BigDecimal getTotal_experience() {
+    public String getTotal_experience() {
         return total_experience;
     }
-
-    public void setTotal_experience(BigDecimal total_experience) {
+    public void setTotal_experience(String total_experience) {
         this.total_experience = total_experience;
     }
-
     public String getAddress() {
         return address;
     }

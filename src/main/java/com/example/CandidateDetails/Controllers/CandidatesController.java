@@ -121,10 +121,10 @@ public class CandidatesController {
     }
 
     @PostMapping("/apply/job")
-    public ResponseEntity<String> applyInterview(ApplyInterviewdto applyInterviewdto){
+    public ResponseEntity<String> applyInterview(@RequestBody ApplyInterviewdto applyInterviewdto){
         try{
             String str=candidateService.applyInterview(applyInterviewdto.getCandidate_id(),applyInterviewdto.getPosition_id());
-            if(str.equals("Applied for interview!")){
+            if(str.equals("Applied for Job!")){
                 return new ResponseEntity<>(str,HttpStatus.OK);
             }
             else{
@@ -151,7 +151,6 @@ public class CandidatesController {
 
     @GetMapping("getapplied_postions/{candidate_id}")
     public ResponseEntity<List<ResponseDTO>> getDetailsByCandidateId(@PathVariable UUID candidate_id){
-
         try{
             List<ResponseDTO> positionDTOList=candidateService.getAllDetailsByCandidateId(candidate_id);
             return new ResponseEntity<>(positionDTOList,HttpStatus.OK);
