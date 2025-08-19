@@ -8,13 +8,12 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Entity
-@Table(name = "approval")
+@Table(name = "workflow_approval")
 @Getter
 @Setter
 public class WorkflowApprovalEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "approval_id")
     private UUID approvalId;
 

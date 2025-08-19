@@ -49,6 +49,24 @@ public class JobRequisitions {
         this.job_postings = job_postings;
     }
 
+    public JobRequisitions(JobRequisitions other) {
+        this.requisition_id = other.requisition_id;
+        this.requisition_code = other.requisition_code;
+        this.requisition_title = other.requisition_title;
+        this.requisition_description = other.requisition_description;
+        this.registration_start_date = other.registration_start_date;
+        this.registration_end_date = other.registration_end_date;
+        this.requisition_status = other.requisition_status;
+        this.requisition_comments = other.requisition_comments;
+        this.requisition_approval = other.requisition_approval;
+        this.created_by = other.created_by;
+        this.created_date = other.created_date;
+        this.updated_by = other.updated_by;
+        this.updated_date = other.updated_date;
+        this.others = other.others;
+        this.no_of_positions = other.no_of_positions;
+        this.job_postings = other.job_postings;
+    }
 
     @PrePersist
     @PreUpdate

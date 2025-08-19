@@ -1,9 +1,11 @@
 package com.example.JobCreation.service;
 
 import com.example.JobCreation.dto.JobPostingDTO;
+import com.example.JobCreation.model.AuditTrailEntity;
 import com.example.JobCreation.model.JobRequisitions;
 import com.example.JobCreation.model.UserEntity;
 import com.example.JobCreation.model.WorkflowApprovalEntity;
+import com.example.JobCreation.repository.AuditTrailRepository;
 import com.example.JobCreation.repository.JobRequisitionsRepository;
 import com.example.JobCreation.repository.UserRepository;
 import com.example.JobCreation.repository.WorkflowApprovalEntityRepository;
@@ -28,8 +30,10 @@ public class JobRequisitionsService {
     UserRepository userRepository;
 
     @Autowired
-    private WorkflowApprovalEntityRepository workflowApprovalEntityRepository;
+    WorkflowApprovalEntityRepository workflowApprovalEntityRepository;
 
+    @Autowired
+    AuditTrailRepository auditTrailRepository;
 
     public List<JobRequisitions>  getAll(){
         return jobRequisitionsRepository.findAll();
@@ -152,9 +156,10 @@ public class JobRequisitionsService {
     }
 
     public String approvalSubmission(UUID requisitionId, String approvalStatus, String userId, String comments, String userRole) {
-        Optional<JobRequisitions> jobRequisitions = jobRequisitionsRepository.findById(requisitionId);
+         Optional<JobRequisitions> jobRequisitions = jobRequisitionsRepository.findById(requisitionId);
         if(jobRequisitions.isPresent()){
             JobRequisitions jobRequisition = jobRequisitions.get();
+            JobRequisitions oldJobRequisition = new JobRequisitions(jobRequisition); // Create a copy for audit purposes
 
             String updateStatus = jobRequisition.getRequisition_status();
             if(!updateStatus.equals(AppConstants.REQ_PENDING_APPROVAL_L1)
@@ -192,7 +197,10 @@ public class JobRequisitionsService {
             jobRequisitionsRepository.save(jobRequisition);
 
             // Update the workflow entity
-            insertWorkflowApprovalEntity(requisitionId);
+            insertWorkflowApprovalEntity(jobRequisition,AppConstants.JOB_REQUISITIONS,userRole,userId,approvalStatus);
+
+            // Update audit table
+            insertAuditRecord(oldJobRequisition, jobRequisition, userId, approvalStatus);
 
             return "Requisition approval status updated successfully";
         }else {
@@ -200,13 +208,38 @@ public class JobRequisitionsService {
         }
     }
 
-    public void insertWorkflowApprovalEntity(UUID requisitionId) {
+    public void insertWorkflowApprovalEntity(JobRequisitions jobRequisition, String entityType,String userRole, String userId,String approvalStatus) {
         WorkflowApprovalEntity workflowApprovalEntity = new WorkflowApprovalEntity();
         workflowApprovalEntity.setApprovalId(UUID.randomUUID());
-        workflowApprovalEntity.setEntityType(AppConstants.JOB_REQUISITIONS);
-        workflowApprovalEntity.setEntityId(requisitionId);
-//        workflowApprovalEntity.
-//        workflowApprovalEntityRepository.save(workflowApprovalEntity);
+        workflowApprovalEntity.setEntityType(entityType);
+        workflowApprovalEntity.setEntityId(jobRequisition.getRequisition_id());
+        workflowApprovalEntity.setStepNumber(jobRequisition.getRequisition_status().equals(AppConstants.REQ_APPROVAL_APPROVED)?2:1);
+        workflowApprovalEntity.setApproverRole(userRole);
+        workflowApprovalEntity.setApproverId(Integer.parseInt(userId));
+        workflowApprovalEntity.setAction(approvalStatus);
+        workflowApprovalEntity.setActionDate(LocalDateTime.now());
+        workflowApprovalEntity.setComments(jobRequisition.getRequisition_comments());
+        workflowApprovalEntity.setStatus(jobRequisition.getRequisition_status().equals(AppConstants.REQ_APPROVAL_APPROVED)?
+                    AppConstants.WORKFLOW_STATUS_COMPLETED:AppConstants.WORKFLOW_STATUS_PENDING);
+        workflowApprovalEntityRepository.save(workflowApprovalEntity);
+    }
+
+    public void insertAuditRecord(JobRequisitions oldJobRequisition, JobRequisitions jobRequisition, String userId, String approvalStatus) {
+
+        AuditTrailEntity auditTrailEntity = new AuditTrailEntity();
+        auditTrailEntity.setAuditId(UUID.randomUUID());
+        auditTrailEntity.setEntityType(AppConstants.JOB_REQUISITIONS);
+        auditTrailEntity.setEntityId(oldJobRequisition.getRequisition_id());
+        auditTrailEntity.setFieldChanged(AppConstants.STATUS_FIELD);
+        auditTrailEntity.setOldValue(oldJobRequisition.getRequisition_status());
+        auditTrailEntity.setNewValue(jobRequisition.getRequisition_status());
+        auditTrailEntity.setChangedBy(Long.parseLong(userId));
+        auditTrailEntity.setChangeDate(LocalDateTime.now());
+        auditTrailEntity.setChangeType(AppConstants.CHANGE_TYPE_UPDATE);
+        auditTrailRepository.save(auditTrailEntity);
+
+        System.out.println("Audit Record: User ID: " + userId + ", Requisition ID: " + jobRequisition.getRequisition_id() +
+                ", Approval Status: " + approvalStatus + ", Timestamp: " + LocalDateTime.now());
     }
 
 
