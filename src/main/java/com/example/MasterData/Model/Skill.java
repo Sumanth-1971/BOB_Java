@@ -15,6 +15,7 @@ public class Skill {
 
     private String skill_name;
 
+    @Column(name="skill_desc",columnDefinition = "text")
     private String skill_desc;
 
     private LocalDate start_date;

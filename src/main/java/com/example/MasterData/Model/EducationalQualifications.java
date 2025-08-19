@@ -14,6 +14,7 @@ public class EducationalQualifications {
 
     private String edu_qualification_name;
 
+    @Column(name="edu_desc",columnDefinition = "text")
     private String edu_desc;
 
     private LocalDateTime created_date;

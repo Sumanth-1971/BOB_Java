@@ -19,7 +19,6 @@ public class State {
 
     private LocalDateTime created_date;
 
-
     private String created_by;
 
     public State() {

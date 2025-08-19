@@ -62,12 +62,7 @@ public class DisplayService {
         return mp;
     }
 
-//    public MasterDTO getAllData2(){
-//        MasterDTO masterDTO=new MasterDTO(cityRepository.findAll(),countryRepository.findAll(),departmentsRepository.findAll(),
-//                educationalQualificationsRepository.findAll(),jobGradeRepository.findAll(),reservationCategories.findAll(),skillRepository.findAll(),specialCategoriesRepository.findAll()
-//        ,stateRepository.findAll());
-//        return masterDTO;
-//    }
+
 
     public MasterDTO2 getAllData3(){
         List<String> position_title=departmentsRepository.getDepartmentNames();

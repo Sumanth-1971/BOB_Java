@@ -16,6 +16,7 @@ public class JobGrade {
 
     private String job_grade_code;
 
+    @Column(name="job_grade_desc",columnDefinition = "text")
     private String job_grade_desc;
 
     private String job_scale;

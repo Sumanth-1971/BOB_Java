@@ -18,19 +18,6 @@ public class DisplayController {
     @Autowired
     private DisplayService displayService;
 
-//    @GetMapping("/all")
-//    public List<ReservationCategories> getAll(){
-//        return displayService.getAllCategories();
-//    }
-//    @GetMapping("/complete")
-//    public Map<String,List<?>> complete(){
-//        return displayService.getAllData();
-//    }
-//
-//    @GetMapping("/complete-data")
-//    public MasterDTO getCompleteData(){
-//        return displayService.getAllData2();
-//    }
     @GetMapping("/all")
     public MasterDTO2 getCompleteData2(){
         return displayService.getAllData3();

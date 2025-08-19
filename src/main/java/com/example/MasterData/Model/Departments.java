@@ -14,6 +14,7 @@ public class Departments {
 
     private String department_name;
 
+    @Column(name="department_desc",columnDefinition = "text")
     private String department_desc;
 
     private boolean isactive;

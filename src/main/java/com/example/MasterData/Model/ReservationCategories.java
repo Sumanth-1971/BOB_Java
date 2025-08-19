@@ -16,6 +16,7 @@ public class ReservationCategories {
 
     private String category_name;
 
+    @Column(name="category_desc",columnDefinition = "text")
     private String category_desc;
 
     private LocalDateTime created_date;

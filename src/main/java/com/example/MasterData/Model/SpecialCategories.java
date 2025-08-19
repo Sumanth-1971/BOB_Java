@@ -16,6 +16,7 @@ public class SpecialCategories {
 
     private String special_category_name;
 
+    @Column(name = "special_category_desc", columnDefinition = "text")
     private String special_category_desc;
 
     private LocalDateTime created_date;

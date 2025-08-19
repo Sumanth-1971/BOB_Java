@@ -12,6 +12,9 @@
 	<artifactId>MasterData</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>MasterData</name>
+
+<!--	<packaging>war</packaging>-->
+
 	<description>Demo project for Spring Boot</description>
 	<url/>
 	<licenses>
@@ -54,6 +57,11 @@
 			<artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
 			<version>2.8.5</version>
 		</dependency>
+<!--		<dependency>-->
+<!--			<groupId>org.springframework.boot</groupId>-->
+<!--			<artifactId>spring-boot-starter-tomcat</artifactId>-->
+<!--			<scope>provided</scope>-->
+<!--		</dependency>-->
 	</dependencies>
 
 	<build>
