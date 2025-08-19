@@ -106,4 +106,20 @@ public class Interviews {
     public void setInterviewer(String interviewer) {
         this.interviewer = interviewer;
     }
+
+    public UUID getCandidateId() {
+        return this.candidate_id;
+    }
+
+    public UUID getPositionId() {
+        return this.position_id;
+    }
+
+    public LocalDateTime getScheduled_at() {
+        return scheduled_at;
+    }
+
+    public void setScheduled_at(LocalDateTime scheduled_at) {
+        this.scheduled_at = scheduled_at;
+    }
 }
