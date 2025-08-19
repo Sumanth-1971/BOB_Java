@@ -1,7 +1,9 @@
 package com.example.CandidateDetails.Controllers;
 
+import com.example.CandidateDetails.Mapper.InterviewMapper;
 import com.example.CandidateDetails.Model.Candidates;
 import com.example.CandidateDetails.Model.Interviews;
+import com.example.CandidateDetails.Service.CalendarService;
 import com.example.CandidateDetails.Service.CandidateService;
 import com.example.CandidateDetails.Service.MailService;
 import com.example.CandidateDetails.dto.*;
@@ -12,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.UnsupportedEncodingException;
+import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
@@ -24,6 +27,10 @@ public class CandidatesController {
 
     @Autowired
     private MailService mailService;
+
+    @Autowired
+    private CalendarService calendarService;
+
 
     @GetMapping("/details/{position_id}")
     public ResponseEntity<ApiResponse<List<Candidates>>> getDetailsByPositionId(@PathVariable UUID position_id) {
@@ -157,6 +164,24 @@ public class CandidatesController {
             return new ResponseEntity<>(positionDTOList,HttpStatus.OK);
         }catch (Exception e){
             return new ResponseEntity<>(null,HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @GetMapping("/interviews/by-date-range")
+    public ResponseEntity<List<InterviewResponse>> getInterviewsByDateRange(
+            @RequestParam long startTimestamp,
+            @RequestParam long endTimestamp) {
+        try {
+            List<InterviewResponse> interviewsResponseList = calendarService.getInterviewSchedulesBetween(startTimestamp, endTimestamp);
+            if (interviewsResponseList.isEmpty()) {
+                return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+            }
+            return new ResponseEntity<>(interviewsResponseList, HttpStatus.OK);
+        }catch (Exception e) {
+            return ResponseEntity
+                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .header("Error-Message", e.getMessage())
+                    .body(Collections.emptyList());
         }
     }
 }
