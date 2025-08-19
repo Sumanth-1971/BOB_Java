@@ -11,7 +11,7 @@
 		<relativePath>..</relativePath>
 	</parent>
 
-	<groupId>com.example</groupId>
+	<groupId>com.bob</groupId>
 	<artifactId>JobCreation</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>JobCreation</name>
@@ -21,6 +21,12 @@
   	<packaging>war</packaging>
 
   	<dependencies>
+
+		<dependency>
+			<groupId>com.bob</groupId>
+			<artifactId>common-config</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+		</dependency>
 
   	</dependencies>
 

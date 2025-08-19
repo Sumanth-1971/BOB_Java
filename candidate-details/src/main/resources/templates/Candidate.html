@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Interview Scheduled</title>
+    <style>
+        body { font-family: Arial, sans-serif; background-color: #f4f4f4; margin: 0; padding: 0; }
+        .container { background-color: #ffffff; margin: 20px auto; padding: 20px; max-width: 600px; border-radius: 8px; border: 1px solid #ddd; }
+        h2 { color: #2c3e50; }
+        p { color: #555; font-size: 14px; line-height: 1.6; }
+        .highlight { color: #27ae60; font-weight: bold; }
+        .footer { font-size: 12px; color: #999; margin-top: 20px; }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h2>Interview Scheduled</h2>
+    <p>Dear <span class="highlight" th:text="${CANDIDATE_NAME}">Candidate</span>,</p>
+    <p>We are pleased to inform you that your interview for the position of
+        <strong th:text="${POSITION_TITLE}">Position</strong> has been scheduled.</p>
+    <p>Your interviewer will be <strong th:text="${INTERVIEWER_NAME}">Interviewer</strong>.</p>
+    <p><strong>Date:</strong> <span th:text="${DATE}">Date</span></p>
+    <p><strong>Time:</strong> <span th:text="${TIME}">Time</span></p>
+    <p>Please ensure you bring all necessary documents and arrive 10 minutes before the scheduled time.</p>
+    <a href="www.google.com">Meeting Link</a>
+    <div class="footer">
+        This is an automated message. Please do not reply.
+    </div>
+</div>
+</body>
+</html>

@@ -1,10 +1,10 @@
 <component name="ProjectRunConfigurationManager">
   <configuration default="false" name="JobCreationApplication" type="Application" factoryName="Application">
-    <option name="MAIN_CLASS_NAME" value="com.example.JobCreation.JobCreationApplication" />
+    <option name="MAIN_CLASS_NAME" value="com.bob.JobCreation.JobCreationApplication" />
     <module name="JobCreation" />
     <extension name="coverage">
       <pattern>
-        <option name="PATTERN" value="com.example.JobCreation.*" />
+        <option name="PATTERN" value="com.bob.JobCreation.*" />
         <option name="ENABLED" value="true" />
       </pattern>
     </extension>

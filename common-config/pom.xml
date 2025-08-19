@@ -11,17 +11,26 @@
   </parent>
 
   <groupId>com.bob</groupId>
-  <artifactId>CandidateDetails</artifactId>
+  <artifactId>common-config</artifactId>
   <version>0.0.1-SNAPSHOT</version>
-  <name>CandidateDetails</name>
-  <description>Spring Boot application Candidate Details</description>
+  <name>common-config</name>
+  <description>Shared configuration resources for all modules</description>
+
+  <packaging>jar</packaging>
 
   <dependencies>
-    <!-- Shared config module -->
-    <dependency>
-      <groupId>com.bob</groupId>
-      <artifactId>common-config</artifactId>
-      <version>0.0.1-SNAPSHOT</version>
-    </dependency>
+    <!-- no code dependencies; only resources included in the jar -->
   </dependencies>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-maven-plugin</artifactId>
+        <configuration>
+          <skip>true</skip>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
 </project>
