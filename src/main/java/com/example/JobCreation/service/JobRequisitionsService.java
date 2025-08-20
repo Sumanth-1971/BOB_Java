@@ -146,16 +146,25 @@ public class JobRequisitionsService {
                     if (jobPostings.getStatus().equalsIgnoreCase("Rejected")) {
                         // Rejecting the job posting
                         jobRequisitions.setRequisition_status("Rejected");
+                        jobRequisitions.setUpdated_by(jobPostings.getUserId());
+                        jobRequisitions.setUpdated_date(LocalDateTime.now());
                         jobRequisitions.setRequisition_approval_notes(jobPostings.getDescription());
+
                     } else if (jobPostings.getStatus().equalsIgnoreCase("Approved") && jobPostings.getRole().equals("L1")) {
                         // Updating the job posting for L1 approval
                         jobRequisitions.setRequisition_status("Pending L2 Approval");
+                        jobRequisitions.setUpdated_by(jobPostings.getUserId());
+                        jobRequisitions.setUpdated_date(LocalDateTime.now());
                         jobRequisitions.setRequisition_approval_notes(jobPostings.getDescription());
 
                     } else if (jobPostings.getStatus().equalsIgnoreCase("Approved") && jobPostings.getRole().equals("L2")) {
                         // Updating the job posting for L2 approval
                         jobRequisitions.setRequisition_status("Approved");
+                        jobRequisitions.setUpdated_by(jobPostings.getUserId());
+                        jobRequisitions.setUpdated_date(LocalDateTime.now());
                         jobRequisitions.setRequisition_approval_notes(jobPostings.getDescription());
+                    }else {
+                        throw new RuntimeException("Invalid status or role provided for job posting update.");
                     }
                     jobRequisitions.setUpdated_by(jobPostings.getUserId());
                     jobRequisitions.setUpdated_date(LocalDateTime.now());

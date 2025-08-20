@@ -12,7 +12,6 @@ import java.util.UUID;
 @Entity
 @Table(name = "positions")
 public class Positions {
-
         @Id
         @Column(name = "position_id", columnDefinition = "uuid")
         private UUID position_id;
@@ -57,7 +56,7 @@ public class Positions {
         private BigDecimal preferred_experience;
 
         @Column(name = "probation_period")
-        private Integer probation_period;
+        private BigDecimal probation_period;
 
         @Column(name = "documents_required", columnDefinition = "text")
         private String documents_required;
@@ -86,7 +85,7 @@ public class Positions {
     public Positions() {
     }
 
-    public Positions(UUID position_id, UUID requisition_id, String position_title, String description, String position_code, String roles_responsibilities, int grade_id, String employment_type, int eligibility_age_min, int eligibility_age_max, String mandatory_qualification, String preferred_qualification, BigDecimal mandatory_experience, BigDecimal preferred_experience, int probation_period, String documents_required, BigDecimal min_credit_score, String position_status, String created_by, LocalDateTime created_date, String updated_by, LocalDateTime updated_date) {
+    public Positions(UUID position_id, UUID requisition_id, String position_title, String description, String position_code, String roles_responsibilities, Integer grade_id, String employment_type, Integer eligibility_age_min, Integer eligibility_age_max, String mandatory_qualification, String preferred_qualification, BigDecimal mandatory_experience, BigDecimal preferred_experience, BigDecimal probation_period, String documents_required, BigDecimal min_credit_score, String position_status, String created_by, LocalDateTime created_date, String updated_by, LocalDateTime updated_date) {
         this.position_id = position_id;
         this.requisition_id = requisition_id;
         this.position_title = position_title;
@@ -223,14 +222,12 @@ public class Positions {
         this.preferred_experience = preferred_experience;
     }
 
-    public int getProbation_period() {
+    public BigDecimal getProbation_period() {
         return probation_period;
     }
-
-    public void setProbation_period(int probation_period) {
+    public void setProbation_period(BigDecimal probation_period) {
         this.probation_period = probation_period;
     }
-
     public String getDocuments_required() {
         return documents_required;
     }
