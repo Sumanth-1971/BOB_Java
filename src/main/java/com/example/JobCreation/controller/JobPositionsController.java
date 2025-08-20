@@ -119,6 +119,7 @@ public class JobPositionsController {
             return new ResponseEntity<>(apiResponse, HttpStatus.NOT_FOUND);
         }
 
+
         ApiResponse<List<JobPositionsDTO>> apiResponse = new ApiResponse<>(
                 true,
                 "Active jobs found",
