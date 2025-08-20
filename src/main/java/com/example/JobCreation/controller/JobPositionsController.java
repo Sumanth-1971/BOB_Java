@@ -50,7 +50,6 @@ public class JobPositionsController {
 
     @GetMapping("/getpos")
     public List<JobPositionsDTO> getAllPosition(){
-
         return jobPositionsService.findAllPositions();
     }
 

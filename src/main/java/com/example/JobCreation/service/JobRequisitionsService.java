@@ -1,8 +1,11 @@
 package com.example.JobCreation.service;
 
+import com.example.JobCreation.dto.JobPositionsDTO;
 import com.example.JobCreation.dto.JobPostingDTO;
 import com.example.JobCreation.dto.JobPostingUpdateDTO;
+import com.example.JobCreation.dto.JobRequisitionDTO;
 import com.example.JobCreation.model.JobRequisitions;
+import com.example.JobCreation.repository.JobPositionsRepository;
 import com.example.JobCreation.repository.JobRequisitionsRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -18,10 +21,42 @@ public class JobRequisitionsService {
 
     @Autowired
     private JobRequisitionsRepository jobRequisitionsRepository;
+    @Autowired
+    private JobPositionsRepository jobPositionsRepository;
 
-    public List<JobRequisitions>  getAll(){
-        return jobRequisitionsRepository.findAll().stream().filter(
+    public List<JobRequisitionDTO>  getAll(){
+        List<JobRequisitions> jobRequisitions =  jobRequisitionsRepository.findAll().stream().filter(
                 jobRequisition -> jobRequisition.getIsactive() == 1).collect(Collectors.toList());
+        if (jobRequisitions.isEmpty()) {
+            return null;
+        }
+        List<JobRequisitionDTO> jobRequisitionDTOS = jobRequisitions.stream()
+                .map(jobRequisition -> {
+                    JobRequisitionDTO dto = new JobRequisitionDTO(
+                            jobRequisition.getRequisition_id(),
+                            jobRequisition.getRequisition_code(),
+                            jobRequisition.getRequisition_title(),
+                            jobRequisition.getRequisition_description(),
+                            jobRequisition.getRegistration_start_date(),
+                            jobRequisition.getRegistration_end_date(),
+                            jobRequisition.getRequisition_status(),
+                            jobRequisition.getRequisition_comments(),
+                            jobRequisition.getRequisition_approval(),
+                            jobRequisition.getNo_of_positions(),
+                            jobRequisition.getJob_postings(),
+                            jobRequisition.getRequisition_approval_notes()
+                    );
+
+                    // set count separately
+                    dto.setCount(
+                            jobPositionsRepository.findAllByRequisitionId(jobRequisition.getRequisition_id()).size()
+                    );
+
+                    return dto;
+                })
+                .collect(Collectors.toList());
+
+        return jobRequisitionDTOS;
     }
 
     public List<JobRequisitions> findByRequisitionStatus(String requisitionStatus){

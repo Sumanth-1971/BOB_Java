@@ -3,6 +3,7 @@ package com.example.JobCreation.controller;
 import com.example.JobCreation.dto.ApiResponse;
 import com.example.JobCreation.dto.JobPostingDTO;
 import com.example.JobCreation.dto.JobPostingUpdateDTO;
+import com.example.JobCreation.dto.JobRequisitionDTO;
 import com.example.JobCreation.model.JobRequisitions;
 import com.example.JobCreation.service.JobRequisitionsService;
 import jdk.jfr.Description;
@@ -21,11 +22,11 @@ public class JobRequisitionsController {
     JobRequisitionsService jobRequisitionsService;
 
     @GetMapping("/getreq")
-    public ResponseEntity<ApiResponse<List<JobRequisitions>>> getAll() {
-        List<JobRequisitions> jobRequisitionsList = jobRequisitionsService.getAll();
+    public ResponseEntity<ApiResponse<List<JobRequisitionDTO>>> getAll() {
+        List<JobRequisitionDTO> jobRequisitionsList = jobRequisitionsService.getAll();
 
         if (jobRequisitionsList.isEmpty()) {
-            ApiResponse<List<JobRequisitions>> apiResponse = new ApiResponse<>(
+            ApiResponse<List<JobRequisitionDTO>> apiResponse = new ApiResponse<>(
                     false,
                     "No job requisitions found",
                     jobRequisitionsList
@@ -33,7 +34,7 @@ public class JobRequisitionsController {
             return new ResponseEntity<>(apiResponse, HttpStatus.NOT_FOUND);
         }
 
-        ApiResponse<List<JobRequisitions>> apiResponse = new ApiResponse<>(
+        ApiResponse<List<JobRequisitionDTO>> apiResponse = new ApiResponse<>(
                 true,
                 "Active jobs found",
                 jobRequisitionsList
