@@ -416,8 +416,7 @@ public class CandidateService {
     }
 
     }
-//
-//
+
     public String getStatus(InterviewDetails interviewDetails){
 
         if(interviewDetails.getStatus().equals("Scheduled")){
