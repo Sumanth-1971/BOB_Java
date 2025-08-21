@@ -11,28 +11,23 @@
     </parent>
 
     <groupId>com.bob</groupId>
-    <artifactId>JobCreation</artifactId>
+    <artifactId>master-data</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>JobCreation</name>
-    <description>spring boot application Job Creation</description>
+    <name>master-data</name>
+    <description>Master Data service</description>
 
-    <!-- Change packaging from JAR to WAR -->
     <packaging>war</packaging>
 
     <dependencies>
-
         <dependency>
             <groupId>com.bob</groupId>
             <artifactId>common-config</artifactId>
             <version>0.0.1-SNAPSHOT</version>
         </dependency>
-
         <dependency>
             <groupId>com.bob</groupId>
             <artifactId>bob-db</artifactId>
             <version>0.0.1-SNAPSHOT</version>
         </dependency>
-
     </dependencies>
-
 </project>

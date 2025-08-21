@@ -1,27 +1,32 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
-  <modelVersion>4.0.0</modelVersion>
+    <modelVersion>4.0.0</modelVersion>
 
-  <parent>
+    <parent>
+        <groupId>com.bob</groupId>
+        <artifactId>BOB_Java</artifactId>
+        <version>0.0.1-SNAPSHOT</version>
+        <relativePath>..</relativePath>
+    </parent>
+
     <groupId>com.bob</groupId>
-    <artifactId>BOB_Java</artifactId>
+    <artifactId>CandidateDetails</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <relativePath>..</relativePath>
-  </parent>
+    <name>CandidateDetails</name>
+    <description>Spring Boot application Candidate Details</description>
 
-  <groupId>com.bob</groupId>
-  <artifactId>CandidateDetails</artifactId>
-  <version>0.0.1-SNAPSHOT</version>
-  <name>CandidateDetails</name>
-  <description>Spring Boot application Candidate Details</description>
-
-  <dependencies>
-    <!-- Shared config module -->
-    <dependency>
-      <groupId>com.bob</groupId>
-      <artifactId>common-config</artifactId>
-      <version>0.0.1-SNAPSHOT</version>
-    </dependency>
-  </dependencies>
+    <dependencies>
+        <!-- Shared config module -->
+        <dependency>
+            <groupId>com.bob</groupId>
+            <artifactId>common-config</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>com.bob</groupId>
+            <artifactId>bob-db</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+        </dependency>
+    </dependencies>
 </project>
