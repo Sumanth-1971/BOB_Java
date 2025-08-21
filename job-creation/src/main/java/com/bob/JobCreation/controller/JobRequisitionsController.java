@@ -1,9 +1,9 @@
 package com.bob.JobCreation.controller;
 
-import com.bob.JobCreation.dto.ApiResponse;
-import com.bob.JobCreation.dto.JobPostingDTO;
-import com.bob.JobCreation.dto.JobRequisitionApprovalRequest;
-import com.bob.JobCreation.model.JobRequisitions;
+import com.bob.db.dto.ApiResponse;
+import com.bob.db.dto.JobPostingDTO;
+import com.bob.db.dto.JobRequisitionApprovalRequest;
+import com.bob.db.entity.JobRequisitions;
 import com.bob.JobCreation.service.JobRequisitionsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;

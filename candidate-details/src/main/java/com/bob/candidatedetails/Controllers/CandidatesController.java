@@ -1,11 +1,12 @@
 package com.bob.candidatedetails.Controllers;
 
-import com.bob.candidatedetails.Model.Candidates;
-import com.bob.candidatedetails.Model.Interviews;
+import com.bob.db.entity.Candidates;
+import com.bob.db.entity.Interviews;
 import com.bob.candidatedetails.Service.CalendarService;
 import com.bob.candidatedetails.Service.CandidateService;
 import com.bob.candidatedetails.Service.MailService;
-import com.bob.candidatedetails.dto.*;
+import com.bob.db.dto.ApiResponse;
+import com.bob.db.dto.*;
 import jakarta.mail.MessagingException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;

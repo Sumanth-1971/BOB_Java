@@ -1,7 +1,7 @@
 package com.bob.candidatedetails.Feign;
 
-import com.bob.candidatedetails.dto.ApiResponse;
-import com.bob.candidatedetails.dto.ResponseDTO;
+import com.bob.db.dto.ApiResponse;
+import com.bob.db.dto.ResponseDTO;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;

@@ -1,8 +1,8 @@
 package com.bob.JobCreation.service;
 
-import com.bob.JobCreation.dto.JobPositionsDTO;
-import com.bob.JobCreation.model.JobApplicationFee;
-import com.bob.JobCreation.repository.JobApplicationFeeRepository;
+import com.bob.db.dto.JobPositionsDTO;
+import com.bob.db.entity.JobApplicationFee;
+import com.bob.db.repository.JobApplicationFeeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

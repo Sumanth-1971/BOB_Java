@@ -27,8 +27,6 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import java.util.TimeZone;
 
 @SpringBootApplication
-@EntityScan(basePackages = "com.bob.db.entity")
-@EnableJpaRepositories(basePackages = "com.bob.db.repository")
 public class JobCreationApplication extends SpringBootServletInitializer {
 
     public static void main(String[] args) {

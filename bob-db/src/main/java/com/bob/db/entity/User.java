@@ -26,6 +26,9 @@ public class User {
 
     private String updated_by;
 
+    private Integer manager_id;
+
+
     public User() {
     }
 
@@ -101,5 +104,13 @@ public class User {
 
     public void setUpdated_by(String updated_by) {
         this.updated_by = updated_by;
+    }
+
+    public Integer getManager_id() {
+        return manager_id;
+    }
+
+    public void setManager_id(Integer manager_id) {
+        this.manager_id = manager_id;
     }
 }

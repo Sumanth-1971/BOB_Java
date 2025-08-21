@@ -1,8 +1,8 @@
 package com.bob.JobCreation.controller;
 
-import com.bob.JobCreation.dto.ApiResponse;
-import com.bob.JobCreation.dto.JobPositionsDTO;
-import com.bob.JobCreation.dto.ResponseDTO;
+import com.bob.db.dto.ApiResponse;
+import com.bob.db.dto.JobPositionsDTO;
+import com.bob.db.dto.ResponseDTO;
 import com.bob.JobCreation.service.JobPositionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;

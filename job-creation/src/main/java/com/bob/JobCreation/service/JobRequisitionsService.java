@@ -1,14 +1,11 @@
 package com.bob.JobCreation.service;
 
-import com.bob.JobCreation.model.UserEntity;
-import com.bob.JobCreation.model.WorkflowApprovalEntity;
-import com.bob.JobCreation.repository.AuditTrailRepository;
-import com.bob.JobCreation.dto.JobPostingDTO;
-import com.bob.JobCreation.model.AuditTrailEntity;
-import com.bob.JobCreation.model.JobRequisitions;
-import com.bob.JobCreation.repository.JobRequisitionsRepository;
-import com.bob.JobCreation.repository.UserRepository;
-import com.bob.JobCreation.repository.WorkflowApprovalEntityRepository;
+import com.bob.db.entity.*;
+import com.bob.db.repository.AuditTrailRepository;
+import com.bob.db.dto.JobPostingDTO;
+import com.bob.db.repository.JobRequisitionsRepository;
+import com.bob.db.repository.UserRepository;
+import com.bob.db.repository.WorkflowApprovalEntityRepository;
 import com.bob.JobCreation.util.AppConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -119,15 +116,14 @@ public class JobRequisitionsService {
                     JobRequisitions jobRequisition = jobRequisitionsRepository.findById(jobRequisitionsId).orElse(null);
                     if (jobRequisition != null) {
                         jobRequisition.setJob_postings(externalJobPostings);
-
-                        Optional<UserEntity> user = userRepository.findById(Long.parseLong(jobPostings.getUser_id()));
+                        Optional<User> user = userRepository.findById(Integer.parseInt(jobPostings.getUser_id()));
                         if (user.isPresent()) {
-                            UserEntity currentUserEntity = user.get();
-                            Long managerId = currentUserEntity.getManager_id();
+                            User currentUserEntity = user.get();
+                            int managerId = currentUserEntity.getManager_id();
 
                             //n+1 flow
-                            if (managerId != null) {
-                                Optional<UserEntity> manager = userRepository.findById(managerId);
+                            if (managerId > -1) {
+                                Optional<User> manager = userRepository.findById(managerId);
                                 if (manager.isPresent()) {
                                     jobRequisition.setRequisition_status(AppConstants.REQ_APPROVAL_PENDING.concat(AppConstants.UNDERSCORE).concat(manager.get().getRole()));
                                     jobRequisition.setRequisition_approval(AppConstants.APPROVAL_STATUS_WORKFLOW);

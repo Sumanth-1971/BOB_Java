@@ -1,9 +1,9 @@
 package com.bob.JobCreation.service;
 
-import com.bob.JobCreation.dto.JobPositionsDTO;
-import com.bob.JobCreation.dto.ResponseDTO;
-import com.bob.JobCreation.model.*;
-import com.bob.JobCreation.repository.JobPositionsRepository;
+import com.bob.db.dto.JobPositionsDTO;
+import com.bob.db.dto.ResponseDTO;
+import com.bob.db.entity.*;
+import com.bob.db.repository.JobPositionsRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

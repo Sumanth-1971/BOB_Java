@@ -1,10 +1,18 @@
 package com.bob.candidatedetails.Service;
 
 import com.bob.candidatedetails.Feign.FeignPositionDTO;
-import com.bob.candidatedetails.Model.*;
-import com.bob.candidatedetails.Repository.*;
-import com.bob.candidatedetails.dto.*;
-import com.bob.candidatedetails.Repository.CandidateRepository;
+import com.bob.db.entity.City;
+import com.bob.db.entity.Country;
+import com.bob.db.entity.Location;
+import com.bob.db.entity.State;
+import com.bob.db.repository.CityRepository;
+import com.bob.db.repository.CountryRepository;
+import com.bob.db.repository.LocationRepository;
+import com.bob.db.repository.StateRepository;
+import com.bob.db.repository.*;
+import com.bob.db.dto.ApiResponse;
+import com.bob.db.dto.*;
+import com.bob.db.entity.*;
 import jakarta.mail.MessagingException;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;

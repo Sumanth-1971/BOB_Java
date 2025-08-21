@@ -1,8 +1,8 @@
 package com.bob.JobCreation.service;
 
-import com.bob.JobCreation.dto.JobPositionsDTO;
-import com.bob.JobCreation.model.JobAgeRelaxations;
-import com.bob.JobCreation.repository.JobAgeRelaxationsRepository;
+import com.bob.db.dto.JobPositionsDTO;
+import com.bob.db.entity.JobAgeRelaxations;
+import com.bob.db.repository.JobAgeRelaxationsRepository;
 
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -11,8 +11,6 @@ import java.util.TimeZone;
 
 @SpringBootApplication
 @EnableFeignClients
-@EntityScan(basePackages = "com.bob.db.entity")
-@EnableJpaRepositories(basePackages = "com.bob.db.repository")
 public class CandidateDetailsApplication extends SpringBootServletInitializer {
 
 	public static void main(String[] args) {

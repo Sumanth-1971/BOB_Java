@@ -1,9 +1,9 @@
 package com.bob.JobCreation.service;
 
 
-import com.bob.JobCreation.repository.*;
-import com.bob.JobCreation.dto.JobPositionsDTO;
-import com.bob.JobCreation.model.JobPostingLocation;
+import com.bob.db.repository.*;
+import com.bob.db.dto.JobPositionsDTO;
+import com.bob.db.entity.JobPostingLocation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -49,11 +49,11 @@ public class JobPostingLocationService {
     }
 
     public JobPostingLocation getByPositionIdPostingLocation(UUID positionId) {
-        return jobPostingLocationRepository.findByPositionId(positionId);
+        return jobPostingLocationRepository.findByPositionId2(positionId);
     }
 
     public void updatePostingLocation(JobPositionsDTO jobPositionsDTO, UUID positionId) {
-        JobPostingLocation existingLocation = jobPostingLocationRepository.findByPositionId(positionId);
+        JobPostingLocation existingLocation = jobPostingLocationRepository.findByPositionId2(positionId);
         if (existingLocation != null) {
             existingLocation.setDept_id(jobPositionsDTO.getDept_id());
             existingLocation.setLocation_id(jobPositionsDTO.getLocation_id());

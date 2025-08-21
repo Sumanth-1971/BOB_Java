@@ -1,13 +1,13 @@
 package com.bob.candidatedetails.Service;
 
 import com.bob.candidatedetails.Mapper.InterviewMapper;
-import com.bob.candidatedetails.Model.Candidates;
-import com.bob.candidatedetails.Model.Interviews;
-import com.bob.candidatedetails.Model.Position;
-import com.bob.candidatedetails.Repository.CandidateRepository;
-import com.bob.candidatedetails.Repository.InterviewsRepository;
-import com.bob.candidatedetails.Repository.PositionRepository;
-import com.bob.candidatedetails.dto.InterviewResponse;
+import com.bob.db.entity.Candidates;
+import com.bob.db.entity.Interviews;
+import com.bob.db.entity.Position;
+import com.bob.db.repository.CandidateRepository;
+import com.bob.db.repository.InterviewsRepository;
+import com.bob.db.repository.PositionRepository;
+import com.bob.db.dto.InterviewResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
