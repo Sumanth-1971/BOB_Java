@@ -55,7 +55,8 @@ public class CandidateService {
         List<CandidateDetails> candidateDetailsList = new ArrayList<>();
         for (CandidateApplications candidateApplications : candidateApplicationsList) {
             CandidateDetails candidateDetails = new CandidateDetails();
-            List<FileInfo> fileInfoList = candidateDocumentsRepository.getFileDetails(candidateApplications.getCandidate_id());
+//            List<FileInfo> fileInfoList = candidateDocumentsRepository.getFileDetails(candidateApplications.getCandidate_id());
+            String fileUrl=candidateRepository.findById(candidateApplications.getCandidate_id()).get().getFile_url();
             List<Long> locationIds= jobPostingLocationRepository.findByPositionId(position_id);
             Location location=locationRepository.findById(locationIds.get(0)).orElse(null);
             candidateDetails.setLocation_details(Map.of(location.getLocation_id(), location.getLocation_name()));
@@ -65,7 +66,7 @@ public class CandidateService {
             candidateDetails.setState_details(Map.of(state.getState_id(), state.getState_name()));
             Country country = countryRepository.findById(state.getCountry_id()).orElse(null);
             candidateDetails.setCountry_details(Map.of(country.getCountry_id(), country.getCountry_name()));
-            System.out.println("File Info List: " + fileInfoList);
+//            System.out.println("File Info List: " + fileInfoList);
             candidateDetails.setCandidate_id(candidateApplications.getCandidate_id());
             candidateDetails.setFull_name(candidateRepository.findById(candidateApplications.getCandidate_id()).get().getFull_name());
             candidateDetails.setUsername(candidateRepository.findById(candidateApplications.getCandidate_id()).get().getUsername());
@@ -77,7 +78,7 @@ public class CandidateService {
             candidateDetails.setAddress(candidateRepository.findById(candidateApplications.getCandidate_id()).get().getAddress());
             candidateDetails.setGender(candidateRepository.findById(candidateApplications.getCandidate_id()).get().getGender());
             candidateDetails.setSpecial_category_id(candidateRepository.findById(candidateApplications.getCandidate_id()).get().getSpecial_category_id());
-            candidateDetails.setFileInfo(fileInfoList);
+            candidateDetails.setFileUrl(fileUrl);
             candidateDetails.setApplication_status(candidateApplications.getApplication_status());
 
             candidateDetailsList.add(candidateDetails);
@@ -137,6 +138,8 @@ public class CandidateService {
             String candidateName = candidate.getFull_name();
             String candidateEmail = candidate.getEmail();
 
+            String candidateFileUrl=candidate.getFile_url();
+
             // Fetch application and validate status
             List<CandidateApplications> applications = candidateApplicationsRepository
                     .findByCandidateIdAndPositionId(candidateId, positionId);
@@ -166,11 +169,19 @@ public class CandidateService {
                     emailData
             );
 
-            boolean interviewerMailSent = sendEmailWithRetryMechanism(
+//            boolean interviewerMailSent = sendEmailWithRetryMechanism(
+//                    interviewerEmail,
+//                    "Interview Scheduled: " + candidateName + " for " + positionTitle,
+//                    "Interviewer",
+//                    emailData
+//            );
+
+            boolean interviewerMailSent = sendEmailWithAttachmentRetry(
                     interviewerEmail,
                     "Interview Scheduled: " + candidateName + " for " + positionTitle,
-                    "Interviewer",
-                    emailData
+                    "Interviewer"
+                    ,emailData
+                    ,candidateFileUrl
             );
 
             if (!candidateMailSent || !interviewerMailSent) {
@@ -325,7 +336,9 @@ public class CandidateService {
                         });
                     });
                 }
-
+                if(candidateApplications.getCandidate_id()==null){
+                    continue;
+                }
                 candidateDetails.setCandidate_id(candidateApplications.getCandidate_id());
                 candidateDetails.setFull_name(candidateRepository.findById(candidateApplications.getCandidate_id()).get().getFull_name());
                 candidateDetails.setUsername(candidateRepository.findById(candidateApplications.getCandidate_id()).get().getUsername());
@@ -337,8 +350,8 @@ public class CandidateService {
                 candidateDetails.setTotal_experience(candidateRepository.findById(candidateApplications.getCandidate_id()).get().getTotal_experience());
                 candidateDetails.setAddress(candidateRepository.findById(candidateApplications.getCandidate_id()).get().getAddress());
                 candidateDetails.setSpecial_category_id(candidateRepository.findById(candidateApplications.getCandidate_id()).get().getSpecial_category_id());
-                List<FileInfo> fileInfoList = candidateDocumentsRepository.getFileDetails(candidateApplications.getCandidate_id());
-                candidateDetails.setFileInfo(fileInfoList);
+                String fileUrl=candidateRepository.findById(candidateApplications.getCandidate_id()).get().getFile_url();
+                candidateDetails.setFileUrl(fileUrl);
                 if (candidateApplications.getApplication_status().equals(status)) {
                     candidateDetails.setApplication_status(candidateApplications.getApplication_status());
                 } else {
@@ -377,6 +390,9 @@ public class CandidateService {
                     });
                 });
             }
+            if(candidateApplications.getCandidate_id()==null){
+                continue;
+            }
             candidateDetails.setCandidate_id(candidateApplications.getCandidate_id());
             candidateDetails.setFull_name(candidateRepository.findById(candidateApplications.getCandidate_id()).get().getFull_name());
             candidateDetails.setUsername(candidateRepository.findById(candidateApplications.getCandidate_id()).get().getUsername());
@@ -388,8 +404,8 @@ public class CandidateService {
             candidateDetails.setTotal_experience(candidateRepository.findById(candidateApplications.getCandidate_id()).get().getTotal_experience());
             candidateDetails.setAddress(candidateRepository.findById(candidateApplications.getCandidate_id()).get().getAddress());
             candidateDetails.setSpecial_category_id(candidateRepository.findById(candidateApplications.getCandidate_id()).get().getSpecial_category_id());
-            List<FileInfo> fileInfoList = candidateDocumentsRepository.getFileDetails(candidateApplications.getCandidate_id());
-            candidateDetails.setFileInfo(fileInfoList);
+            String fileUrl=candidateRepository.findById(candidateApplications.getCandidate_id()).get().getFile_url();
+            candidateDetails.setFileUrl(fileUrl);
             candidateDetails.setApplication_status(candidateApplications.getApplication_status());
             candidateDetailsList.add(candidateDetails);
         }
@@ -451,14 +467,14 @@ public class CandidateService {
             emailData.put("TIME", interviewDetails.getTime().toString());
             boolean candidateMailSent = sendEmailWithRetryMechanism(
                     candidateEmail,
-                    "Interview Scheduled for " + positionTitle,
+                    "Interview Rescheduled for " + positionTitle,
                     "CandidateRescheduled",
                     emailData
             );
 
             boolean interviewerMailSent = sendEmailWithRetryMechanism(
                     users.getEmail(),
-                    "Interview Scheduled: " + candidateName + " for " + positionTitle,
+                    "Interview Rescheduled: " + candidateName + " for " + positionTitle,
                     "InterviewerRescheduled",
                     emailData
             );
@@ -510,12 +526,15 @@ public class CandidateService {
                         emailData
                 );
 
+
                 boolean interviewerMailSent = sendEmailWithRetryMechanism(
                         users.getEmail(),
-                        "Interview Scheduled: " + candidateName + " for " + positionTitle,
-                        "Interviewer",
+                        "Interview Cancelled: " + candidateName + " for " + positionTitle,
+                        "InterviewerCancelled",
                         emailData
                 );
+
+
 
                 if (!candidateMailSent || !interviewerMailSent) {
                     return "Failed to send one or both interview scheduling emails!";

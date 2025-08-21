@@ -29,7 +29,7 @@ public class CandidateDetailsApplication extends SpringBootServletInitializer {
 //import org.springframework.cloud.openfeign.EnableFeignClients;
 //
 //import java.util.TimeZone;
-
+//
 //@SpringBootApplication
 //@EnableFeignClients
 //public class CandidateDetailsApplication {

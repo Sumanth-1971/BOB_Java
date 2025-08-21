@@ -43,13 +43,13 @@ public class CandidateDetails {
 
     private String application_status;
 
-    private List<FileInfo> fileInfo;
+    private String fileUrl;
 
 
     public CandidateDetails() {
     }
 
-    public CandidateDetails(UUID candidate_id, String full_name, String username, Map<Long, String> country_details, Map<Long, String> state_details, Map<Long, String> location_details, Map<Long, String> city_details, String email, String gender, String phone, Integer reservation_category_id, Integer special_category_id, Integer highest_qualification, String total_experience, String address, String comments, String application_status, List<FileInfo> fileInfo) {
+    public CandidateDetails(UUID candidate_id, String full_name, String username, Map<Long, String> country_details, Map<Long, String> state_details, Map<Long, String> location_details, Map<Long, String> city_details, String email, String gender, String phone, Integer reservation_category_id, Integer special_category_id, Integer highest_qualification, String total_experience, String address, String comments, String application_status, String fileUrl) {
         this.candidate_id = candidate_id;
         this.full_name = full_name;
         this.username = username;
@@ -67,7 +67,7 @@ public class CandidateDetails {
         this.address = address;
         this.comments = comments;
         this.application_status = application_status;
-        this.fileInfo = fileInfo;
+        this.fileUrl=fileUrl;
     }
 
     public UUID getCandidate_id() {
@@ -204,11 +204,11 @@ public class CandidateDetails {
         this.application_status = application_status;
     }
 
-    public List<FileInfo> getFileInfo() {
-        return fileInfo;
+    public String getFileUrl() {
+        return fileUrl;
     }
 
-    public void setFileInfo(List<FileInfo> fileInfo) {
-        this.fileInfo = fileInfo;
+    public void setFileUrl(String fileUrl) {
+        this.fileUrl = fileUrl;
     }
 }

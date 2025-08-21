@@ -66,7 +66,7 @@ public class MailService {
 
             UrlResource pdfResource = new UrlResource(path);
             System.out.println(path);
-            helper.addAttachment("OfferLetter.pdf", pdfResource);
+            helper.addAttachment(getFileNameFromPath(path), pdfResource);
             mailSender.send(message);
 
             return "Mail Sent with attachment!";
@@ -74,6 +74,12 @@ public class MailService {
             return "Error sending email due to" + e.getMessage();
         }
     }
-
+    private String getFileNameFromPath(String path) {
+        if (path == null || path.isEmpty()) {
+            return "attachment";
+        }
+        String[] parts = path.split("/");
+        return parts[parts.length - 1];
+    }
 
 }
