@@ -15,4 +15,6 @@ public interface JobPositionsRepository extends JpaRepository<Positions, UUID> {
     List<Positions> findAllByRequisitionId(@Param("requisitionId") UUID requisitionId);
 
 
+
+
 }

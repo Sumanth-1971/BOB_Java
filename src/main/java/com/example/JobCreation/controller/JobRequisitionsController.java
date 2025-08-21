@@ -21,6 +21,7 @@ public class JobRequisitionsController {
     @Autowired
     JobRequisitionsService jobRequisitionsService;
 
+
     @GetMapping("/getreq")
     public ResponseEntity<ApiResponse<List<JobRequisitionDTO>>> getAll() {
         List<JobRequisitionDTO> jobRequisitionsList = jobRequisitionsService.getAll();

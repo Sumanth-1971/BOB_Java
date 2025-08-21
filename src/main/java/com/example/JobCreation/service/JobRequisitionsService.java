@@ -8,6 +8,7 @@ import com.example.JobCreation.model.JobRequisitions;
 import com.example.JobCreation.repository.JobPositionsRepository;
 import com.example.JobCreation.repository.JobRequisitionsRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -19,11 +20,13 @@ import java.util.stream.Collectors;
 @Service
 public class JobRequisitionsService {
 
+    private final JobPositionService jobPositionService;
+
+    public JobRequisitionsService(@Lazy JobPositionService jobPositionService) {
+        this.jobPositionService = jobPositionService;
+    }
     @Autowired
     private JobRequisitionsRepository jobRequisitionsRepository;
-    @Autowired
-    private JobPositionsRepository jobPositionsRepository;
-
     public List<JobRequisitionDTO>  getAll(){
         List<JobRequisitions> jobRequisitions =  jobRequisitionsRepository.findAll().stream().filter(
                 jobRequisition -> jobRequisition.getIsactive() == 1).collect(Collectors.toList());
@@ -49,7 +52,10 @@ public class JobRequisitionsService {
 
                     // set count separately
                     dto.setCount(
-                            jobPositionsRepository.findAllByRequisitionId(jobRequisition.getRequisition_id()).size()
+                     jobPositionService.findByReqId(jobRequisition.getRequisition_id())
+                            .stream()
+                            .mapToInt(JobPositionsDTO::getNo_of_vacancies) // convert to IntStream
+                            .sum() // sum the no_of_vacancies
                     );
 
                     return dto;

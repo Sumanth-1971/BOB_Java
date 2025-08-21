@@ -6,6 +6,7 @@ import com.example.JobCreation.model.*;
 import com.example.JobCreation.repository.JobPositionsRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -34,9 +35,11 @@ public class JobPositionService{
     private JobPositionsRepository jobPositionsRepository;
 
     //microservices
-    @Autowired
-    private JobRequisitionsService jobRequisitionsService;
+    private final JobRequisitionsService jobRequisitionsService;
 
+    public JobPositionService(@Lazy JobRequisitionsService jobRequisitionsService) {
+        this.jobRequisitionsService = jobRequisitionsService;
+    }
 
 
     private JobPositionsDTO setValuesDTO(Positions positions,
