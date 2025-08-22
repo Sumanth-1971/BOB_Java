@@ -365,6 +365,8 @@ public class JobPositionService{
                     JobSelectionProcess jobSelectionProcess = jobSelectionProcessService.getByPositionIdSelectionProcess(position.getPosition_id());
                     JobVacancies jobVacancies = jobVacanciesService.getByPositionIdJobVacancies(position.getPosition_id());
                     JobPositionsDTO jobPositionsDTO = setValuesDTO(position, jobPostingLocation, jobVacancies, jobSelectionProcess);
+                    jobPositionsDTO.setRequisition_code(requisition.getRequisition_code());
+                    jobPositionsDTO.setRequisition_title(requisition.getRequisition_title());
                     activePositions.add(jobPositionsDTO);
                 }
             }

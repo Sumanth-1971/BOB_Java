@@ -10,7 +10,8 @@ public class JobPositionsDTO {
     private UUID position_id;
     private UUID requisition_id;
     private String position_title;
-
+    private String Requisition_code;
+    private String Requisition_title;
     private String position_code;
     private String description;
     private String roles_responsibilities;
@@ -61,10 +62,12 @@ public class JobPositionsDTO {
     public JobPositionsDTO() {
     }
 
-    public JobPositionsDTO(UUID position_id, UUID requisition_id, String position_title, String position_code, String description, String roles_responsibilities, Integer grade_id, String employment_type, Integer eligibility_age_min, Integer eligibility_age_max, String mandatory_qualification, String preferred_qualification, BigDecimal mandatory_experience, BigDecimal preferred_experience, BigDecimal probation_period, String documents_required, BigDecimal min_credit_score, Integer dept_id, Long location_id, Integer special_cat_id, Integer reservation_cat_id, Integer no_of_vacancies, String selection_procedure, String position_status) {
+    public JobPositionsDTO(UUID position_id, UUID requisition_id, String position_title, String requisition_code, String requisition_title, String position_code, String description, String roles_responsibilities, Integer grade_id, String employment_type, Integer eligibility_age_min, Integer eligibility_age_max, String mandatory_qualification, String preferred_qualification, BigDecimal mandatory_experience, BigDecimal preferred_experience, BigDecimal probation_period, String documents_required, BigDecimal min_credit_score, Integer dept_id, Long location_id, Integer special_cat_id, Integer reservation_cat_id, Integer no_of_vacancies, String selection_procedure, String position_status) {
         this.position_id = position_id;
         this.requisition_id = requisition_id;
         this.position_title = position_title;
+        Requisition_code = requisition_code;
+        Requisition_title = requisition_title;
         this.position_code = position_code;
         this.description = description;
         this.roles_responsibilities = roles_responsibilities;
@@ -276,5 +279,18 @@ public class JobPositionsDTO {
 
     public void setPosition_status(String position_status) {
         this.position_status = position_status;
+    }
+
+    public String getRequisition_code() {
+        return Requisition_code;
+    }
+    public void setRequisition_code(String requisition_code) {
+        Requisition_code = requisition_code;
+    }
+    public String getRequisition_title() {
+        return Requisition_title;
+    }
+    public void setRequisition_title(String requisition_title) {
+        Requisition_title = requisition_title;
     }
 }
