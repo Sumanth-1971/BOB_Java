@@ -16,6 +16,9 @@
     <name>CandidateDetails</name>
     <description>Spring Boot application Candidate Details</description>
 
+    <!-- Change packaging from JAR to WAR -->
+    <packaging>war</packaging>
+
     <dependencies>
         <!-- Shared config module -->
         <dependency>
