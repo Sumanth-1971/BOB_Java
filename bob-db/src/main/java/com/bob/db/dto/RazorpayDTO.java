@@ -1,5 +1,6 @@
 package com.bob.db.dto;
 
+
 import java.time.LocalDateTime;
 import java.util.Map;
 
@@ -18,12 +19,14 @@ public class RazorpayDTO {
     private String candidateId;
     private String positionId;
 
+    private String requisitionCode;
+
     public RazorpayDTO() {
     }
 
     public RazorpayDTO(Long id, String orderId, Integer amount, String currency, String status, String receipt,
                        Map<String, Object> notes, String paymentId, String signature, Integer capturedAmount,
-                       LocalDateTime createdAt, LocalDateTime updatedAt, String candidateId, String positionId) {
+                       LocalDateTime createdAt, LocalDateTime updatedAt, String candidateId, String positionId,String requisitionCode) {
         this.id = id;
         this.orderId = orderId;
         this.amount = amount;
@@ -36,6 +39,7 @@ public class RazorpayDTO {
         this.createdAt = createdAt;
         this.candidateId = candidateId;
         this.positionId = positionId;
+        this.requisitionCode = requisitionCode;
     }
 
     public Long getId() {
@@ -132,5 +136,12 @@ public class RazorpayDTO {
 
     public void setPositionId(String positionId) {
         this.positionId = positionId;
+    }
+
+    public String getRequisitionCode() {
+        return requisitionCode;
+    }
+    public void setRequisitionCode(String requisitionCode) {
+        this.requisitionCode = requisitionCode;
     }
 }

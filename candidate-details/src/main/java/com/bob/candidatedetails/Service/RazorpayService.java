@@ -2,6 +2,7 @@ package com.bob.candidatedetails.Service;
 
 import com.bob.db.entity.RazorpayOrdersResponse;
 import com.bob.db.repository.CandidatesRepository;
+import com.bob.db.repository.JobRequisitionsRepository;
 import com.bob.db.repository.PositionsRepository;
 import com.bob.db.repository.RazorpayOrderRepository;
 import com.bob.db.dto.RazorpayDTO;
@@ -29,6 +30,9 @@ public class RazorpayService {
 
     @Autowired
     private PositionsRepository positionsRepository;
+
+    @Autowired
+    private JobRequisitionsRepository jobRequisitionsRepository;
 
     public List<RazorpayOrdersResponse> getAllRazorpayOrders() {
         List<RazorpayDTO> razorpayOrdersList = razorpayOrderRepository.findAll()
@@ -87,6 +91,9 @@ public class RazorpayService {
                         if (dto.getPositionId() != null) {
                             PositionsEntity p = positionsById.get(UUID.fromString(dto.getPositionId()));
                             if (p != null) {
+                                RazorpayDTO details = r.getRazorpayOrderDetails();
+                                details.setRequisitionCode(jobRequisitionsRepository.findById(p.getRequisitionId()).orElse(null).getRequisition_code());
+                                r.setRazorpayOrderDetails(details);
                                 r.setPositionTitle(p.getPositionTitle());
                                 r.setPositionDescription(p.getDescription());
                             }
