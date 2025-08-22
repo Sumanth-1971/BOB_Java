@@ -1,5 +1,6 @@
 package com.example.CandidateDetails.Service;
 
+import com.example.CandidateDetails.CandidateDetailsApplication;
 import com.example.CandidateDetails.Feign.FeignPositionDTO;
 import com.example.CandidateDetails.Model.*;
 import com.example.CandidateDetails.Repository.*;
@@ -66,18 +67,35 @@ public class CandidateService {
             candidateDetails.setState_details(Map.of(state.getState_id(), state.getState_name()));
             Country country = countryRepository.findById(state.getCountry_id()).orElse(null);
             candidateDetails.setCountry_details(Map.of(country.getCountry_id(), country.getCountry_name()));
+            UUID candidateId=candidateApplications.getCandidate_id();
+            Candidates candidates=candidateRepository.findById(candidateApplications.getCandidate_id()).get();
+
 //            System.out.println("File Info List: " + fileInfoList);
-            candidateDetails.setCandidate_id(candidateApplications.getCandidate_id());
-            candidateDetails.setFull_name(candidateRepository.findById(candidateApplications.getCandidate_id()).get().getFull_name());
-            candidateDetails.setUsername(candidateRepository.findById(candidateApplications.getCandidate_id()).get().getUsername());
-            candidateDetails.setEmail(candidateRepository.findById(candidateApplications.getCandidate_id()).get().getEmail());
-            candidateDetails.setPhone(candidateRepository.findById(candidateApplications.getCandidate_id()).get().getPhone());
-            candidateDetails.setReservation_category_id(candidateRepository.findById(candidateApplications.getCandidate_id()).get().getReservation_category_id());
-            candidateDetails.setHighest_qualification(candidateRepository.findById(candidateApplications.getCandidate_id()).get().getHighest_qualification_id());
-            candidateDetails.setTotal_experience(candidateRepository.findById(candidateApplications.getCandidate_id()).get().getTotal_experience());
-            candidateDetails.setAddress(candidateRepository.findById(candidateApplications.getCandidate_id()).get().getAddress());
-            candidateDetails.setGender(candidateRepository.findById(candidateApplications.getCandidate_id()).get().getGender());
-            candidateDetails.setSpecial_category_id(candidateRepository.findById(candidateApplications.getCandidate_id()).get().getSpecial_category_id());
+//            candidateDetails.setCandidate_id(candidateApplications.getCandidate_id());
+//            candidateDetails.setFull_name(candidateRepository.findById(candidateApplications.getCandidate_id()).get().getFull_name());
+//            candidateDetails.setUsername(candidateRepository.findById(candidateApplications.getCandidate_id()).get().getUsername());
+//            candidateDetails.setEmail(candidateRepository.findById(candidateApplications.getCandidate_id()).get().getEmail());
+//            candidateDetails.setPhone(candidateRepository.findById(candidateApplications.getCandidate_id()).get().getPhone());
+//            candidateDetails.setReservation_category_id(candidateRepository.findById(candidateApplications.getCandidate_id()).get().getReservation_category_id());
+//            candidateDetails.setHighest_qualification(candidateRepository.findById(candidateApplications.getCandidate_id()).get().getHighest_qualification_id());
+//            candidateDetails.setTotal_experience(candidateRepository.findById(candidateApplications.getCandidate_id()).get().getTotal_experience());
+//            candidateDetails.setAddress(candidateRepository.findById(candidateApplications.getCandidate_id()).get().getAddress());
+//            candidateDetails.setGender(candidateRepository.findById(candidateApplications.getCandidate_id()).get().getGender());
+//            candidateDetails.setSpecial_category_id(candidateRepository.findById(candidateApplications.getCandidate_id()).get().getSpecial_category_id());
+//            candidateDetails.setFileUrl(fileUrl);
+//            candidateDetails.setApplication_status(candidateApplications.getApplication_status());
+
+            candidateDetails.setCandidate_id(candidateId);
+            candidateDetails.setFull_name(candidates.getFull_name());
+            candidateDetails.setUsername(candidates.getUsername());
+            candidateDetails.setEmail(candidates.getEmail());
+            candidateDetails.setPhone(candidates.getPhone());
+            candidateDetails.setReservation_category_id(candidates.getReservation_category_id());
+            candidateDetails.setHighest_qualification(candidates.getHighest_qualification_id());
+            candidateDetails.setTotal_experience(candidates.getTotal_experience());
+            candidateDetails.setAddress(candidates.getAddress());
+            candidateDetails.setGender(candidates.getGender());
+            candidateDetails.setSpecial_category_id(candidates.getSpecial_category_id());
             candidateDetails.setFileUrl(fileUrl);
             candidateDetails.setApplication_status(candidateApplications.getApplication_status());
 
@@ -110,6 +128,7 @@ public class CandidateService {
     @Transactional
     public String scheduleInterview(Interviewdto interviewdto) {
         try {
+
             if (interviewdto.getCandidate_id() == null || interviewdto.getPosition_id() == null) {
                 return "Invalid input data: Candidate, User, or Position ID is missing.";
             }
@@ -339,19 +358,19 @@ public class CandidateService {
                 if(candidateApplications.getCandidate_id()==null){
                     continue;
                 }
-                candidateDetails.setCandidate_id(candidateApplications.getCandidate_id());
-                candidateDetails.setFull_name(candidateRepository.findById(candidateApplications.getCandidate_id()).get().getFull_name());
-                candidateDetails.setUsername(candidateRepository.findById(candidateApplications.getCandidate_id()).get().getUsername());
-                candidateDetails.setEmail(candidateRepository.findById(candidateApplications.getCandidate_id()).get().getEmail());
-                candidateDetails.setPhone(candidateRepository.findById(candidateApplications.getCandidate_id()).get().getPhone());
-                candidateDetails.setGender(candidateRepository.findById(candidateApplications.getCandidate_id()).get().getGender());
-                candidateDetails.setReservation_category_id(candidateRepository.findById(candidateApplications.getCandidate_id()).get().getReservation_category_id());
-                candidateDetails.setHighest_qualification(candidateRepository.findById(candidateApplications.getCandidate_id()).get().getHighest_qualification_id());
-                candidateDetails.setTotal_experience(candidateRepository.findById(candidateApplications.getCandidate_id()).get().getTotal_experience());
-                candidateDetails.setAddress(candidateRepository.findById(candidateApplications.getCandidate_id()).get().getAddress());
-                candidateDetails.setSpecial_category_id(candidateRepository.findById(candidateApplications.getCandidate_id()).get().getSpecial_category_id());
-                String fileUrl=candidateRepository.findById(candidateApplications.getCandidate_id()).get().getFile_url();
-                candidateDetails.setFileUrl(fileUrl);
+//                candidateDetails.setCandidate_id(candidateApplications.getCandidate_id());
+//                candidateDetails.setFull_name(candidateRepository.findById(candidateApplications.getCandidate_id()).get().getFull_name());
+//                candidateDetails.setUsername(candidateRepository.findById(candidateApplications.getCandidate_id()).get().getUsername());
+//                candidateDetails.setEmail(candidateRepository.findById(candidateApplications.getCandidate_id()).get().getEmail());
+//                candidateDetails.setPhone(candidateRepository.findById(candidateApplications.getCandidate_id()).get().getPhone());
+//                candidateDetails.setGender(candidateRepository.findById(candidateApplications.getCandidate_id()).get().getGender());
+//                candidateDetails.setReservation_category_id(candidateRepository.findById(candidateApplications.getCandidate_id()).get().getReservation_category_id());
+//                candidateDetails.setHighest_qualification(candidateRepository.findById(candidateApplications.getCandidate_id()).get().getHighest_qualification_id());
+//                candidateDetails.setTotal_experience(candidateRepository.findById(candidateApplications.getCandidate_id()).get().getTotal_experience());
+//                candidateDetails.setAddress(candidateRepository.findById(candidateApplications.getCandidate_id()).get().getAddress());
+//                candidateDetails.setSpecial_category_id(candidateRepository.findById(candidateApplications.getCandidate_id()).get().getSpecial_category_id());
+//                String fileUrl=candidateRepository.findById(candidateApplications.getCandidate_id()).get().getFile_url();
+//                candidateDetails.setFileUrl(fileUrl);
                 if (candidateApplications.getApplication_status().equals(status)) {
                     candidateDetails.setApplication_status(candidateApplications.getApplication_status());
                 } else {
@@ -393,18 +412,36 @@ public class CandidateService {
             if(candidateApplications.getCandidate_id()==null){
                 continue;
             }
-            candidateDetails.setCandidate_id(candidateApplications.getCandidate_id());
-            candidateDetails.setFull_name(candidateRepository.findById(candidateApplications.getCandidate_id()).get().getFull_name());
-            candidateDetails.setUsername(candidateRepository.findById(candidateApplications.getCandidate_id()).get().getUsername());
-            candidateDetails.setEmail(candidateRepository.findById(candidateApplications.getCandidate_id()).get().getEmail());
-            candidateDetails.setPhone(candidateRepository.findById(candidateApplications.getCandidate_id()).get().getPhone());
-            candidateDetails.setGender(candidateRepository.findById(candidateApplications.getCandidate_id()).get().getGender());
-            candidateDetails.setReservation_category_id(candidateRepository.findById(candidateApplications.getCandidate_id()).get().getReservation_category_id());
-            candidateDetails.setHighest_qualification(candidateRepository.findById(candidateApplications.getCandidate_id()).get().getHighest_qualification_id());
-            candidateDetails.setTotal_experience(candidateRepository.findById(candidateApplications.getCandidate_id()).get().getTotal_experience());
-            candidateDetails.setAddress(candidateRepository.findById(candidateApplications.getCandidate_id()).get().getAddress());
-            candidateDetails.setSpecial_category_id(candidateRepository.findById(candidateApplications.getCandidate_id()).get().getSpecial_category_id());
-            String fileUrl=candidateRepository.findById(candidateApplications.getCandidate_id()).get().getFile_url();
+            UUID candidateId=candidateApplications.getCandidate_id();
+            Candidates candidates=candidateRepository.findById(candidateId).get();
+//            candidateDetails.setCandidate_id(candidateApplications.getCandidate_id());
+//            candidateDetails.setFull_name(candidateRepository.findById(candidateApplications.getCandidate_id()).get().getFull_name());
+//            candidateDetails.setUsername(candidateRepository.findById(candidateApplications.getCandidate_id()).get().getUsername());
+//            candidateDetails.setEmail(candidateRepository.findById(candidateApplications.getCandidate_id()).get().getEmail());
+//            candidateDetails.setPhone(candidateRepository.findById(candidateApplications.getCandidate_id()).get().getPhone());
+//            candidateDetails.setGender(candidateRepository.findById(candidateApplications.getCandidate_id()).get().getGender());
+//            candidateDetails.setReservation_category_id(candidateRepository.findById(candidateApplications.getCandidate_id()).get().getReservation_category_id());
+//            candidateDetails.setHighest_qualification(candidateRepository.findById(candidateApplications.getCandidate_id()).get().getHighest_qualification_id());
+//            candidateDetails.setTotal_experience(candidateRepository.findById(candidateApplications.getCandidate_id()).get().getTotal_experience());
+//            candidateDetails.setAddress(candidateRepository.findById(candidateApplications.getCandidate_id()).get().getAddress());
+//            candidateDetails.setSpecial_category_id(candidateRepository.findById(candidateApplications.getCandidate_id()).get().getSpecial_category_id());
+//            String fileUrl=candidateRepository.findById(candidateApplications.getCandidate_id()).get().getFile_url();
+//            candidateDetails.setFileUrl(fileUrl);
+//            candidateDetails.setApplication_status(candidateApplications.getApplication_status());
+//            candidateDetailsList.add(candidateDetails);
+
+            candidateDetails.setCandidate_id(candidateId);
+            candidateDetails.setFull_name(candidates.getFull_name());
+            candidateDetails.setUsername(candidates.getUsername());
+            candidateDetails.setEmail(candidates.getEmail());
+            candidateDetails.setPhone(candidates.getPhone());
+            candidateDetails.setGender(candidates.getGender());
+            candidateDetails.setReservation_category_id(candidates.getReservation_category_id());
+            candidateDetails.setHighest_qualification(candidates.getHighest_qualification_id());
+            candidateDetails.setTotal_experience(candidates.getTotal_experience());
+            candidateDetails.setAddress(candidates.getAddress());
+            candidateDetails.setSpecial_category_id(candidates.getSpecial_category_id());
+            String fileUrl=candidates.getFile_url();
             candidateDetails.setFileUrl(fileUrl);
             candidateDetails.setApplication_status(candidateApplications.getApplication_status());
             candidateDetailsList.add(candidateDetails);
@@ -482,13 +519,20 @@ public class CandidateService {
             if (!candidateMailSent || !interviewerMailSent) {
                 return "Failed to send one or both interview scheduling emails!";
             }
+            CandidateApplications candidateApplications=candidateApplicationsRepository.findByCandidateIdAndPositionId(candidate_id, position_id).get(0);
+
             Interviews interviews1=interviews;
                 LocalDateTime scheduleTime = LocalDateTime.of(
                         interviewDetails.getDate(),
                         interviewDetails.getTime()
                 );
+                LocalDateTime currentTime = LocalDateTime.now();
                 interviews1.setSchedule_at(scheduleTime);
                 interviews1.setStatus("Rescheduled");
+
+                candidateApplications.setApplication_status("Rescheduled");
+                candidateApplications.setUpdated_date(currentTime);
+                candidateApplicationsRepository.save(candidateApplications);
                 interviewerRepository.save(interviews1);
                 return "Interview Rescheduled!";
         }
@@ -521,7 +565,7 @@ public class CandidateService {
             if(interviews1!=null){
                 boolean candidateMailSent = sendEmailWithRetryMechanism(
                         candidateEmail,
-                        "Interview Scheduled for " + positionTitle,
+                        "Interview Cancelled for " + positionTitle,
                         "CandidateCancelled",
                         emailData
                 );
@@ -539,8 +583,13 @@ public class CandidateService {
                 if (!candidateMailSent || !interviewerMailSent) {
                     return "Failed to send one or both interview scheduling emails!";
                 }
+                CandidateApplications candidateApplications =candidateApplicationsRepository.findByCandidateIdAndPositionId(candidate_id, position_id).get(0);
+                LocalDateTime currentTime = LocalDateTime.now();
+                candidateApplications.setApplication_status("Cancelled");
                 interviews1.setStatus("Cancelled");
+                candidateApplications.setUpdated_date(currentTime);
                 interviewerRepository.save(interviews1);
+                candidateApplicationsRepository.save(candidateApplications);
                 return "Interview Cancelled!";
             }
         }
