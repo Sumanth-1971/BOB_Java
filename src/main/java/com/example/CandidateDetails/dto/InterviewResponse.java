@@ -14,4 +14,5 @@ public class InterviewResponse {
     private String interviewTitle;
     private String candidateName;
     private String candidateSkill;
+    private String applicationStatus;
 }

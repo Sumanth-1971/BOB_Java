@@ -14,7 +14,7 @@ public class InterviewMapper {
         response.setInterviewTitle(Util.nullcheckString(position.getPosition_title()));
         response.setCandidateName(Util.nullcheckString(candidate.getFull_name()));
         response.setCandidateSkill(Util.nullcheckString(candidate.getCurrent_designation()));
-
+        response.setApplicationStatus(Util.nullcheckString(interview.getStatus()));
         return response;
     }
 }

@@ -2,6 +2,7 @@ package com.example.CandidateDetails.Service;
 
 import com.example.CandidateDetails.Model.RazorpayOrdersResponse;
 import com.example.CandidateDetails.Repository.CandidatesRepository;
+import com.example.CandidateDetails.Repository.JobRequisitionsRepository;
 import com.example.CandidateDetails.Repository.PositionsRepository;
 import com.example.CandidateDetails.Repository.RazorpayOrderRepository;
 import com.example.CandidateDetails.dto.RazorpayDTO;
@@ -27,6 +28,8 @@ public class RazorpayService {
     @Autowired
     private CandidatesRepository candidatesRepository;
 
+    @Autowired
+    private JobRequisitionsRepository jobRequisitionsRepository;
     @Autowired
     private PositionsRepository positionsRepository;
 
@@ -87,6 +90,9 @@ public class RazorpayService {
                         if (dto.getPositionId() != null) {
                             PositionsEntity p = positionsById.get(UUID.fromString(dto.getPositionId()));
                             if (p != null) {
+                                RazorpayDTO details = r.getRazorpayOrderDetails();
+                                details.setRequisitionCode(jobRequisitionsRepository.findById(p.getRequisitionId()).orElse(null).getRequisition_code());
+                                r.setRazorpayOrderDetails(details);
                                 r.setPositionTitle(p.getPositionTitle());
                                 r.setPositionDescription(p.getDescription());
                             }

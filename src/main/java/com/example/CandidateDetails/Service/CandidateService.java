@@ -358,19 +358,23 @@ public class CandidateService {
                 if(candidateApplications.getCandidate_id()==null){
                     continue;
                 }
-//                candidateDetails.setCandidate_id(candidateApplications.getCandidate_id());
-//                candidateDetails.setFull_name(candidateRepository.findById(candidateApplications.getCandidate_id()).get().getFull_name());
-//                candidateDetails.setUsername(candidateRepository.findById(candidateApplications.getCandidate_id()).get().getUsername());
-//                candidateDetails.setEmail(candidateRepository.findById(candidateApplications.getCandidate_id()).get().getEmail());
-//                candidateDetails.setPhone(candidateRepository.findById(candidateApplications.getCandidate_id()).get().getPhone());
-//                candidateDetails.setGender(candidateRepository.findById(candidateApplications.getCandidate_id()).get().getGender());
-//                candidateDetails.setReservation_category_id(candidateRepository.findById(candidateApplications.getCandidate_id()).get().getReservation_category_id());
-//                candidateDetails.setHighest_qualification(candidateRepository.findById(candidateApplications.getCandidate_id()).get().getHighest_qualification_id());
-//                candidateDetails.setTotal_experience(candidateRepository.findById(candidateApplications.getCandidate_id()).get().getTotal_experience());
-//                candidateDetails.setAddress(candidateRepository.findById(candidateApplications.getCandidate_id()).get().getAddress());
-//                candidateDetails.setSpecial_category_id(candidateRepository.findById(candidateApplications.getCandidate_id()).get().getSpecial_category_id());
-//                String fileUrl=candidateRepository.findById(candidateApplications.getCandidate_id()).get().getFile_url();
-//                candidateDetails.setFileUrl(fileUrl);
+                UUID candidateId=candidateApplications.getCandidate_id();
+                Candidates candidates=candidateRepository.findById(candidateId).get();
+
+                candidateDetails.setCandidate_id(candidateId);
+                candidateDetails.setFull_name(candidates.getFull_name());
+                candidateDetails.setUsername(candidates.getUsername());
+                candidateDetails.setEmail(candidates.getEmail());
+                candidateDetails.setPhone(candidates.getPhone());
+                candidateDetails.setGender(candidates.getGender());
+                candidateDetails.setReservation_category_id(candidates.getReservation_category_id());
+                candidateDetails.setHighest_qualification(candidates.getHighest_qualification_id());
+                candidateDetails.setTotal_experience(candidates.getTotal_experience());
+                candidateDetails.setAddress(candidates.getAddress());
+                candidateDetails.setSpecial_category_id(candidates.getSpecial_category_id());
+                String fileUrl=candidates.getFile_url();
+                candidateDetails.setFileUrl(fileUrl);
+                candidateDetails.setApplication_status(candidateApplications.getApplication_status());
                 if (candidateApplications.getApplication_status().equals(status)) {
                     candidateDetails.setApplication_status(candidateApplications.getApplication_status());
                 } else {
@@ -414,21 +418,7 @@ public class CandidateService {
             }
             UUID candidateId=candidateApplications.getCandidate_id();
             Candidates candidates=candidateRepository.findById(candidateId).get();
-//            candidateDetails.setCandidate_id(candidateApplications.getCandidate_id());
-//            candidateDetails.setFull_name(candidateRepository.findById(candidateApplications.getCandidate_id()).get().getFull_name());
-//            candidateDetails.setUsername(candidateRepository.findById(candidateApplications.getCandidate_id()).get().getUsername());
-//            candidateDetails.setEmail(candidateRepository.findById(candidateApplications.getCandidate_id()).get().getEmail());
-//            candidateDetails.setPhone(candidateRepository.findById(candidateApplications.getCandidate_id()).get().getPhone());
-//            candidateDetails.setGender(candidateRepository.findById(candidateApplications.getCandidate_id()).get().getGender());
-//            candidateDetails.setReservation_category_id(candidateRepository.findById(candidateApplications.getCandidate_id()).get().getReservation_category_id());
-//            candidateDetails.setHighest_qualification(candidateRepository.findById(candidateApplications.getCandidate_id()).get().getHighest_qualification_id());
-//            candidateDetails.setTotal_experience(candidateRepository.findById(candidateApplications.getCandidate_id()).get().getTotal_experience());
-//            candidateDetails.setAddress(candidateRepository.findById(candidateApplications.getCandidate_id()).get().getAddress());
-//            candidateDetails.setSpecial_category_id(candidateRepository.findById(candidateApplications.getCandidate_id()).get().getSpecial_category_id());
-//            String fileUrl=candidateRepository.findById(candidateApplications.getCandidate_id()).get().getFile_url();
-//            candidateDetails.setFileUrl(fileUrl);
-//            candidateDetails.setApplication_status(candidateApplications.getApplication_status());
-//            candidateDetailsList.add(candidateDetails);
+
 
             candidateDetails.setCandidate_id(candidateId);
             candidateDetails.setFull_name(candidates.getFull_name());
