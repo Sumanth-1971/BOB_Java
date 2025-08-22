@@ -1,4 +1,4 @@
-package com.bob.CandidateDetails.Model;
+package com.bob.db.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;

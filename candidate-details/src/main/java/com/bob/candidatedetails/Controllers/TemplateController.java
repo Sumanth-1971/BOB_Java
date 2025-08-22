@@ -1,8 +1,8 @@
 package com.bob.candidatedetails.Controllers;
 
-import com.bob.CandidateDetails.Model.Templates;
-import com.bob.CandidateDetails.Service.TemplateService;
+import com.bob.candidatedetails.Service.TemplateService;
 import com.bob.db.dto.ApiResponse;
+import com.bob.db.entity.Templates;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

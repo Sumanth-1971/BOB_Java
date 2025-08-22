@@ -1,6 +1,6 @@
-package com.bob.CandidateDetails.Repository;
+package com.bob.db.repository;
 
-import com.bob.CandidateDetails.Model.Templates;
+import com.bob.db.entity.Templates;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
