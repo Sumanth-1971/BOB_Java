@@ -64,7 +64,8 @@ public class CandidateService {
         List<CandidateDetails> candidateDetailsList = new ArrayList<>();
         for (CandidateApplications candidateApplications : candidateApplicationsList) {
             CandidateDetails candidateDetails = new CandidateDetails();
-            List<FileInfo> fileInfoList = candidateDocumentsRepository.getFileDetails(candidateApplications.getCandidate_id());
+//            List<FileInfo> fileInfoList = candidateDocumentsRepository.getFileDetails(candidateApplications.getCandidate_id());
+            String fileUrl=candidateRepository.findById(candidateApplications.getCandidate_id()).get().getFile_url();
             List<Long> locationIds= jobPostingLocationRepository.findByPositionId(position_id);
             Location location=locationRepository.findById(locationIds.get(0)).orElse(null);
             candidateDetails.setLocation_details(Map.of(location.getLocation_id(), location.getLocation_name()));
@@ -74,19 +75,36 @@ public class CandidateService {
             candidateDetails.setState_details(Map.of(state.getState_id(), state.getState_name()));
             Country country = countryRepository.findById(state.getCountry_id()).orElse(null);
             candidateDetails.setCountry_details(Map.of(country.getCountry_id(), country.getCountry_name()));
-            System.out.println("File Info List: " + fileInfoList);
-            candidateDetails.setCandidate_id(candidateApplications.getCandidate_id());
-            candidateDetails.setFull_name(candidateRepository.findById(candidateApplications.getCandidate_id()).get().getFull_name());
-            candidateDetails.setUsername(candidateRepository.findById(candidateApplications.getCandidate_id()).get().getUsername());
-            candidateDetails.setEmail(candidateRepository.findById(candidateApplications.getCandidate_id()).get().getEmail());
-            candidateDetails.setPhone(candidateRepository.findById(candidateApplications.getCandidate_id()).get().getPhone());
-            candidateDetails.setReservation_category_id(candidateRepository.findById(candidateApplications.getCandidate_id()).get().getReservation_category_id());
-            candidateDetails.setHighest_qualification(candidateRepository.findById(candidateApplications.getCandidate_id()).get().getHighest_qualification_id());
-            candidateDetails.setTotal_experience(candidateRepository.findById(candidateApplications.getCandidate_id()).get().getTotal_experience());
-            candidateDetails.setAddress(candidateRepository.findById(candidateApplications.getCandidate_id()).get().getAddress());
-            candidateDetails.setGender(candidateRepository.findById(candidateApplications.getCandidate_id()).get().getGender());
-            candidateDetails.setSpecial_category_id(candidateRepository.findById(candidateApplications.getCandidate_id()).get().getSpecial_category_id());
-            candidateDetails.setFileInfo(fileInfoList);
+            UUID candidateId=candidateApplications.getCandidate_id();
+            Candidates candidates=candidateRepository.findById(candidateApplications.getCandidate_id()).get();
+
+//            System.out.println("File Info List: " + fileInfoList);
+//            candidateDetails.setCandidate_id(candidateApplications.getCandidate_id());
+//            candidateDetails.setFull_name(candidateRepository.findById(candidateApplications.getCandidate_id()).get().getFull_name());
+//            candidateDetails.setUsername(candidateRepository.findById(candidateApplications.getCandidate_id()).get().getUsername());
+//            candidateDetails.setEmail(candidateRepository.findById(candidateApplications.getCandidate_id()).get().getEmail());
+//            candidateDetails.setPhone(candidateRepository.findById(candidateApplications.getCandidate_id()).get().getPhone());
+//            candidateDetails.setReservation_category_id(candidateRepository.findById(candidateApplications.getCandidate_id()).get().getReservation_category_id());
+//            candidateDetails.setHighest_qualification(candidateRepository.findById(candidateApplications.getCandidate_id()).get().getHighest_qualification_id());
+//            candidateDetails.setTotal_experience(candidateRepository.findById(candidateApplications.getCandidate_id()).get().getTotal_experience());
+//            candidateDetails.setAddress(candidateRepository.findById(candidateApplications.getCandidate_id()).get().getAddress());
+//            candidateDetails.setGender(candidateRepository.findById(candidateApplications.getCandidate_id()).get().getGender());
+//            candidateDetails.setSpecial_category_id(candidateRepository.findById(candidateApplications.getCandidate_id()).get().getSpecial_category_id());
+//            candidateDetails.setFileUrl(fileUrl);
+//            candidateDetails.setApplication_status(candidateApplications.getApplication_status());
+
+            candidateDetails.setCandidate_id(candidateId);
+            candidateDetails.setFull_name(candidates.getFull_name());
+            candidateDetails.setUsername(candidates.getUsername());
+            candidateDetails.setEmail(candidates.getEmail());
+            candidateDetails.setPhone(candidates.getPhone());
+            candidateDetails.setReservation_category_id(candidates.getReservation_category_id());
+            candidateDetails.setHighest_qualification(candidates.getHighest_qualification_id());
+            candidateDetails.setTotal_experience(candidates.getTotal_experience());
+            candidateDetails.setAddress(candidates.getAddress());
+            candidateDetails.setGender(candidates.getGender());
+            candidateDetails.setSpecial_category_id(candidates.getSpecial_category_id());
+            candidateDetails.setFileUrl(fileUrl);
             candidateDetails.setApplication_status(candidateApplications.getApplication_status());
 
             candidateDetailsList.add(candidateDetails);
@@ -146,6 +164,8 @@ public class CandidateService {
             String candidateName = candidate.getFull_name();
             String candidateEmail = candidate.getEmail();
 
+            String candidateFileUrl=candidate.getFile_url();
+
             // Fetch application and validate status
             List<CandidateApplications> applications = candidateApplicationsRepository
                     .findByCandidateIdAndPositionId(candidateId, positionId);
@@ -175,11 +195,19 @@ public class CandidateService {
                     emailData
             );
 
-            boolean interviewerMailSent = sendEmailWithRetryMechanism(
+//            boolean interviewerMailSent = sendEmailWithRetryMechanism(
+//                    interviewerEmail,
+//                    "Interview Scheduled: " + candidateName + " for " + positionTitle,
+//                    "Interviewer",
+//                    emailData
+//            );
+
+            boolean interviewerMailSent = sendEmailWithAttachmentRetry(
                     interviewerEmail,
                     "Interview Scheduled: " + candidateName + " for " + positionTitle,
-                    "Interviewer",
-                    emailData
+                    "Interviewer"
+                    ,emailData
+                    ,candidateFileUrl
             );
 
             if (!candidateMailSent || !interviewerMailSent) {
@@ -334,20 +362,22 @@ public class CandidateService {
                         });
                     });
                 }
-
-                candidateDetails.setCandidate_id(candidateApplications.getCandidate_id());
-                candidateDetails.setFull_name(candidateRepository.findById(candidateApplications.getCandidate_id()).get().getFull_name());
-                candidateDetails.setUsername(candidateRepository.findById(candidateApplications.getCandidate_id()).get().getUsername());
-                candidateDetails.setEmail(candidateRepository.findById(candidateApplications.getCandidate_id()).get().getEmail());
-                candidateDetails.setPhone(candidateRepository.findById(candidateApplications.getCandidate_id()).get().getPhone());
-                candidateDetails.setGender(candidateRepository.findById(candidateApplications.getCandidate_id()).get().getGender());
-                candidateDetails.setReservation_category_id(candidateRepository.findById(candidateApplications.getCandidate_id()).get().getReservation_category_id());
-                candidateDetails.setHighest_qualification(candidateRepository.findById(candidateApplications.getCandidate_id()).get().getHighest_qualification_id());
-                candidateDetails.setTotal_experience(candidateRepository.findById(candidateApplications.getCandidate_id()).get().getTotal_experience());
-                candidateDetails.setAddress(candidateRepository.findById(candidateApplications.getCandidate_id()).get().getAddress());
-                candidateDetails.setSpecial_category_id(candidateRepository.findById(candidateApplications.getCandidate_id()).get().getSpecial_category_id());
-                List<FileInfo> fileInfoList = candidateDocumentsRepository.getFileDetails(candidateApplications.getCandidate_id());
-                candidateDetails.setFileInfo(fileInfoList);
+                if(candidateApplications.getCandidate_id()==null){
+                    continue;
+                }
+//                candidateDetails.setCandidate_id(candidateApplications.getCandidate_id());
+//                candidateDetails.setFull_name(candidateRepository.findById(candidateApplications.getCandidate_id()).get().getFull_name());
+//                candidateDetails.setUsername(candidateRepository.findById(candidateApplications.getCandidate_id()).get().getUsername());
+//                candidateDetails.setEmail(candidateRepository.findById(candidateApplications.getCandidate_id()).get().getEmail());
+//                candidateDetails.setPhone(candidateRepository.findById(candidateApplications.getCandidate_id()).get().getPhone());
+//                candidateDetails.setGender(candidateRepository.findById(candidateApplications.getCandidate_id()).get().getGender());
+//                candidateDetails.setReservation_category_id(candidateRepository.findById(candidateApplications.getCandidate_id()).get().getReservation_category_id());
+//                candidateDetails.setHighest_qualification(candidateRepository.findById(candidateApplications.getCandidate_id()).get().getHighest_qualification_id());
+//                candidateDetails.setTotal_experience(candidateRepository.findById(candidateApplications.getCandidate_id()).get().getTotal_experience());
+//                candidateDetails.setAddress(candidateRepository.findById(candidateApplications.getCandidate_id()).get().getAddress());
+//                candidateDetails.setSpecial_category_id(candidateRepository.findById(candidateApplications.getCandidate_id()).get().getSpecial_category_id());
+//                String fileUrl=candidateRepository.findById(candidateApplications.getCandidate_id()).get().getFile_url();
+//                candidateDetails.setFileUrl(fileUrl);
                 if (candidateApplications.getApplication_status().equals(status)) {
                     candidateDetails.setApplication_status(candidateApplications.getApplication_status());
                 } else {
@@ -386,19 +416,40 @@ public class CandidateService {
                     });
                 });
             }
-            candidateDetails.setCandidate_id(candidateApplications.getCandidate_id());
-            candidateDetails.setFull_name(candidateRepository.findById(candidateApplications.getCandidate_id()).get().getFull_name());
-            candidateDetails.setUsername(candidateRepository.findById(candidateApplications.getCandidate_id()).get().getUsername());
-            candidateDetails.setEmail(candidateRepository.findById(candidateApplications.getCandidate_id()).get().getEmail());
-            candidateDetails.setPhone(candidateRepository.findById(candidateApplications.getCandidate_id()).get().getPhone());
-            candidateDetails.setGender(candidateRepository.findById(candidateApplications.getCandidate_id()).get().getGender());
-            candidateDetails.setReservation_category_id(candidateRepository.findById(candidateApplications.getCandidate_id()).get().getReservation_category_id());
-            candidateDetails.setHighest_qualification(candidateRepository.findById(candidateApplications.getCandidate_id()).get().getHighest_qualification_id());
-            candidateDetails.setTotal_experience(candidateRepository.findById(candidateApplications.getCandidate_id()).get().getTotal_experience());
-            candidateDetails.setAddress(candidateRepository.findById(candidateApplications.getCandidate_id()).get().getAddress());
-            candidateDetails.setSpecial_category_id(candidateRepository.findById(candidateApplications.getCandidate_id()).get().getSpecial_category_id());
-            List<FileInfo> fileInfoList = candidateDocumentsRepository.getFileDetails(candidateApplications.getCandidate_id());
-            candidateDetails.setFileInfo(fileInfoList);
+            if(candidateApplications.getCandidate_id()==null){
+                continue;
+            }
+            UUID candidateId=candidateApplications.getCandidate_id();
+            Candidates candidates=candidateRepository.findById(candidateId).get();
+//            candidateDetails.setCandidate_id(candidateApplications.getCandidate_id());
+//            candidateDetails.setFull_name(candidateRepository.findById(candidateApplications.getCandidate_id()).get().getFull_name());
+//            candidateDetails.setUsername(candidateRepository.findById(candidateApplications.getCandidate_id()).get().getUsername());
+//            candidateDetails.setEmail(candidateRepository.findById(candidateApplications.getCandidate_id()).get().getEmail());
+//            candidateDetails.setPhone(candidateRepository.findById(candidateApplications.getCandidate_id()).get().getPhone());
+//            candidateDetails.setGender(candidateRepository.findById(candidateApplications.getCandidate_id()).get().getGender());
+//            candidateDetails.setReservation_category_id(candidateRepository.findById(candidateApplications.getCandidate_id()).get().getReservation_category_id());
+//            candidateDetails.setHighest_qualification(candidateRepository.findById(candidateApplications.getCandidate_id()).get().getHighest_qualification_id());
+//            candidateDetails.setTotal_experience(candidateRepository.findById(candidateApplications.getCandidate_id()).get().getTotal_experience());
+//            candidateDetails.setAddress(candidateRepository.findById(candidateApplications.getCandidate_id()).get().getAddress());
+//            candidateDetails.setSpecial_category_id(candidateRepository.findById(candidateApplications.getCandidate_id()).get().getSpecial_category_id());
+//            String fileUrl=candidateRepository.findById(candidateApplications.getCandidate_id()).get().getFile_url();
+//            candidateDetails.setFileUrl(fileUrl);
+//            candidateDetails.setApplication_status(candidateApplications.getApplication_status());
+//            candidateDetailsList.add(candidateDetails);
+
+            candidateDetails.setCandidate_id(candidateId);
+            candidateDetails.setFull_name(candidates.getFull_name());
+            candidateDetails.setUsername(candidates.getUsername());
+            candidateDetails.setEmail(candidates.getEmail());
+            candidateDetails.setPhone(candidates.getPhone());
+            candidateDetails.setGender(candidates.getGender());
+            candidateDetails.setReservation_category_id(candidates.getReservation_category_id());
+            candidateDetails.setHighest_qualification(candidates.getHighest_qualification_id());
+            candidateDetails.setTotal_experience(candidates.getTotal_experience());
+            candidateDetails.setAddress(candidates.getAddress());
+            candidateDetails.setSpecial_category_id(candidates.getSpecial_category_id());
+            String fileUrl=candidates.getFile_url();
+            candidateDetails.setFileUrl(fileUrl);
             candidateDetails.setApplication_status(candidateApplications.getApplication_status());
             candidateDetailsList.add(candidateDetails);
         }
@@ -461,14 +512,14 @@ public class CandidateService {
             emailData.put("TIME", interviewDetails.getTime().toString());
             boolean candidateMailSent = sendEmailWithRetryMechanism(
                     candidateEmail,
-                    "Interview Scheduled for " + positionTitle,
+                    "Interview Rescheduled for " + positionTitle,
                     "CandidateRescheduled",
                     emailData
             );
 
             boolean interviewerMailSent = sendEmailWithRetryMechanism(
                     users.getEmail(),
-                    "Interview Scheduled: " + candidateName + " for " + positionTitle,
+                    "Interview Rescheduled: " + candidateName + " for " + positionTitle,
                     "InterviewerRescheduled",
                     emailData
             );
@@ -476,13 +527,20 @@ public class CandidateService {
             if (!candidateMailSent || !interviewerMailSent) {
                 return "Failed to send one or both interview scheduling emails!";
             }
+            CandidateApplications candidateApplications=candidateApplicationsRepository.findByCandidateIdAndPositionId(candidate_id, position_id).get(0);
+
             Interviews interviews1=interviews;
                 LocalDateTime scheduleTime = LocalDateTime.of(
                         interviewDetails.getDate(),
                         interviewDetails.getTime()
                 );
+                LocalDateTime currentTime = LocalDateTime.now();
                 interviews1.setSchedule_at(scheduleTime);
                 interviews1.setStatus("Rescheduled");
+
+                candidateApplications.setApplication_status("Rescheduled");
+                candidateApplications.setUpdated_date(currentTime);
+                candidateApplicationsRepository.save(candidateApplications);
                 interviewerRepository.save(interviews1);
                 return "Interview Rescheduled!";
         }
@@ -515,23 +573,29 @@ public class CandidateService {
             if(interviews1!=null){
                 boolean candidateMailSent = sendEmailWithRetryMechanism(
                         candidateEmail,
-                        "Interview Scheduled for " + positionTitle,
+                        "Interview Cancelled for " + positionTitle,
                         "CandidateCancelled",
                         emailData
                 );
 
+
                 boolean interviewerMailSent = sendEmailWithRetryMechanism(
                         users.getEmail(),
-                        "Interview Scheduled: " + candidateName + " for " + positionTitle,
-                        "Interviewer",
+                        "Interview Cancelled: " + candidateName + " for " + positionTitle,
+                        "InterviewerCancelled",
                         emailData
                 );
 
                 if (!candidateMailSent || !interviewerMailSent) {
                     return "Failed to send one or both interview scheduling emails!";
                 }
+                CandidateApplications candidateApplications =candidateApplicationsRepository.findByCandidateIdAndPositionId(candidate_id, position_id).get(0);
+                LocalDateTime currentTime = LocalDateTime.now();
+                candidateApplications.setApplication_status("Cancelled");
                 interviews1.setStatus("Cancelled");
+                candidateApplications.setUpdated_date(currentTime);
                 interviewerRepository.save(interviews1);
+                candidateApplicationsRepository.save(candidateApplications);
                 return "Interview Cancelled!";
             }
         }
@@ -551,9 +615,9 @@ public class CandidateService {
             candidateApplications.setApplication_date(time);
             candidateApplications.setUpdated_date(time);
             candidateApplicationsRepository.save(candidateApplications);
-            return "Applied for interview!";
+            return "Applied for Job!";
         }catch (Exception e){
-            return "Couldn't Apply!";
+            return " Couldn't Apply!";
         }
     }
 

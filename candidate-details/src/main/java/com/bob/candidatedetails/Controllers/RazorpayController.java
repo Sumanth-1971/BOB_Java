@@ -1,8 +1,8 @@
-package com.example.CandidateDetails.Controllers;
+package com.bob.candidatedetails.Controllers;
 
-import com.example.CandidateDetails.Model.RazorpayOrdersResponse;
-import com.example.CandidateDetails.Service.RazorpayService;
-import com.example.CandidateDetails.dto.ApiResponse;
+import com.bob.candidatedetails.Service.RazorpayService;
+import com.bob.db.dto.ApiResponse;
+import com.bob.db.entity.RazorpayOrdersResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

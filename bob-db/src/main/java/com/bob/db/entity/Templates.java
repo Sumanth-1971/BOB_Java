@@ -1,4 +1,4 @@
-package com.example.CandidateDetails.Model;
+package com.bob.CandidateDetails.Model;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;

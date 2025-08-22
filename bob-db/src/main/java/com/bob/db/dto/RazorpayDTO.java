@@ -38,39 +38,99 @@ public class RazorpayDTO {
         this.positionId = positionId;
     }
 
-    public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
+    public Long getId() {
+        return id;
+    }
 
-    public String getOrderId() { return orderId; }
-    public void setOrderId(String orderId) { this.orderId = orderId; }
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-    public Integer getAmount() { return amount; }
-    public void setAmount(Integer amount) { this.amount = amount; }
+    public String getOrderId() {
+        return orderId;
+    }
 
-    public String getCurrency() { return currency; }
-    public void setCurrency(String currency) { this.currency = currency; }
+    public void setOrderId(String orderId) {
+        this.orderId = orderId;
+    }
 
-    public String getStatus() { return status; }
-    public void setStatus(String status) { this.status = status; }
+    public Integer getAmount() {
+        return amount;
+    }
 
-    public String getReceipt() { return receipt; }
-    public void setReceipt(String receipt) { this.receipt = receipt; }
+    public void setAmount(Integer amount) {
+        this.amount = amount;
+    }
 
-    public Map<String, Object> getNotes() { return notes; }
-    public void setNotes(Map<String, Object> notes) { this.notes = notes; }
+    public String getCurrency() {
+        return currency;
+    }
 
-    public String getPaymentId() { return paymentId; }
-    public void setPaymentId(String paymentId) { this.paymentId = paymentId; }
+    public void setCurrency(String currency) {
+        this.currency = currency;
+    }
 
-    public Integer getCapturedAmount() { return capturedAmount; }
-    public void setCapturedAmount(Integer capturedAmount) { this.capturedAmount = capturedAmount; }
+    public String getStatus() {
+        return status;
+    }
 
-    public LocalDateTime getCreatedAt() { return createdAt; }
-    public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
+    public void setStatus(String status) {
+        this.status = status;
+    }
 
-    public String getCandidateId() { return candidateId; }
-    public void setCandidateId(String candidateId) { this.candidateId = candidateId; }
+    public String getReceipt() {
+        return receipt;
+    }
 
-    public String getPositionId() { return positionId; }
-    public void setPositionId(String positionId) { this.positionId = positionId; }
+    public void setReceipt(String receipt) {
+        this.receipt = receipt;
+    }
+
+    public Map<String, Object> getNotes() {
+        return notes;
+    }
+
+    public void setNotes(Map<String, Object> notes) {
+        this.notes = notes;
+    }
+
+    public String getPaymentId() {
+        return paymentId;
+    }
+
+    public void setPaymentId(String paymentId) {
+        this.paymentId = paymentId;
+    }
+
+    public Integer getCapturedAmount() {
+        return capturedAmount;
+    }
+
+    public void setCapturedAmount(Integer capturedAmount) {
+        this.capturedAmount = capturedAmount;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public String getCandidateId() {
+        return candidateId;
+    }
+
+    public void setCandidateId(String candidateId) {
+        this.candidateId = candidateId;
+    }
+
+    public String getPositionId() {
+        return positionId;
+    }
+
+    public void setPositionId(String positionId) {
+        this.positionId = positionId;
+    }
 }

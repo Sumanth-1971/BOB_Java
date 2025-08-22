@@ -1,13 +1,13 @@
-package com.example.CandidateDetails.Service;
+package com.bob.candidatedetails.Service;
 
-import com.example.CandidateDetails.Model.RazorpayOrdersResponse;
-import com.example.CandidateDetails.Repository.CandidatesRepository;
-import com.example.CandidateDetails.Repository.PositionsRepository;
-import com.example.CandidateDetails.Repository.RazorpayOrderRepository;
-import com.example.CandidateDetails.dto.RazorpayDTO;
-import com.example.CandidateDetails.entity.CandidatesEntity;
-import com.example.CandidateDetails.entity.PositionsEntity;
-import com.example.CandidateDetails.entity.RazorpayOrderEntity;
+import com.bob.db.entity.RazorpayOrdersResponse;
+import com.bob.db.repository.CandidatesRepository;
+import com.bob.db.repository.PositionsRepository;
+import com.bob.db.repository.RazorpayOrderRepository;
+import com.bob.db.dto.RazorpayDTO;
+import com.bob.db.entity.CandidatesEntity;
+import com.bob.db.entity.PositionsEntity;
+import com.bob.db.entity.RazorpayOrderEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

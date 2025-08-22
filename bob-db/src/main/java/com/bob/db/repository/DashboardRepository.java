@@ -1,4 +1,4 @@
-package com.example.JobCreation.repository;
+package com.bob.JobCreation.repository;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;

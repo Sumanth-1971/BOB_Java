@@ -1,4 +1,4 @@
-package com.example.JobCreation.dto;
+package com.bob.JobCreation.dto;
 
 import java.util.List;
 import java.util.UUID;

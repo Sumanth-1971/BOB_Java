@@ -1,7 +1,7 @@
 <component name="ProjectRunConfigurationManager">
   <configuration default="false" name="CandidateDetailsApplication" type="Application" factoryName="Application">
     <option name="MAIN_CLASS_NAME" value="com.bob.candidatedetails.CandidateDetailsApplication" />
-    <module name="CandidateDetails (1)" />
+    <module name="CandidateDetails" />
     <extension name="coverage">
       <pattern>
         <option name="PATTERN" value="com.bob.candidatedetails.*" />

@@ -15,9 +15,11 @@ public class CorsConfig {
                 registry.addMapping("/**") // Allow all endpoints
                         .allowedOrigins(
                                 "http://localhost:3000",
+                                "https://localhost:8082",
                                 "https://bobrec.sentrifugo.com",
                                 "https://bobcan.sentrifugo.com",
-                                "http://docs.sentrifugo.com:8080"
+                                "http://docs.sentrifugo.com:8080",
+                                "https://bobjava.sentrifugo.com:8443/"
                         ) // Frontend origins
                         .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
                         .allowedHeaders("*")

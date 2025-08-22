@@ -41,7 +41,7 @@ public class Candidates {
 
     private Integer highest_qualification_id;
 
-    @Column
+    @Column(name = "total_experience", columnDefinition = "text")
     private String total_experience;
 
     @Column(name = "address", columnDefinition = "TEXT")

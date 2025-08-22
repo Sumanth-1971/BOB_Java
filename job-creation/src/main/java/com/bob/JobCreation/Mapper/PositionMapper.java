@@ -1,10 +1,10 @@
-package com.example.JobCreation.Mapper;
+package com.bob.JobCreation.Mapper;
 
-import com.example.JobCreation.dto.JobPositionsDTO;
-import com.example.JobCreation.model.JobPostingLocation;
-import com.example.JobCreation.model.JobSelectionProcess;
-import com.example.JobCreation.model.JobVacancies;
-import com.example.JobCreation.model.Positions;
+import com.bob.db.dto.JobPositionsDTO;
+import com.bob.db.entity.JobPostingLocation;
+import com.bob.db.entity.JobSelectionProcess;
+import com.bob.db.entity.JobVacancies;
+import com.bob.db.entity.Positions;
 
 public class PositionMapper {
 

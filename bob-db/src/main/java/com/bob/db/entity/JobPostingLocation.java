@@ -1,8 +1,6 @@
 package com.bob.db.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 
 import java.util.UUID;
 
@@ -10,9 +8,8 @@ import java.util.UUID;
 @Table(name = "job_posting_location")
 public class JobPostingLocation {
     @Id
-    private Integer posting_location_id;
-
-
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer posting_location_id ;
     private UUID position_id;
     private Integer dept_id;
 

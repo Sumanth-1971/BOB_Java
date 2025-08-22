@@ -1,10 +1,10 @@
 package com.bob.JobCreation.controller;
 
+import com.bob.JobCreation.service.JobRequisitionsService;
 import com.bob.db.dto.ApiResponse;
 import com.bob.db.dto.JobPostingDTO;
-import com.bob.db.dto.JobRequisitionApprovalRequest;
 import com.bob.db.entity.JobRequisitions;
-import com.bob.JobCreation.service.JobRequisitionsService;
+import jdk.jfr.Description;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,12 +19,13 @@ public class JobRequisitionsController {
     @Autowired
     JobRequisitionsService jobRequisitionsService;
 
+
     @GetMapping("/getreq")
-    public ResponseEntity<ApiResponse<List<JobRequisitions>>> getAll() {
-        List<JobRequisitions> jobRequisitionsList = jobRequisitionsService.getAll();
+    public ResponseEntity<ApiResponse<List<com.bob.JobCreation.dto.JobRequisitionDTO>>> getAll() {
+        List<com.bob.JobCreation.dto.JobRequisitionDTO> jobRequisitionsList = jobRequisitionsService.getAll();
 
         if (jobRequisitionsList.isEmpty()) {
-            ApiResponse<List<JobRequisitions>> apiResponse = new ApiResponse<>(
+            ApiResponse<List<com.bob.JobCreation.dto.JobRequisitionDTO>> apiResponse = new ApiResponse<>(
                     false,
                     "No job requisitions found",
                     jobRequisitionsList
@@ -32,7 +33,7 @@ public class JobRequisitionsController {
             return new ResponseEntity<>(apiResponse, HttpStatus.NOT_FOUND);
         }
 
-        ApiResponse<List<JobRequisitions>> apiResponse = new ApiResponse<>(
+        ApiResponse<List<com.bob.JobCreation.dto.JobRequisitionDTO>> apiResponse = new ApiResponse<>(
                 true,
                 "Active jobs found",
                 jobRequisitionsList
@@ -41,7 +42,9 @@ public class JobRequisitionsController {
     }
 
     @GetMapping("/getByStatus/{requisitionStatus}")
+    @Description("Get job requisitions by status")
     public ResponseEntity<ApiResponse<List<JobRequisitions>>> getByStatus(@PathVariable String requisitionStatus) {
+
         List<JobRequisitions> jobRequisitionsList = jobRequisitionsService.findByRequisitionStatus( requisitionStatus);
 
         if (jobRequisitionsList.isEmpty()) {
@@ -60,8 +63,6 @@ public class JobRequisitionsController {
         );
         return new ResponseEntity<>(apiResponse, HttpStatus.OK);
     }
-
-
 
     @PostMapping("/create_requisitions")
     public ResponseEntity<ApiResponse<JobRequisitions>> createRequisitions(@RequestBody JobRequisitions jobRequisitions){
@@ -108,8 +109,6 @@ public class JobRequisitionsController {
         }
     }
 
-
-
     @PutMapping("/update_requisitions")
     public ResponseEntity<ApiResponse<JobRequisitions>> updateRequisitions(@RequestBody JobRequisitions jobRequisitions){
         try{
@@ -137,7 +136,6 @@ public class JobRequisitionsController {
     @GetMapping("/active_requisitions")
     public ResponseEntity<ApiResponse<?>>  getActiveRequisitions() {
         List<JobRequisitions> activeJobs = jobRequisitionsService.getActiveRequisitions();
-
         if (activeJobs.isEmpty()) {
             ApiResponse<List<JobRequisitions>> apiResponse = new ApiResponse<>(
                     false,
@@ -155,6 +153,27 @@ public class JobRequisitionsController {
         return new ResponseEntity<>(apiResponse, HttpStatus.OK);
     }
 
+    @DeleteMapping("/delete_requisitions/{requisition_id}")
+    public ResponseEntity<ApiResponse<?>> deleteRequisitions(@PathVariable UUID requisition_id) {
+        try {
+            String res = jobRequisitionsService.deleteRequisitions(requisition_id);
+            ApiResponse<JobRequisitions> apiResponse =new ApiResponse<>(true,"Delete Successful",null);
+            return  new ResponseEntity<>(apiResponse,HttpStatus.OK);
+        }catch (Exception e){
+            ApiResponse<JobRequisitions> apiResponse =new ApiResponse<>(false,"Failed to Delete",null);
+            return  new ResponseEntity<>(apiResponse,HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    private boolean checkFields(JobRequisitions jobRequisitions) {
+        return jobRequisitions.getRequisition_title() == null || jobRequisitions.getRequisition_title().trim().isEmpty()
+                || jobRequisitions.getRequisition_description() == null || jobRequisitions.getRequisition_description().trim().isEmpty()
+                || jobRequisitions.getRegistration_start_date() == null
+                || jobRequisitions.getRegistration_end_date() == null
+                || jobRequisitions.getNo_of_positions() <= 0;
+    }
+
+    //job posting
     @PostMapping("/job_postings")
     public ResponseEntity<ApiResponse<?>> createJobPostings(@RequestBody JobPostingDTO jobPostings) {
         try {
@@ -174,48 +193,49 @@ public class JobRequisitionsController {
         }
     }
 
-    @DeleteMapping("/delete_requisitions/{requisition_id}")
-    public ResponseEntity<ApiResponse<?>> deleteRequisitions(@PathVariable UUID requisition_id) {
+    @PutMapping("/approve_job_postings")
+    public ResponseEntity<ApiResponse<?>> updateJobPostings(@RequestBody com.bob.JobCreation.dto.JobPostingUpdateDTO jobPostings) {
         try {
-            String res = jobRequisitionsService.deleteRequisitions(requisition_id);
-            ApiResponse<JobRequisitions> apiResponse =new ApiResponse<>(true,"Delete Successful",null);
-            return  new ResponseEntity<>(apiResponse,HttpStatus.OK);
-        }catch (Exception e){
-            ApiResponse<JobRequisitions> apiResponse =new ApiResponse<>(false,"Failed to Delete",null);
-            return  new ResponseEntity<>(apiResponse,HttpStatus.BAD_REQUEST);
-        }
-    }
-
-
-    @PostMapping("/approval_submission")
-    public ResponseEntity<ApiResponse<?>> approvalSubmission(@RequestBody JobRequisitionApprovalRequest jobRequisitionApprovalRequest){
-        try {
-            String result = "[";
-            for (UUID requisitionId : jobRequisitionApprovalRequest.getRequisition_id_list()) {
-                result +="{requisitionId="+requisitionId+",approval_status='";
-                result += jobRequisitionsService.approvalSubmission(requisitionId,
-                        jobRequisitionApprovalRequest.getApproval_status(),
-                        jobRequisitionApprovalRequest.getUser_id(),
-                        jobRequisitionApprovalRequest.getComments(),
-                        jobRequisitionApprovalRequest.getUser_role());
-                result +="'},";
+            if (jobPostings == null || jobPostings.getRequisitionId() == null || jobPostings.getStatus() == null || jobPostings.getRole() == null){
+                return ResponseEntity
+                        .badRequest()
+                        .body(new ApiResponse<>(false, "Job postings list cannot be empty", null));
             }
-            result = result.substring(0, result.length() - 1);
-            result +="]";
-            ApiResponse<String> apiResponse = new ApiResponse<>(true, "Approval/Denial submission successful", result);
+
+            String response = jobRequisitionsService.updateJobPostings(jobPostings);
+
+            ApiResponse<String> apiResponse = new ApiResponse<>(true, "Job postings updated successfully", response);
             return new ResponseEntity<>(apiResponse, HttpStatus.OK);
-        }catch (Exception e) {
-            ApiResponse<String> apiResponse = new ApiResponse<>(false, "Failed to submit approval/denial: " + e.getMessage(), null);
+        } catch (Exception e) {
+            ApiResponse<String> apiResponse = new ApiResponse<>(false, "Failed to update job postings: " + e.getMessage(), null);
             return new ResponseEntity<>(apiResponse, HttpStatus.BAD_REQUEST);
         }
     }
 
-    private boolean checkFields(JobRequisitions jobRequisitions) {
-        return jobRequisitions.getRequisition_title() == null || jobRequisitions.getRequisition_title().trim().isEmpty()
-                || jobRequisitions.getRequisition_description() == null || jobRequisitions.getRequisition_description().trim().isEmpty()
-                || jobRequisitions.getRegistration_start_date() == null
-                || jobRequisitions.getRegistration_end_date() == null
-                || jobRequisitions.getNo_of_positions() <= 0;
+    @GetMapping("/need_approval/{role}")
+    public ResponseEntity<ApiResponse<List<JobRequisitions>>> getJobPostingsNeedApproval(@PathVariable String role) {
+        try {
+            List<JobRequisitions> jobRequisitionsList = jobRequisitionsService.getJobPostingsNeedApproval(role);
+
+            if (jobRequisitionsList.isEmpty()) {
+                ApiResponse<List<JobRequisitions>> apiResponse = new ApiResponse<>(
+                        false,
+                        "No job postings found that need approval for role: " + role,
+                        jobRequisitionsList
+                );
+                return new ResponseEntity<>(apiResponse, HttpStatus.NOT_FOUND);
+            }
+
+            ApiResponse<List<JobRequisitions>> apiResponse = new ApiResponse<>(
+                    true,
+                    "Job postings found that need approval for role: " + role,
+                    jobRequisitionsList
+            );
+            return new ResponseEntity<>(apiResponse, HttpStatus.OK);
+        } catch (Exception e) {
+            ApiResponse<List<JobRequisitions>> apiResponse = new ApiResponse<>(false, "Failed to retrieve job postings: " + e.getMessage(), null);
+            return new ResponseEntity<>(apiResponse, HttpStatus.BAD_REQUEST);
+        }
     }
 
 }

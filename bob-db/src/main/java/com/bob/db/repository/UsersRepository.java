@@ -9,7 +9,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface UsersRepository extends JpaRepository<Users, Long> {
+public interface UsersRepository extends JpaRepository<Users, Integer> {
 
     @Query(value = "SELECT * FROM users WHERE role = :role", nativeQuery = true)
     List<Users> findByRole(@Param("role") String role);

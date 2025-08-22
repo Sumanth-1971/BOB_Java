@@ -24,11 +24,11 @@ public class City {
     public City() {
     }
 
-    public City(Long city_id, String city_name, Long state_id, String created_by) {
+    public City(Long city_id, String city_name, Long state_id, LocalDateTime created_date, String created_by) {
         this.city_id = city_id;
         this.city_name = city_name;
         this.state_id = state_id;
-        this.created_date = LocalDateTime.now();
+        this.created_date = created_date;
         this.created_by = created_by;
     }
 

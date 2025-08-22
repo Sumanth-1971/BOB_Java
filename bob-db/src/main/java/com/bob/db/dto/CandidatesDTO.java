@@ -175,11 +175,9 @@ public class CandidatesDTO {
     public String getTotal_experience() {
         return total_experience;
     }
-
     public void setTotal_experience(String total_experience) {
         this.total_experience = total_experience;
     }
-
     public String getAddress() {
         return address;
     }

@@ -1,9 +1,8 @@
-package com.example.CandidateDetails.Controllers;
+package com.bob.candidatedetails.Controllers;
 
-import com.example.CandidateDetails.Model.Candidates;
-import com.example.CandidateDetails.Model.Templates;
-import com.example.CandidateDetails.Service.TemplateService;
-import com.example.CandidateDetails.dto.ApiResponse;
+import com.bob.CandidateDetails.Model.Templates;
+import com.bob.CandidateDetails.Service.TemplateService;
+import com.bob.db.dto.ApiResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

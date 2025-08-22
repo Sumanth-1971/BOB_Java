@@ -3,6 +3,8 @@ package com.bob.candidatedetails.Service;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ByteArrayResource;
+import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
@@ -63,7 +65,7 @@ public class MailService {
 
             UrlResource pdfResource = new UrlResource(path);
             System.out.println(path);
-            helper.addAttachment("OfferLetter.pdf", pdfResource);
+            helper.addAttachment(getFileNameFromPath(path), pdfResource);
             mailSender.send(message);
 
             return "Mail Sent with attachment!";
@@ -71,6 +73,12 @@ public class MailService {
             return "Error sending email due to" + e.getMessage();
         }
     }
-
+    private String getFileNameFromPath(String path) {
+        if (path == null || path.isEmpty()) {
+            return "attachment";
+        }
+        String[] parts = path.split("/");
+        return parts[parts.length - 1];
+    }
 
 }

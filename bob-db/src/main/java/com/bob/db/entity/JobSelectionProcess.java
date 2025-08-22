@@ -11,6 +11,7 @@ public class JobSelectionProcess {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer job_selection_id;
     private UUID position_id;
+    @Column(name = "selection_procedure", columnDefinition = "text")
     private String selection_procedure;
 
     public JobSelectionProcess() {

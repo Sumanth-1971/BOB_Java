@@ -1,44 +1,74 @@
 package com.bob.JobCreation.service;
 
-import com.bob.db.entity.*;
-import com.bob.db.repository.AuditTrailRepository;
+import com.bob.JobCreation.dto.JobPostingUpdateDTO;
+import com.bob.JobCreation.dto.JobRequisitionDTO;
+import com.bob.db.dto.JobPositionsDTO;
 import com.bob.db.dto.JobPostingDTO;
+import com.bob.db.entity.JobRequisitions;
 import com.bob.db.repository.JobRequisitionsRepository;
-import com.bob.db.repository.UserRepository;
-import com.bob.db.repository.WorkflowApprovalEntityRepository;
-import com.bob.JobCreation.util.AppConstants;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
 public class JobRequisitionsService {
 
-    @Autowired
-    JobRequisitionsRepository jobRequisitionsRepository;
+    private final JobPositionService jobPositionService;
 
+    public JobRequisitionsService(@Lazy JobPositionService jobPositionService) {
+        this.jobPositionService = jobPositionService;
+    }
     @Autowired
-    UserRepository userRepository;
+    private JobRequisitionsRepository jobRequisitionsRepository;
+    public List<JobRequisitionDTO>  getAll(){
+        List<JobRequisitions> jobRequisitions =  jobRequisitionsRepository.findAll().stream().filter(
+                jobRequisition -> jobRequisition.getIsactive() == 1).collect(Collectors.toList());
+        if (jobRequisitions.isEmpty()) {
+            return null;
+        }
+        List<JobRequisitionDTO> jobRequisitionDTOS = jobRequisitions.stream()
+                .map(jobRequisition -> {
+                    JobRequisitionDTO dto = new JobRequisitionDTO(
+                            jobRequisition.getRequisition_id(),
+                            jobRequisition.getRequisition_code(),
+                            jobRequisition.getRequisition_title(),
+                            jobRequisition.getRequisition_description(),
+                            jobRequisition.getRegistration_start_date(),
+                            jobRequisition.getRegistration_end_date(),
+                            jobRequisition.getRequisition_status(),
+                            jobRequisition.getRequisition_comments(),
+                            jobRequisition.getRequisition_approval(),
+                            jobRequisition.getNo_of_positions(),
+                            jobRequisition.getJob_postings(),
+                            jobRequisition.getRequisition_approval_notes()
+                    );
 
-    @Autowired
-    WorkflowApprovalEntityRepository workflowApprovalEntityRepository;
+                    // set count separately
+                    dto.setCount(
+                     jobPositionService.findByReqId(jobRequisition.getRequisition_id())
+                            .stream()
+                            .mapToInt(JobPositionsDTO::getNo_of_vacancies) // convert to IntStream
+                            .sum() // sum the no_of_vacancies
+                    );
 
-    @Autowired
-    AuditTrailRepository auditTrailRepository;
+                    return dto;
+                })
+                .collect(Collectors.toList());
 
-    public List<JobRequisitions>  getAll(){
-        return jobRequisitionsRepository.findAll();
+        return jobRequisitionDTOS;
     }
 
     public List<JobRequisitions> findByRequisitionStatus(String requisitionStatus){
-        return jobRequisitionsRepository.findByRequisitionStatus(requisitionStatus);
+        return jobRequisitionsRepository.findByRequisitionStatus(requisitionStatus)
+                .stream().filter(jobRequisition -> jobRequisition.getIsactive()==1).collect(Collectors.toList());
     }
+
     public JobRequisitions createRequisitions(JobRequisitions jobRequisitions){
         jobRequisitions.setRequisition_code("JREQ-" +(1000+ jobRequisitionsRepository.count()));
         jobRequisitions.setRequisition_id(UUID.randomUUID());
@@ -48,7 +78,6 @@ public class JobRequisitionsService {
         jobRequisitions.setUpdated_date(tme);
         return jobRequisitionsRepository.save(jobRequisitions);
     }
-
     public List<JobRequisitions> createBulkRequistions(List<JobRequisitions> jobRequisitionsList) {
         LocalDateTime tme = LocalDateTime.now();
         for (JobRequisitions jobRequisitions : jobRequisitionsList) {
@@ -60,8 +89,6 @@ public class JobRequisitionsService {
         }
         return jobRequisitionsRepository.saveAll(jobRequisitionsList);
     }
-
-
     public JobRequisitions updateRequisitions(JobRequisitions jobRequisitions){
         JobRequisitions jobRequisitions1 = jobRequisitionsRepository.findById(jobRequisitions.getRequisition_id())
                 .orElseThrow(() -> new RuntimeException("Requisition not found with ID: " + jobRequisitions.getRequisition_id()));
@@ -79,173 +106,127 @@ public class JobRequisitionsService {
         jobRequisitions.setUpdated_date(LocalDateTime.now());
         return jobRequisitionsRepository.save(jobRequisitions);
     }
-
     public String deleteRequisitions(UUID id) {
         try {
             if (!jobRequisitionsRepository.existsById(id)) {
                 return "Requisition not found";
             }
-            jobRequisitionsRepository.deleteById(id);
+            //SOFT DELETING
+            JobRequisitions jobRequisitions = jobRequisitionsRepository.findById(id).orElseThrow(() -> new RuntimeException("Requisition not found with ID: " + id));
+            jobRequisitions.setIsactive(0);
+            jobRequisitions.setUpdated_date(LocalDateTime.now());
+            jobRequisitionsRepository.save(jobRequisitions);
+            //jobRequisitionsRepository.deleteById(id);
             return "Deleted Successful";
         }catch (Exception e){
             return "Deleted Unsuccessful"+e.getMessage() ;
         }
     }
-
     public String createJobPostings(JobPostingDTO jobPostings) throws Exception {
-
         try {
             for (UUID jobRequisitionsId : jobPostings.getRequisition_id()) {
                 if (!jobRequisitionsRepository.existsById(jobRequisitionsId)) {
                     return "Requisition with ID " + jobRequisitionsId + " does not exist.";
                 }
             }
-            String externalJobPostings = jobPostings.getJob_postings().stream().collect(Collectors.joining(","));
+
+            String result = jobPostings.getJob_postings().stream().collect(Collectors.joining(","));
             if( jobPostings.getApproval_status().equals("Direct Approval") ) {
                 for (UUID jobRequisitionsId : jobPostings.getRequisition_id()) {
                     JobRequisitions jobRequisitions = jobRequisitionsRepository.findById(jobRequisitionsId).orElse(null);
                     if (jobRequisitions != null) {
-                        jobRequisitions.setJob_postings(externalJobPostings);
+                        jobRequisitions.setJob_postings(result);
                         jobRequisitions.setRequisition_status("Approved");
                         jobRequisitions.setRequisition_approval("Direct Approval");
                         jobRequisitionsRepository.save(jobRequisitions);
                     }
                 }
-            } else if (jobPostings.getApproval_status().equals(AppConstants.APPROVAL_STATUS_WORKFLOW) ){
+            } else if (jobPostings.getApproval_status().equals("Workflow") ){
                 for (UUID jobRequisitionsId : jobPostings.getRequisition_id()) {
-                    JobRequisitions jobRequisition = jobRequisitionsRepository.findById(jobRequisitionsId).orElse(null);
-                    if (jobRequisition != null) {
-                        jobRequisition.setJob_postings(externalJobPostings);
-                        Optional<User> user = userRepository.findById(Integer.parseInt(jobPostings.getUser_id()));
-                        if (user.isPresent()) {
-                            User currentUserEntity = user.get();
-                            int managerId = currentUserEntity.getManager_id();
-
-                            //n+1 flow
-                            if (managerId > -1) {
-                                Optional<User> manager = userRepository.findById(managerId);
-                                if (manager.isPresent()) {
-                                    jobRequisition.setRequisition_status(AppConstants.REQ_APPROVAL_PENDING.concat(AppConstants.UNDERSCORE).concat(manager.get().getRole()));
-                                    jobRequisition.setRequisition_approval(AppConstants.APPROVAL_STATUS_WORKFLOW);
-                                } else {
-                                    throw new Exception("Manager User with ID " + managerId + " not found.");
-                                }
-                            } else {
-                                //approval flow
-                                jobRequisition.setRequisition_status(AppConstants.REQ_APPROVAL_APPROVED);
-                                jobRequisition.setRequisition_approval(AppConstants.APPROVAL_STATUS_WORKFLOW);
-                            }
-                        } else {
-                            throw new Exception("User with ID " + jobPostings.getUser_id() + " not found.");
-                        }
-
-                        jobRequisitionsRepository.save(jobRequisition);
+                    JobRequisitions jobRequisitions = jobRequisitionsRepository.findById(jobRequisitionsId).orElse(null);
+                    if (jobRequisitions != null) {
+                        jobRequisitions.setJob_postings(result);
+                        jobRequisitions.setRequisition_status("Pending L1 Approval");
+                        jobRequisitions.setRequisition_approval("Workflow");
+                        jobRequisitionsRepository.save(jobRequisitions);
                     }
                 }
             }
+
             return "Job postings created successfully ";
         }catch (Exception e) {
             throw new Exception("Failed to create job postings: " + e.getMessage());
         }
-
-
     }
-
-    public String approvalSubmission(UUID requisitionId, String approvalStatus, String userId, String comments, String userRole) {
-         Optional<JobRequisitions> jobRequisitions = jobRequisitionsRepository.findById(requisitionId);
-        if(jobRequisitions.isPresent()){
-            JobRequisitions jobRequisition = jobRequisitions.get();
-            JobRequisitions oldJobRequisition = new JobRequisitions(jobRequisition); // Create a copy for audit purposes
-
-            String updateStatus = jobRequisition.getRequisition_status();
-            if(!updateStatus.equals(AppConstants.REQ_PENDING_APPROVAL_L1)
-                    && !updateStatus.equals(AppConstants.REQ_PENDING_APPROVAL_L2)){
-                return("Requisition is not in pending approval status for L1 or L2");
-            }
-            if(!jobRequisition.getRequisition_approval().equals(AppConstants.APPROVAL_STATUS_WORKFLOW)){
-                return("Requisition is not in workflow approval status");
-            }
-
-            if(approvalStatus.equals(AppConstants.API_APPROVAL_APPROVED)) {         //Approved flow
-                if (userRole.equals(AppConstants.L2)) {
-                    //If L2 approves - direct approval
-                    jobRequisition.setRequisition_status(AppConstants.REQ_APPROVAL_APPROVED);
-                } else if (userRole.equals(AppConstants.L1) && updateStatus.equals(AppConstants.REQ_PENDING_APPROVAL_L1)){
-                    //If L1 approves - next approval required
-                    jobRequisition.setRequisition_status(AppConstants.REQ_PENDING_APPROVAL_L2);
-                } else {
-                    return("Invalid approval status or user role");
-                }
-            } else if (approvalStatus.equals(AppConstants.API_APPROVAL_DENIED)) {         //Denied flow
-                if (userRole.equals(AppConstants.L1) || userRole.equals(AppConstants.L2)) {
-                    //If L1 or L2 denies - set to denied status
-                    jobRequisition.setRequisition_status(AppConstants.REQ_APPROVAL_REJECTED);
-                } else {
-                    return("Invalid user role for rejection");
-                }
-            } else {
-                return("Invalid approval status");
-            }
-
-            jobRequisition.setRequisition_comments(comments);
-
-            // Update the approval entity
-            jobRequisitionsRepository.save(jobRequisition);
-
-            // Update the workflow entity
-            insertWorkflowApprovalEntity(jobRequisition,AppConstants.JOB_REQUISITIONS,userRole,userId,approvalStatus);
-
-            // Update audit table
-            insertAuditRecord(oldJobRequisition, jobRequisition, userId, approvalStatus);
-
-            return "Requisition approval status updated successfully";
-        }else {
-            return ("Requisition not found with ID: " + requisitionId);
-        }
-    }
-
-    public void insertWorkflowApprovalEntity(JobRequisitions jobRequisition, String entityType,String userRole, String userId,String approvalStatus) {
-        WorkflowApprovalEntity workflowApprovalEntity = new WorkflowApprovalEntity();
-        workflowApprovalEntity.setApprovalId(UUID.randomUUID());
-        workflowApprovalEntity.setEntityType(entityType);
-        workflowApprovalEntity.setEntityId(jobRequisition.getRequisition_id());
-        workflowApprovalEntity.setStepNumber(jobRequisition.getRequisition_status().equals(AppConstants.REQ_APPROVAL_APPROVED)?2:1);
-        workflowApprovalEntity.setApproverRole(userRole);
-        workflowApprovalEntity.setApproverId(Integer.parseInt(userId));
-        workflowApprovalEntity.setAction(approvalStatus);
-        workflowApprovalEntity.setActionDate(LocalDateTime.now());
-        workflowApprovalEntity.setComments(jobRequisition.getRequisition_comments());
-        workflowApprovalEntity.setStatus(jobRequisition.getRequisition_status().equals(AppConstants.REQ_APPROVAL_APPROVED)?
-                    AppConstants.WORKFLOW_STATUS_COMPLETED:AppConstants.WORKFLOW_STATUS_PENDING);
-        workflowApprovalEntityRepository.save(workflowApprovalEntity);
-    }
-
-    public void insertAuditRecord(JobRequisitions oldJobRequisition, JobRequisitions jobRequisition, String userId, String approvalStatus) {
-
-        AuditTrailEntity auditTrailEntity = new AuditTrailEntity();
-        auditTrailEntity.setAuditId(UUID.randomUUID());
-        auditTrailEntity.setEntityType(AppConstants.JOB_REQUISITIONS);
-        auditTrailEntity.setEntityId(oldJobRequisition.getRequisition_id());
-        auditTrailEntity.setFieldChanged(AppConstants.STATUS_FIELD);
-        auditTrailEntity.setOldValue(oldJobRequisition.getRequisition_status());
-        auditTrailEntity.setNewValue(jobRequisition.getRequisition_status());
-        auditTrailEntity.setChangedBy(Long.parseLong(userId));
-        auditTrailEntity.setChangeDate(LocalDateTime.now());
-        auditTrailEntity.setChangeType(AppConstants.CHANGE_TYPE_UPDATE);
-        auditTrailRepository.save(auditTrailEntity);
-
-        System.out.println("Audit Record: User ID: " + userId + ", Requisition ID: " + jobRequisition.getRequisition_id() +
-                ", Approval Status: " + approvalStatus + ", Timestamp: " + LocalDateTime.now());
-    }
-
-
     public boolean existsById(UUID id) {
-        return jobRequisitionsRepository.existsById(id);
+        // Check if a job requisition with the given ID exists
+        if (id == null) {
+            return false; // or throw an exception, depending on your design choice
+        }
+        JobRequisitions jobRequisitions = jobRequisitionsRepository.findById(id).orElse(null);
+        return (jobRequisitions != null && jobRequisitions.getIsactive() == 1)? true :false;
     }
-
     public List<JobRequisitions> getActiveRequisitions() {
         LocalDate today = LocalDate.now();
         return jobRequisitionsRepository.findAll().stream()
-                .filter(job -> job.getRequisition_status().equals("Published") || job.getRequisition_status().equals("Approved")).toList();
+                .filter(job -> job.getIsactive()==1 && (job.getRequisition_status().equals("Published") || job.getRequisition_status().equals("Approved"))).toList();
     }
+
+    public String updateJobPostings(JobPostingUpdateDTO jobPostings) {
+        try {
+            for (UUID jobRequisitionsId : jobPostings.getRequisitionId()) {
+                if (!jobRequisitionsRepository.existsById(jobRequisitionsId)) {
+                    return "Requisition with ID " + jobRequisitionsId + " does not exist.";
+                }
+            }
+
+            for (UUID jobRequisitionsId : jobPostings.getRequisitionId()) {
+                JobRequisitions jobRequisitions = jobRequisitionsRepository.findById(jobRequisitionsId).orElse(null);
+                if (jobRequisitions != null && jobRequisitions.getIsactive() == 1) {
+                    if (jobPostings.getStatus().equalsIgnoreCase("Rejected")) {
+                        // Rejecting the job posting
+                        jobRequisitions.setRequisition_status("Rejected");
+                        jobRequisitions.setUpdated_by(jobPostings.getUserId());
+                        jobRequisitions.setUpdated_date(LocalDateTime.now());
+                        jobRequisitions.setRequisition_approval_notes(jobPostings.getDescription());
+
+                    } else if (jobPostings.getStatus().equalsIgnoreCase("Approved") && jobPostings.getRole().equals("L1")) {
+                        // Updating the job posting for L1 approval
+                        jobRequisitions.setRequisition_status("Pending L2 Approval");
+                        jobRequisitions.setUpdated_by(jobPostings.getUserId());
+                        jobRequisitions.setUpdated_date(LocalDateTime.now());
+                        jobRequisitions.setRequisition_approval_notes(jobPostings.getDescription());
+
+                    } else if (jobPostings.getStatus().equalsIgnoreCase("Approved") && jobPostings.getRole().equals("L2")) {
+                        // Updating the job posting for L2 approval
+                        jobRequisitions.setRequisition_status("Approved");
+                        jobRequisitions.setUpdated_by(jobPostings.getUserId());
+                        jobRequisitions.setUpdated_date(LocalDateTime.now());
+                        jobRequisitions.setRequisition_approval_notes(jobPostings.getDescription());
+                    }else {
+                        throw new RuntimeException("Invalid status or role provided for job posting update.");
+                    }
+                    jobRequisitions.setUpdated_by(jobPostings.getUserId());
+                    jobRequisitions.setUpdated_date(LocalDateTime.now());
+                    jobRequisitionsRepository.save(jobRequisitions);
+                }
+            }
+            return "Job postings updated successfully";
+        } catch (Exception e) {
+            return "Failed to update job postings: " + e.getMessage();
+        }
+    }
+
+    public List<JobRequisitions> getJobPostingsNeedApproval(String role) {
+        if (role.equals("L1")) {
+            return jobRequisitionsRepository.findByRequisitionStatus("Pending L1 Approval").stream().filter(
+                    jobRequisition -> jobRequisition.getIsactive() == 1).collect(Collectors.toList());
+        } else if (role.equals("L2")) {
+            return jobRequisitionsRepository.findByRequisitionStatus("Pending L2 Approval").stream()
+                    .filter(jobRequisition -> jobRequisition.getIsactive() == 1).collect(Collectors.toList());
+        } else {
+            return List.of(); // Return an empty list for other roles
+        }
+    }
+
 }

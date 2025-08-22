@@ -128,10 +128,10 @@ public class CandidatesController {
     }
 
     @PostMapping("/apply/job")
-    public ResponseEntity<String> applyInterview(ApplyInterviewdto applyInterviewdto){
+    public ResponseEntity<String> applyInterview(@RequestBody ApplyInterviewdto applyInterviewdto){
         try{
             String str=candidateService.applyInterview(applyInterviewdto.getCandidate_id(),applyInterviewdto.getPosition_id());
-            if(str.equals("Applied for interview!")){
+            if(str.equals("Applied for Job!")){
                 return new ResponseEntity<>(str,HttpStatus.OK);
             }
             else{

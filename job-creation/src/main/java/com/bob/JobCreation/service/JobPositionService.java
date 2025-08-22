@@ -6,6 +6,7 @@ import com.bob.db.entity.*;
 import com.bob.db.repository.JobPositionsRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -34,9 +35,11 @@ public class JobPositionService{
     private JobPositionsRepository jobPositionsRepository;
 
     //microservices
-    @Autowired
-    private JobRequisitionsService jobRequisitionsService;
+    private final JobRequisitionsService jobRequisitionsService;
 
+    public JobPositionService(@Lazy JobRequisitionsService jobRequisitionsService) {
+        this.jobRequisitionsService = jobRequisitionsService;
+    }
 
 
     private JobPositionsDTO setValuesDTO(Positions positions,
@@ -362,6 +365,8 @@ public class JobPositionService{
                     JobSelectionProcess jobSelectionProcess = jobSelectionProcessService.getByPositionIdSelectionProcess(position.getPosition_id());
                     JobVacancies jobVacancies = jobVacanciesService.getByPositionIdJobVacancies(position.getPosition_id());
                     JobPositionsDTO jobPositionsDTO = setValuesDTO(position, jobPostingLocation, jobVacancies, jobSelectionProcess);
+                    jobPositionsDTO.setRequisition_code(requisition.getRequisition_code());
+                    jobPositionsDTO.setRequisition_title(requisition.getRequisition_title());
                     activePositions.add(jobPositionsDTO);
                 }
             }

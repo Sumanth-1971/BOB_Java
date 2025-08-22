@@ -15,22 +15,30 @@ public class JobRequisitions {
     private UUID requisition_id;
     private String requisition_code;
     private String requisition_title;
-
+    @Column(name = "requisition_description", columnDefinition = "text")
     private String requisition_description;
     private LocalDate registration_start_date;
     private LocalDate registration_end_date;
     private String requisition_status;
+    @Column(name = "requisition_comments", columnDefinition = "text")
     private String requisition_comments;
     private String requisition_approval;
     private String created_by;
     private LocalDateTime created_date;
     private String updated_by;
     private LocalDateTime updated_date;
+
+    @Column(name = "others" , columnDefinition = "jsonb")
     private String others;
     private Integer no_of_positions;
+    @Column(name = "job_postings", columnDefinition = "text")
     private String job_postings;
 
-    public JobRequisitions(UUID requisition_id, String requisition_code, String requisition_title, String requisition_description, LocalDate registration_start_date, LocalDate registration_end_date, String requisition_status, String requisition_comments, String requisition_approval, String created_by, LocalDateTime created_date, String updated_by, LocalDateTime updated_date, String others, int no_of_positions, String job_postings) {
+    @Column(name = "requisition_approval_notes", columnDefinition = "text")
+    private String requisition_approval_notes;
+    private Integer isactive = 1;
+
+    public JobRequisitions(UUID requisition_id, String requisition_code, String requisition_title, String requisition_description, LocalDate registration_start_date, LocalDate registration_end_date, String requisition_status, String requisition_comments, String requisition_approval, String created_by, LocalDateTime created_date, String updated_by, LocalDateTime updated_date, String others, Integer no_of_positions, String job_postings, String requisition_approval_notes, Integer isactive) {
         this.requisition_id = requisition_id;
         this.requisition_code = requisition_code;
         this.requisition_title = requisition_title;
@@ -47,6 +55,8 @@ public class JobRequisitions {
         this.others = others;
         this.no_of_positions = no_of_positions;
         this.job_postings = job_postings;
+		this.requisition_approval_notes = requisition_approval_notes;
+		this.isactive = isactive;
     }
 
     public JobRequisitions(JobRequisitions other) {
@@ -198,6 +208,18 @@ public class JobRequisitions {
         this.registration_end_date = registration_end_date;
     }
 
+    public void setNo_of_positions(Integer no_of_positions) {
+        this.no_of_positions = no_of_positions;
+    }
+
+    public Integer getIsactive() {
+        return isactive;
+    }
+
+    public void setIsactive(Integer isactive) {
+        this.isactive = isactive;
+    }
+
     public String getOthers() {
         return others;
     }
@@ -205,6 +227,11 @@ public class JobRequisitions {
     public void setOthers(String others) {
         this.others = others;
     }
-
+    public String getRequisition_approval_notes() {
+        return requisition_approval_notes;
+    }
+    public void setRequisition_approval_notes(String requisition_approval_notes) {
+        this.requisition_approval_notes = requisition_approval_notes;
+    }
 
 }

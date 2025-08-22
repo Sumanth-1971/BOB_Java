@@ -26,7 +26,7 @@ public class ResponseDTO {
     @Column(precision = 4, scale = 1)
     private BigDecimal preferred_experience;
 
-    private Integer probation_period;
+    private BigDecimal probation_period;
 
     private String documents_required;
 
@@ -56,7 +56,7 @@ public class ResponseDTO {
     public ResponseDTO() {
     }
 
-    public ResponseDTO(UUID position_id, UUID requisition_id, String position_title, String position_code, String description, String roles_responsibilities, Integer grade_id, String employment_type, Integer eligibility_age_min, Integer eligibility_age_max, String mandatory_qualification, String preferred_qualification, BigDecimal mandatory_experience, BigDecimal preferred_experience, Integer probation_period, String documents_required, BigDecimal min_credit_score, Integer dept_id, Long location_id, Long country_id, Long city_id, Long state_id, Integer special_cat_id, Integer reservation_cat_id, Integer no_of_vacancies, String selection_procedure, String position_status) {
+    public ResponseDTO(UUID position_id, UUID requisition_id, String position_title, String position_code, String description, String roles_responsibilities, Integer grade_id, String employment_type, Integer eligibility_age_min, Integer eligibility_age_max, String mandatory_qualification, String preferred_qualification, BigDecimal mandatory_experience, BigDecimal preferred_experience, BigDecimal probation_period, String documents_required, BigDecimal min_credit_score, Integer dept_id, Long location_id, Long country_id, Long city_id, Long state_id, Integer special_cat_id, Integer reservation_cat_id, Integer no_of_vacancies, String selection_procedure, String position_status) {
         this.position_id = position_id;
         this.requisition_id = requisition_id;
         this.position_title = position_title;
@@ -198,14 +198,12 @@ public class ResponseDTO {
         this.preferred_experience = preferred_experience;
     }
 
-    public Integer getProbation_period() {
+    public BigDecimal getProbation_period() {
         return probation_period;
     }
-
-    public void setProbation_period(Integer probation_period) {
+    public void setProbation_period(BigDecimal probation_period) {
         this.probation_period = probation_period;
     }
-
     public String getDocuments_required() {
         return documents_required;
     }
