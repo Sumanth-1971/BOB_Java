@@ -60,12 +60,12 @@ public class CandidateService {
     private FeignPositionDTO feignPositionDTO;
 
     public List<CandidateDetails> getCandidateDetailsByPositionId(UUID position_id) {
-        List<CandidateApplications> candidateApplicationsList = candidateApplicationsRepository.findByPositionId(position_id);
+        List<CandidateApplicationsEntity> candidateApplicationsList = candidateApplicationsRepository.findByPositionId(position_id);
         List<CandidateDetails> candidateDetailsList = new ArrayList<>();
-        for (CandidateApplications candidateApplications : candidateApplicationsList) {
+        for (CandidateApplicationsEntity candidateApplications : candidateApplicationsList) {
             CandidateDetails candidateDetails = new CandidateDetails();
 //            List<FileInfo> fileInfoList = candidateDocumentsRepository.getFileDetails(candidateApplications.getCandidate_id());
-            String fileUrl=candidateRepository.findById(candidateApplications.getCandidate_id()).get().getFile_url();
+            String fileUrl=candidateRepository.findById(candidateApplications.getCandidateId()).get().getFile_url();
             List<Long> locationIds= jobPostingLocationRepository.findByPositionId(position_id);
             Location location=locationRepository.findById(locationIds.get(0)).orElse(null);
             candidateDetails.setLocation_details(Map.of(location.getLocation_id(), location.getLocation_name()));
@@ -75,23 +75,8 @@ public class CandidateService {
             candidateDetails.setState_details(Map.of(state.getState_id(), state.getState_name()));
             Country country = countryRepository.findById(state.getCountry_id()).orElse(null);
             candidateDetails.setCountry_details(Map.of(country.getCountry_id(), country.getCountry_name()));
-            UUID candidateId=candidateApplications.getCandidate_id();
-            Candidates candidates=candidateRepository.findById(candidateApplications.getCandidate_id()).get();
-
-//            System.out.println("File Info List: " + fileInfoList);
-//            candidateDetails.setCandidate_id(candidateApplications.getCandidate_id());
-//            candidateDetails.setFull_name(candidateRepository.findById(candidateApplications.getCandidate_id()).get().getFull_name());
-//            candidateDetails.setUsername(candidateRepository.findById(candidateApplications.getCandidate_id()).get().getUsername());
-//            candidateDetails.setEmail(candidateRepository.findById(candidateApplications.getCandidate_id()).get().getEmail());
-//            candidateDetails.setPhone(candidateRepository.findById(candidateApplications.getCandidate_id()).get().getPhone());
-//            candidateDetails.setReservation_category_id(candidateRepository.findById(candidateApplications.getCandidate_id()).get().getReservation_category_id());
-//            candidateDetails.setHighest_qualification(candidateRepository.findById(candidateApplications.getCandidate_id()).get().getHighest_qualification_id());
-//            candidateDetails.setTotal_experience(candidateRepository.findById(candidateApplications.getCandidate_id()).get().getTotal_experience());
-//            candidateDetails.setAddress(candidateRepository.findById(candidateApplications.getCandidate_id()).get().getAddress());
-//            candidateDetails.setGender(candidateRepository.findById(candidateApplications.getCandidate_id()).get().getGender());
-//            candidateDetails.setSpecial_category_id(candidateRepository.findById(candidateApplications.getCandidate_id()).get().getSpecial_category_id());
-//            candidateDetails.setFileUrl(fileUrl);
-//            candidateDetails.setApplication_status(candidateApplications.getApplication_status());
+            UUID candidateId=candidateApplications.getCandidateId();
+            Candidates candidates=candidateRepository.findById(candidateApplications.getCandidateId()).get();
 
             candidateDetails.setCandidate_id(candidateId);
             candidateDetails.setFull_name(candidates.getFull_name());
@@ -105,7 +90,7 @@ public class CandidateService {
             candidateDetails.setGender(candidates.getGender());
             candidateDetails.setSpecial_category_id(candidates.getSpecial_category_id());
             candidateDetails.setFileUrl(fileUrl);
-            candidateDetails.setApplication_status(candidateApplications.getApplication_status());
+            candidateDetails.setApplication_status(candidateApplications.getApplicationStatus());
 
             candidateDetailsList.add(candidateDetails);
 
@@ -114,13 +99,13 @@ public class CandidateService {
     }
 
     public List<Candidates> getDetailsByPositionId(UUID position_id) {
-        List<CandidateApplications> candidateApplicationsList = candidateApplicationsRepository.findByPositionId(position_id);
+        List<CandidateApplicationsEntity> candidateApplicationsList = candidateApplicationsRepository.findByPositionId(position_id);
         if (candidateApplicationsList.isEmpty()) {
             return null; // or throw an exception if no applications found
         }
         List<Candidates> candidatesList = new ArrayList<>();
-        for (CandidateApplications candidateApplications : candidateApplicationsList) {
-            Candidates candidates = candidateRepository.findById(candidateApplications.getCandidate_id()).orElse(null);
+        for (CandidateApplicationsEntity candidateApplications : candidateApplicationsList) {
+            Candidates candidates = candidateRepository.findById(candidateApplications.getCandidateId()).orElse(null);
             if (candidates != null) {
                 candidatesList.add(candidates);
             }
@@ -167,16 +152,16 @@ public class CandidateService {
             String candidateFileUrl=candidate.getFile_url();
 
             // Fetch application and validate status
-            List<CandidateApplications> applications = candidateApplicationsRepository
+            List<CandidateApplicationsEntity> applications = candidateApplicationsRepository
                     .findByCandidateIdAndPositionId(candidateId, positionId);
 
             if (applications.isEmpty()) {
                 return "No candidate application found for the selected position.";
             }
 
-            CandidateApplications candidateApplication = applications.get(0);
+            CandidateApplicationsEntity candidateApplication = applications.get(0);
 
-            if (!candidateApplication.getApplication_status().equalsIgnoreCase("Shortlisted")) {
+            if (!candidateApplication.getApplicationStatus().equalsIgnoreCase("Shortlisted")) {
                 return "Interview can only be scheduled for shortlisted candidates.";
             }
 
@@ -195,12 +180,7 @@ public class CandidateService {
                     emailData
             );
 
-//            boolean interviewerMailSent = sendEmailWithRetryMechanism(
-//                    interviewerEmail,
-//                    "Interview Scheduled: " + candidateName + " for " + positionTitle,
-//                    "Interviewer",
-//                    emailData
-//            );
+
 
             boolean interviewerMailSent = sendEmailWithAttachmentRetry(
                     interviewerEmail,
@@ -215,8 +195,8 @@ public class CandidateService {
             }
 
             // Update application status
-            candidateApplication.setUpdated_date(LocalDateTime.now());
-            candidateApplication.setApplication_status("Scheduled");
+            candidateApplication.setUpdatedDate(LocalDateTime.now());
+            candidateApplication.setApplicationStatus("Scheduled");
             candidateApplicationsRepository.save(candidateApplication);
 
             // Save interview
@@ -272,17 +252,17 @@ public class CandidateService {
                     .orElse("Unknown Position");
 
             // 3. Fetch candidate application
-            List<CandidateApplications> applications = candidateApplicationsRepository
+            List<CandidateApplicationsEntity> applications = candidateApplicationsRepository
                     .findByCandidateIdAndPositionId(offerdto.getCandidate_id(), offerdto.getPosition_id());
 
             if (applications.isEmpty()) {
                 return "Candidate application not found!";
             }
 
-            CandidateApplications application = applications.get(0);
+            CandidateApplicationsEntity application = applications.get(0);
 
             // 4. Ensure candidate is "Scheduled"
-            if (!application.getApplication_status().equalsIgnoreCase("Scheduled")) {
+            if (!application.getApplicationStatus().equalsIgnoreCase("Scheduled")) {
                 return "Offer letter can only be sent to candidates with 'Scheduled' status.";
             }
 
@@ -310,7 +290,7 @@ public class CandidateService {
             CandidateDocuments candidateDocuments = new CandidateDocuments();
             candidateDocuments.setDocument_id(UUID.randomUUID());
             candidateDocuments.setCandidate_id(offerdto.getCandidate_id());
-            candidateDocuments.setApplication_id(application.getApplication_id());
+            candidateDocuments.setApplication_id(application.getApplicationId());
             candidateDocuments.setDocument_type("Offer Letter");
             candidateDocuments.setFile_name(offerdto.getCandidate_id().toString() + ".pdf");
             candidateDocuments.setFile_url(path);
@@ -318,8 +298,8 @@ public class CandidateService {
             candidateDocumentsRepository.save(candidateDocuments);
 
             // 8. Update application status
-            application.setApplication_status("Offered");
-            application.setUpdated_date(LocalDateTime.now());
+            application.setApplicationStatus("Offered");
+            application.setUpdatedDate(LocalDateTime.now());
             candidateApplicationsRepository.save(application);
 
             return "Offer sent!";
@@ -343,10 +323,10 @@ public class CandidateService {
     public List<CandidateDetails> getCandidateByApplicationStatus(String status) {
         List<CandidateDetails> candidateDetailsList = new ArrayList<>();
 
-        for (CandidateApplications candidateApplications : candidateApplicationsRepository.findAll()) {
+        for (CandidateApplicationsEntity candidateApplications : candidateApplicationsRepository.findAll()) {
             CandidateDetails candidateDetails = new CandidateDetails();
-            UUID position_id=candidateApplications.getPosition_id();
-            if (candidateApplications.getApplication_status().equals(status)) {
+            UUID position_id=candidateApplications.getPositionId();
+            if (candidateApplications.getApplicationStatus().equals(status)) {
                 List<Long> locationIds = jobPostingLocationRepository.findByPositionId(position_id);
                 if (!locationIds.isEmpty()) {
                     locationRepository.findById(locationIds.get(0)).ifPresent(location -> {
@@ -362,10 +342,10 @@ public class CandidateService {
                         });
                     });
                 }
-                if(candidateApplications.getCandidate_id()==null){
+                if(candidateApplications.getCandidateId()==null){
                     continue;
                 }
-                UUID candidateId=candidateApplications.getCandidate_id();
+                UUID candidateId=candidateApplications.getCandidateId();
                 Candidates candidates=candidateRepository.findById(candidateId).get();
 
                 candidateDetails.setCandidate_id(candidateId);
@@ -381,10 +361,10 @@ public class CandidateService {
                 candidateDetails.setSpecial_category_id(candidates.getSpecial_category_id());
                 String fileUrl=candidates.getFile_url();
                 candidateDetails.setFileUrl(fileUrl);
-                candidateDetails.setApplication_status(candidateApplications.getApplication_status());
+                candidateDetails.setApplication_status(candidateApplications.getApplicationStatus());
 
-                if (candidateApplications.getApplication_status().equals(status)) {
-                    candidateDetails.setApplication_status(candidateApplications.getApplication_status());
+                if (candidateApplications.getApplicationStatus().equals(status)) {
+                    candidateDetails.setApplication_status(candidateApplications.getApplicationStatus());
                 } else {
                     continue;
                 }
@@ -403,9 +383,9 @@ public class CandidateService {
     //Method to get all candidate details
     public List<CandidateDetails> getAllCandidateDetails() {
         List<CandidateDetails> candidateDetailsList = new ArrayList<>();
-        for (CandidateApplications candidateApplications : candidateApplicationsRepository.findAll()) {
+        for (CandidateApplicationsEntity candidateApplications : candidateApplicationsRepository.findAll()) {
             CandidateDetails candidateDetails = new CandidateDetails();
-            UUID position_id=candidateApplications.getPosition_id();
+            UUID position_id=candidateApplications.getPositionId();
             List<Long> locationIds = jobPostingLocationRepository.findByPositionId(position_id);
             if (!locationIds.isEmpty()) {
                 locationRepository.findById(locationIds.get(0)).ifPresent(location -> {
@@ -421,27 +401,11 @@ public class CandidateService {
                     });
                 });
             }
-            if(candidateApplications.getCandidate_id()==null){
+            if(candidateApplications.getCandidateId()==null){
                 continue;
             }
-            UUID candidateId=candidateApplications.getCandidate_id();
+            UUID candidateId=candidateApplications.getCandidateId();
             Candidates candidates=candidateRepository.findById(candidateId).get();
-//            candidateDetails.setCandidate_id(candidateApplications.getCandidate_id());
-//            candidateDetails.setFull_name(candidateRepository.findById(candidateApplications.getCandidate_id()).get().getFull_name());
-//            candidateDetails.setUsername(candidateRepository.findById(candidateApplications.getCandidate_id()).get().getUsername());
-//            candidateDetails.setEmail(candidateRepository.findById(candidateApplications.getCandidate_id()).get().getEmail());
-//            candidateDetails.setPhone(candidateRepository.findById(candidateApplications.getCandidate_id()).get().getPhone());
-//            candidateDetails.setGender(candidateRepository.findById(candidateApplications.getCandidate_id()).get().getGender());
-//            candidateDetails.setReservation_category_id(candidateRepository.findById(candidateApplications.getCandidate_id()).get().getReservation_category_id());
-//            candidateDetails.setHighest_qualification(candidateRepository.findById(candidateApplications.getCandidate_id()).get().getHighest_qualification_id());
-//            candidateDetails.setTotal_experience(candidateRepository.findById(candidateApplications.getCandidate_id()).get().getTotal_experience());
-//            candidateDetails.setAddress(candidateRepository.findById(candidateApplications.getCandidate_id()).get().getAddress());
-//            candidateDetails.setSpecial_category_id(candidateRepository.findById(candidateApplications.getCandidate_id()).get().getSpecial_category_id());
-//            String fileUrl=candidateRepository.findById(candidateApplications.getCandidate_id()).get().getFile_url();
-//            candidateDetails.setFileUrl(fileUrl);
-//            candidateDetails.setApplication_status(candidateApplications.getApplication_status());
-//            candidateDetailsList.add(candidateDetails);
-
             candidateDetails.setCandidate_id(candidateId);
             candidateDetails.setFull_name(candidates.getFull_name());
             candidateDetails.setUsername(candidates.getUsername());
@@ -455,7 +419,7 @@ public class CandidateService {
             candidateDetails.setSpecial_category_id(candidates.getSpecial_category_id());
             String fileUrl=candidates.getFile_url();
             candidateDetails.setFileUrl(fileUrl);
-            candidateDetails.setApplication_status(candidateApplications.getApplication_status());
+            candidateDetails.setApplication_status(candidateApplications.getApplicationStatus());
             candidateDetailsList.add(candidateDetails);
         }
         return candidateDetailsList;
@@ -467,11 +431,6 @@ public class CandidateService {
 
 
     public Interviews getInterviewsByCandidateAndPositionId(UUID candidate_id,UUID position_id){
-//        List<Interviews> interviewsList=getInterviewListByCandidateId(candidate_id);
-//        List<Interviews> interviewsList1=interviewsList.stream()
-//                .filter(interviews -> interviews.getPosition_id().equals(position_id))
-//                .toList();
-//        return interviewsList1;
     try{
         List<Interviews> interviewsList=interviewerRepository.findByCandidateIdAndPositionIdNative(candidate_id,position_id);
         return interviewsList.get(0);
@@ -481,8 +440,7 @@ public class CandidateService {
     }
 
     }
-//
-//
+
     public String getStatus(InterviewDetails interviewDetails){
 
         if(interviewDetails.getStatus().equals("Scheduled")){
@@ -532,7 +490,7 @@ public class CandidateService {
             if (!candidateMailSent || !interviewerMailSent) {
                 return "Failed to send one or both interview scheduling emails!";
             }
-            CandidateApplications candidateApplications=candidateApplicationsRepository.findByCandidateIdAndPositionId(candidate_id, position_id).get(0);
+            CandidateApplicationsEntity candidateApplications=candidateApplicationsRepository.findByCandidateIdAndPositionId(candidate_id, position_id).get(0);
 
             Interviews interviews1=interviews;
                 LocalDateTime scheduleTime = LocalDateTime.of(
@@ -543,8 +501,8 @@ public class CandidateService {
                 interviews1.setSchedule_at(scheduleTime);
                 interviews1.setStatus("Rescheduled");
 
-                candidateApplications.setApplication_status("Rescheduled");
-                candidateApplications.setUpdated_date(currentTime);
+                candidateApplications.setApplicationStatus("Rescheduled");
+                candidateApplications.setUpdatedDate(currentTime);
                 candidateApplicationsRepository.save(candidateApplications);
                 interviewerRepository.save(interviews1);
                 return "Interview Rescheduled!";
@@ -594,11 +552,11 @@ public class CandidateService {
                 if (!candidateMailSent || !interviewerMailSent) {
                     return "Failed to send one or both interview scheduling emails!";
                 }
-                CandidateApplications candidateApplications =candidateApplicationsRepository.findByCandidateIdAndPositionId(candidate_id, position_id).get(0);
+                CandidateApplicationsEntity candidateApplications =candidateApplicationsRepository.findByCandidateIdAndPositionId(candidate_id, position_id).get(0);
                 LocalDateTime currentTime = LocalDateTime.now();
-                candidateApplications.setApplication_status("Cancelled");
+                candidateApplications.setApplicationStatus("Cancelled");
                 interviews1.setStatus("Cancelled");
-                candidateApplications.setUpdated_date(currentTime);
+                candidateApplications.setUpdatedDate(currentTime);
                 interviewerRepository.save(interviews1);
                 candidateApplicationsRepository.save(candidateApplications);
                 return "Interview Cancelled!";
@@ -610,15 +568,15 @@ public class CandidateService {
 
     public String applyInterview(UUID candidateId, UUID positionId) {
         try {
-            CandidateApplications candidateApplications = new CandidateApplications();
-            candidateApplications.setApplication_id(UUID.randomUUID());
-            candidateApplications.setCandidate_id(candidateId);
-            candidateApplications.setPosition_id(positionId);
-            candidateApplications.setApplication_status("Shortlisted");
+            CandidateApplicationsEntity candidateApplications = new CandidateApplicationsEntity();
+            candidateApplications.setApplicationId(UUID.randomUUID());
+            candidateApplications.setCandidateId(candidateId);
+            candidateApplications.setPositionId(positionId);
+            candidateApplications.setApplicationStatus("Shortlisted");
             LocalDateTime time = LocalDateTime.now();
 
-            candidateApplications.setApplication_date(time);
-            candidateApplications.setUpdated_date(time);
+            candidateApplications.setApplicationDate(time);
+            candidateApplications.setUpdatedDate(time);
             candidateApplicationsRepository.save(candidateApplications);
             return "Applied for Job!";
         }catch (Exception e){
@@ -628,10 +586,10 @@ public class CandidateService {
 
 
     public List<ResponseDTO> getAllDetailsByCandidateId(UUID candidate_id){
-        List<CandidateApplications> candidateApplicationsList=candidateApplicationsRepository.findByCandidateIdNative(candidate_id);
+        List<CandidateApplicationsEntity> candidateApplicationsList=candidateApplicationsRepository.findByCandidateIdNative(candidate_id);
         List<ResponseDTO> positionDTOList=new ArrayList<>();
-        for (CandidateApplications candidateApplications:candidateApplicationsList){
-            ApiResponse<ResponseDTO> responseDTOS=feignPositionDTO.getById(candidateApplications.getPosition_id());
+        for (CandidateApplicationsEntity candidateApplications:candidateApplicationsList){
+            ApiResponse<ResponseDTO> responseDTOS=feignPositionDTO.getById(candidateApplications.getPositionId());
             ResponseDTO responseDTO=responseDTOS.getData();
             positionDTOList.add(responseDTO);
         }

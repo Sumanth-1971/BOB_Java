@@ -1,7 +1,7 @@
 package com.bob.JobCreation.service;
 
 import com.bob.db.dto.JobPositionsDTO;
-import com.bob.db.entity.JobAgeRelaxations;
+import com.bob.db.entity.JobAgeRelaxationsEntity;
 import com.bob.db.repository.JobAgeRelaxationsRepository;
 
 import jakarta.transaction.Transactional;
@@ -26,22 +26,22 @@ public class JobAgeRelaxationService {
     @Autowired
     private JobAgeRelaxationsRepository jobAgeRelaxationsRepository;
 
-    private JobAgeRelaxations setValues(JobPositionsDTO jobPositionsDTO, UUID position_id){
-        JobAgeRelaxations jobAgeRelaxations = new JobAgeRelaxations();
-        jobAgeRelaxations.setPosition_id(position_id);
-        jobAgeRelaxations.setAge_relaxation_id( 1 );
+    private JobAgeRelaxationsEntity setValues(JobPositionsDTO jobPositionsDTO, UUID position_id){
+        JobAgeRelaxationsEntity jobAgeRelaxations = new JobAgeRelaxationsEntity();
+        jobAgeRelaxations.setPositionId(position_id);
+        jobAgeRelaxations.setAgeRelaxationId( 1 );
         return jobAgeRelaxations;
 
     }
 
     @Transactional
-    public JobAgeRelaxations createAgeRelaxation(JobPositionsDTO jobPositionsDTO, UUID position_id){
-        JobAgeRelaxations jobAgeRelaxations = setValues(jobPositionsDTO,position_id);
+    public JobAgeRelaxationsEntity createAgeRelaxation(JobPositionsDTO jobPositionsDTO, UUID position_id){
+        JobAgeRelaxationsEntity jobAgeRelaxations = setValues(jobPositionsDTO,position_id);
         return jobAgeRelaxationsRepository.save(jobAgeRelaxations);
     }
 
     @Transactional
-    public JobAgeRelaxations getByPositionIdAgeRelaxation(UUID position_id){
+    public JobAgeRelaxationsEntity getByPositionIdAgeRelaxation(UUID position_id){
         return jobAgeRelaxationsRepository.findByPositionId(position_id);
     }
 }

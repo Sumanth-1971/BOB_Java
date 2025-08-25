@@ -1,7 +1,7 @@
 package com.bob.JobCreation.service;
 
 import com.bob.db.dto.JobPositionsDTO;
-import com.bob.db.entity.JobApplicationFee;
+import com.bob.db.entity.JobApplicationFeeEntity;
 import com.bob.db.repository.JobApplicationFeeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -21,21 +21,21 @@ public class JobApplicationFeeService {
     @Autowired
     private JobApplicationFeeRepository jobApplicationFeeRepository;
 
-    private JobApplicationFee setValues(JobPositionsDTO jobPositionsDTO,UUID position_id){
-        JobApplicationFee jobApplicationFee = new JobApplicationFee();
+    private JobApplicationFeeEntity setValues(JobPositionsDTO jobPositionsDTO, UUID position_id){
+        JobApplicationFeeEntity jobApplicationFee = new JobApplicationFeeEntity();
 
-        jobApplicationFee.setPosition_id(position_id);
-        jobApplicationFee.setApplication_fee_id(jobApplicationFee.getApplication_fee_id());
+        jobApplicationFee.setPositionId(position_id);
+        jobApplicationFee.setApplicationFeeId(jobApplicationFee.getApplicationFeeId());
 
         return jobApplicationFee;
     }
 
-    public JobApplicationFee createApplicationFee(JobPositionsDTO jobPositionsDTO,UUID position_id){
-        JobApplicationFee jobApplicationFee = setValues(jobPositionsDTO,position_id);
+    public JobApplicationFeeEntity createApplicationFee(JobPositionsDTO jobPositionsDTO, UUID position_id){
+        JobApplicationFeeEntity jobApplicationFee = setValues(jobPositionsDTO,position_id);
         return jobApplicationFeeRepository.save(jobApplicationFee);
     }
 
-    public JobApplicationFee getByPositionIdApplicationFee(UUID position_id){
+    public JobApplicationFeeEntity getByPositionIdApplicationFee(UUID position_id){
         return jobApplicationFeeRepository.findByPositionId(position_id);
     }
 
