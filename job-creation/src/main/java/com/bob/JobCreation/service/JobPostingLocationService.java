@@ -3,7 +3,7 @@ package com.bob.JobCreation.service;
 
 import com.bob.db.repository.*;
 import com.bob.db.dto.JobPositionsDTO;
-import com.bob.db.entity.JobPostingLocation;
+import com.bob.db.entity.JobPostingLocationEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -33,30 +33,30 @@ public class JobPostingLocationService {
     @Autowired
     private JobPostingLocationRepository jobPostingLocationRepository;
 
-    private JobPostingLocation setValues(JobPositionsDTO jobPositionsDTO,UUID positionId){
-        JobPostingLocation jobPostingLocation = new JobPostingLocation();
+    private JobPostingLocationEntity setValues(JobPositionsDTO jobPositionsDTO, UUID positionId){
+        JobPostingLocationEntity jobPostingLocation = new JobPostingLocationEntity();
 
-        jobPostingLocation.setLocation_id(jobPositionsDTO.getLocation_id());
-        jobPostingLocation.setDept_id(jobPositionsDTO.getDept_id());
-        jobPostingLocation.setPosition_id(positionId);
+        jobPostingLocation.setLocationId(jobPositionsDTO.getLocation_id());
+        jobPostingLocation.setDeptId(jobPositionsDTO.getDept_id());
+        jobPostingLocation.setPositionId(positionId);
 
         return jobPostingLocation;
     }
 
-    public JobPostingLocation createPostingLocation(JobPositionsDTO jobPositionsDTO,UUID positionId) {
-        JobPostingLocation jobPostingLocation = setValues(jobPositionsDTO, positionId);
+    public JobPostingLocationEntity createPostingLocation(JobPositionsDTO jobPositionsDTO, UUID positionId) {
+        JobPostingLocationEntity jobPostingLocation = setValues(jobPositionsDTO, positionId);
         return jobPostingLocationRepository.save(jobPostingLocation);
     }
 
-    public JobPostingLocation getByPositionIdPostingLocation(UUID positionId) {
+    public JobPostingLocationEntity getByPositionIdPostingLocation(UUID positionId) {
         return jobPostingLocationRepository.findByPositionId2(positionId);
     }
 
     public void updatePostingLocation(JobPositionsDTO jobPositionsDTO, UUID positionId) {
-        JobPostingLocation existingLocation = jobPostingLocationRepository.findByPositionId2(positionId);
+        JobPostingLocationEntity existingLocation = jobPostingLocationRepository.findByPositionId2(positionId);
         if (existingLocation != null) {
-            existingLocation.setDept_id(jobPositionsDTO.getDept_id());
-            existingLocation.setLocation_id(jobPositionsDTO.getLocation_id());
+            existingLocation.setDeptId(jobPositionsDTO.getDept_id());
+            existingLocation.setLocationId(jobPositionsDTO.getLocation_id());
             jobPostingLocationRepository.save(existingLocation);
         } else {
             throw new RuntimeException("Posting location not found for position ID: " + positionId);

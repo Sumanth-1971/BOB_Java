@@ -1,7 +1,7 @@
 package com.bob.JobCreation.service;
 
 import com.bob.db.dto.JobPositionsDTO;
-import com.bob.db.entity.JobVacancies;
+import com.bob.db.entity.JobVacanciesEntity;
 import com.bob.db.repository.JobVacanciesRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -21,35 +21,35 @@ public class JobVacanciesService {
     @Autowired
     private JobVacanciesRepository jobVacanciesRepository;
 
-    private JobVacancies setValues(JobPositionsDTO jobPositionsDTO,UUID position_id){
-        JobVacancies jobVacancies = new JobVacancies();
-        jobVacancies.setPosition_id(position_id);
+    private JobVacanciesEntity setValues(JobPositionsDTO jobPositionsDTO, UUID position_id){
+        JobVacanciesEntity jobVacancies = new JobVacanciesEntity();
+        jobVacancies.setPositionId(position_id);
 
-        jobVacancies.setNo_of_vacancies(jobPositionsDTO.getNo_of_vacancies());
-        jobVacancies.setLocation_id(jobPositionsDTO.getLocation_id());
-        jobVacancies.setReservation_cat_id(jobPositionsDTO.getReservation_cat_id());
-        jobVacancies.setSpecial_cat_id(jobPositionsDTO.getSpecial_cat_id());
+        jobVacancies.setNoOfVacancies(jobPositionsDTO.getNo_of_vacancies());
+        jobVacancies.setLocationId(jobPositionsDTO.getLocation_id());
+        jobVacancies.setReservationCatId(jobPositionsDTO.getReservation_cat_id());
+        jobVacancies.setSpecialCatId(jobPositionsDTO.getSpecial_cat_id());
 
         return jobVacancies;
     }
 
     //save - jobVacancies
-    public JobVacancies createJobVacancies(JobPositionsDTO jobPositionsDTO,UUID position_id){
-        JobVacancies jobVacancies = setValues(jobPositionsDTO,position_id);
+    public JobVacanciesEntity createJobVacancies(JobPositionsDTO jobPositionsDTO, UUID position_id){
+        JobVacanciesEntity jobVacancies = setValues(jobPositionsDTO,position_id);
         return jobVacanciesRepository.save(jobVacancies);
     }
 
-    public JobVacancies getByPositionIdJobVacancies(UUID position_id){
+    public JobVacanciesEntity getByPositionIdJobVacancies(UUID position_id){
         return jobVacanciesRepository.findByPositionId(position_id);
     }
 
     public void updateJobVacancies(JobPositionsDTO jobPositionsDTO, UUID positionId) {
-        JobVacancies existingVacancy = jobVacanciesRepository.findByPositionId(positionId);
+        JobVacanciesEntity existingVacancy = jobVacanciesRepository.findByPositionId(positionId);
         if (existingVacancy != null) {
-            existingVacancy.setNo_of_vacancies(jobPositionsDTO.getNo_of_vacancies());
-            existingVacancy.setLocation_id(jobPositionsDTO.getLocation_id());
-            existingVacancy.setReservation_cat_id(jobPositionsDTO.getReservation_cat_id());
-            existingVacancy.setSpecial_cat_id(jobPositionsDTO.getSpecial_cat_id());
+            existingVacancy.setNoOfVacancies(jobPositionsDTO.getNo_of_vacancies());
+            existingVacancy.setLocationId(jobPositionsDTO.getLocation_id());
+            existingVacancy.setReservationCatId(jobPositionsDTO.getReservation_cat_id());
+            existingVacancy.setSpecialCatId(jobPositionsDTO.getSpecial_cat_id());
             jobVacanciesRepository.save(existingVacancy);
         } else {
             throw new RuntimeException("Job vacancy not found for position ID: " + positionId);

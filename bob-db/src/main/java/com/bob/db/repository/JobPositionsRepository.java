@@ -1,6 +1,6 @@
 package com.bob.db.repository;
 
-import com.bob.db.entity.Positions;
+import com.bob.db.entity.PositionsEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -10,9 +10,9 @@ import java.util.List;
 import java.util.UUID;
 
 @Repository
-public interface JobPositionsRepository extends JpaRepository<Positions, UUID> {
+public interface JobPositionsRepository extends JpaRepository<PositionsEntity, UUID> {
     @Query(value = "SELECT * FROM positions WHERE requisition_id = :requisitionId", nativeQuery = true)
-    List<Positions> findAllByRequisitionId(@Param("requisitionId") UUID requisitionId);
+    List<PositionsEntity> findAllByRequisitionId(@Param("requisitionId") UUID requisitionId);
 
 
 }

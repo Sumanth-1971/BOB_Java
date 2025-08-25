@@ -1,6 +1,6 @@
 package com.bob.db.repository;
 
-import com.bob.db.entity.JobSelectionProcess;
+import com.bob.db.entity.JobSelectionProcessEntity;
 import jakarta.transaction.Transactional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -9,9 +9,9 @@ import org.springframework.stereotype.Repository;
 
 import java.util.UUID;
 @Repository
-public interface JobSelectionProcessRepository extends JpaRepository<JobSelectionProcess,Integer> {
+public interface JobSelectionProcessRepository extends JpaRepository<JobSelectionProcessEntity,Integer> {
     @Query(value = "SELECT * FROM job_selection_process WHERE position_id = ?1", nativeQuery = true)
-    JobSelectionProcess findByPositionId(UUID positionId);
+    JobSelectionProcessEntity findByPositionId(UUID positionId);
 
     //update by position id
     @Modifying

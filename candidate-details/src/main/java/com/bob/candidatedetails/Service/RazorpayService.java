@@ -92,7 +92,7 @@ public class RazorpayService {
                             PositionsEntity p = positionsById.get(UUID.fromString(dto.getPositionId()));
                             if (p != null) {
                                 RazorpayDTO details = r.getRazorpayOrderDetails();
-                                details.setRequisitionCode(jobRequisitionsRepository.findById(p.getRequisitionId()).orElse(null).getRequisition_code());
+                                details.setRequisitionCode(jobRequisitionsRepository.findById(p.getRequisitionId()).orElse(null).getRequisitionCode());
                                 r.setRazorpayOrderDetails(details);
                                 r.setPositionTitle(p.getPositionTitle());
                                 r.setPositionDescription(p.getDescription());

@@ -1,7 +1,7 @@
 package com.bob.JobCreation.service;
 
 import com.bob.db.dto.JobPositionsDTO;
-import com.bob.db.entity.JobSelectionProcess;
+import com.bob.db.entity.JobSelectionProcessEntity;
 import com.bob.db.repository.JobSelectionProcessRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -18,29 +18,29 @@ public class JobSelectionProcessService {
 //    private UUID position_id; --> set
 //    private String selection_procedure; --> set
 
-    private JobSelectionProcess setValues(JobPositionsDTO jobPositionsDTO,UUID position_id){
-        JobSelectionProcess jobSelectionProcess = new JobSelectionProcess();
+    private JobSelectionProcessEntity setValues(JobPositionsDTO jobPositionsDTO, UUID position_id){
+        JobSelectionProcessEntity jobSelectionProcess = new JobSelectionProcessEntity();
 
-        jobSelectionProcess.setSelection_procedure(jobPositionsDTO.getSelection_procedure());
+        jobSelectionProcess.setSelectionProcedure(jobPositionsDTO.getSelection_procedure());
         jobSelectionProcess.setPosition_id(position_id);
         return jobSelectionProcess;
     }
 
-    public JobSelectionProcess createSelectionProcess(JobPositionsDTO jobPositionsDTO,UUID position_id){
+    public JobSelectionProcessEntity createSelectionProcess(JobPositionsDTO jobPositionsDTO, UUID position_id){
 
-        JobSelectionProcess jobSelectionProcess = setValues(jobPositionsDTO,position_id);
+        JobSelectionProcessEntity jobSelectionProcess = setValues(jobPositionsDTO,position_id);
         return jobSelectionProcessRepository.save(jobSelectionProcess);
     }
 
-    public JobSelectionProcess getByPositionIdSelectionProcess(UUID position_id){
+    public JobSelectionProcessEntity getByPositionIdSelectionProcess(UUID position_id){
         return jobSelectionProcessRepository.findByPositionId(position_id);
     }
 
     //updateSelectionProcess
-    public JobSelectionProcess updateSelectionProcess(JobPositionsDTO jobPositionsDTO, UUID position_id) {
-        JobSelectionProcess existingProcess = getByPositionIdSelectionProcess(position_id);
+    public JobSelectionProcessEntity updateSelectionProcess(JobPositionsDTO jobPositionsDTO, UUID position_id) {
+        JobSelectionProcessEntity existingProcess = getByPositionIdSelectionProcess(position_id);
         if (existingProcess != null) {
-            existingProcess.setSelection_procedure(jobPositionsDTO.getSelection_procedure());
+            existingProcess.setSelectionProcedure(jobPositionsDTO.getSelection_procedure());
             return jobSelectionProcessRepository.save(existingProcess);
         }
         return null; // or throw an exception if not found
