@@ -1,4 +1,4 @@
-package com.bob.db.Mapper;
+package com.bob.db.mapper;
 
 import com.bob.db.dto.JobPositionsDTO;
 import com.bob.db.entity.JobPostingLocationEntity;

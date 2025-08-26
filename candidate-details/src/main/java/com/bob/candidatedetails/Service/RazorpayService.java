@@ -1,14 +1,14 @@
 package com.bob.candidatedetails.Service;
 
+import com.bob.db.dto.RazorpayOrderDto;
 import com.bob.db.entity.RazorpayOrdersResponse;
+import com.bob.db.mapper.RazorpayOrderMapper;
 import com.bob.db.repository.CandidatesRepository;
 import com.bob.db.repository.JobRequisitionsRepository;
 import com.bob.db.repository.PositionsRepository;
 import com.bob.db.repository.RazorpayOrderRepository;
-import com.bob.db.dto.RazorpayDTO;
 import com.bob.db.entity.CandidatesEntity;
 import com.bob.db.entity.PositionsEntity;
-import com.bob.db.entity.RazorpayOrderEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -34,15 +34,18 @@ public class RazorpayService {
     @Autowired
     private JobRequisitionsRepository jobRequisitionsRepository;
 
+    @Autowired
+    private RazorpayOrderMapper razorpayOrderMapper;
+
     public List<RazorpayOrdersResponse> getAllRazorpayOrders() {
-        List<RazorpayDTO> razorpayOrdersList = razorpayOrderRepository.findAll()
+        List<RazorpayOrderDto> razorpayOrdersList = razorpayOrderRepository.findAll()
                 .stream()
-                .map(this::toDto)
+                .map(razorpayOrderMapper::toDto)
                 .collect(Collectors.toList());
 
         // Fetch all candidates by IDs
         ArrayList<UUID> candidateUUIDs = new ArrayList<>();
-        for (RazorpayDTO dto : razorpayOrdersList) {
+        for (RazorpayOrderDto dto : razorpayOrdersList) {
             try {
             if (dto.getCandidateId() != null) {
                 candidateUUIDs.add(UUID.fromString(dto.getCandidateId()));
@@ -57,7 +60,7 @@ public class RazorpayService {
 
         // Fetch all positions by IDs
         ArrayList<UUID> positionUUIDs = new ArrayList<>();
-        for (RazorpayDTO dto : razorpayOrdersList) {
+        for (RazorpayOrderDto dto : razorpayOrdersList) {
             try {
                 if (dto.getPositionId() != null) {
                     positionUUIDs.add(UUID.fromString(dto.getPositionId()));
@@ -91,7 +94,7 @@ public class RazorpayService {
                         if (dto.getPositionId() != null) {
                             PositionsEntity p = positionsById.get(UUID.fromString(dto.getPositionId()));
                             if (p != null) {
-                                RazorpayDTO details = r.getRazorpayOrderDetails();
+                                RazorpayOrderDto details = r.getRazorpayOrderDetails();
                                 details.setRequisitionCode(jobRequisitionsRepository.findById(p.getRequisitionId()).orElse(null).getRequisitionCode());
                                 r.setRazorpayOrderDetails(details);
                                 r.setPositionTitle(p.getPositionTitle());
@@ -104,20 +107,4 @@ public class RazorpayService {
                 .collect(Collectors.toList());
     }
 
-    private RazorpayDTO toDto(RazorpayOrderEntity e) {
-        RazorpayDTO d = new RazorpayDTO();
-        d.setId(e.getId());
-        d.setOrderId(e.getOrderId());
-        d.setAmount(e.getAmount());
-        d.setCurrency(e.getCurrency());
-        d.setStatus(e.getStatus());
-        d.setReceipt(e.getReceipt());
-        d.setNotes(e.getNotes());
-        d.setPaymentId(e.getPaymentId());
-        d.setCapturedAmount(e.getCapturedAmount());
-        d.setCreatedAt(e.getCreatedAt());
-        d.setCandidateId(e.getCandidateId());
-        d.setPositionId(e.getPositionId());
-        return d;
-    }
 }

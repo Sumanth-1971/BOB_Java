@@ -82,6 +82,8 @@
             <version>1.18.32</version>
         </dependency>
 
+        
+
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
@@ -100,11 +102,11 @@
     </build>
 
     <modules>
+        <module>bob-db</module>
         <module>job-creation</module>
         <module>candidate-details</module>
         <module>common-config</module>
         <module>master-data</module>
-        <module>bob-db</module>
     </modules>
 
     <profiles>

@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -141,7 +142,38 @@ public class JobRequisitionsService {
                         jobRequisitionsRepository.save(jobRequisitions);
                     }
                 }
-            } else if (jobPostings.getApproval_status().equals("Workflow") ){
+            }
+            /*else if (jobPostings.getApproval_status().equals(AppConstants.APPROVAL_STATUS_WORKFLOW) ){
+                for (UUID jobRequisitionsId : jobPostings.getRequisition_id()) {
+                    JobRequisitions jobRequisition = jobRequisitionsRepository.findById(jobRequisitionsId).orElse(null);
+                    if (jobRequisition != null) {
+                        jobRequisition.setJob_postings(externalJobPostings);
+
+                        Optional<UserEntity> user = userRepository.findById(Long.parseLong(jobPostings.getUser_id()));
+                        if (user.isPresent()) {
+                            UserEntity currentUserEntity = user.get();
+                            Long managerId = currentUserEntity.getManager_id();
+
+                            //n+1 flow
+                            if (managerId != null) {
+                                Optional<UserEntity> manager = userRepository.findById(managerId);
+                                if (manager.isPresent()) {
+                                    jobRequisition.setRequisition_status(AppConstants.REQ_APPROVAL_PENDING.concat(AppConstants.UNDERSCORE).concat(manager.get().getRole()));
+                                    jobRequisition.setRequisition_approval(AppConstants.APPROVAL_STATUS_WORKFLOW);
+                                } else {
+                                    throw new Exception("Manager User with ID " + managerId + " not found.");
+                                }
+                            } else {
+                                //approval flow
+                                jobRequisition.setRequisition_status(AppConstants.REQ_APPROVAL_APPROVED);
+                                jobRequisition.setRequisition_approval(AppConstants.APPROVAL_STATUS_WORKFLOW);
+                            }
+                        } else {
+                            throw new Exception("User with ID " + jobPostings.getUser_id() + " not found.");
+                        }
+
+                        jobRequisitionsRepository.save(jobRequisition);*/
+            else if (jobPostings.getApproval_status().equals("Workflow") ){
                 for (UUID jobRequisitionsId : jobPostings.getRequisition_id()) {
                     JobRequisitionsEntity jobRequisitions = jobRequisitionsRepository.findById(jobRequisitionsId).orElse(null);
                     if (jobRequisitions != null) {
