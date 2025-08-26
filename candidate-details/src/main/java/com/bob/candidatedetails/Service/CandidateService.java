@@ -1,6 +1,7 @@
 package com.bob.candidatedetails.Service;
 
 import com.bob.candidatedetails.Feign.FeignPositionDTO;
+import com.bob.candidatedetails.model.GetCandidateDetailsByPositionIdResponse;
 import com.bob.db.entity.City;
 import com.bob.db.entity.Country;
 import com.bob.db.entity.Location;
@@ -25,7 +26,11 @@ import java.util.*;
 @Service
 public class CandidateService {
     @Autowired
+    private CandidatesRepository candidatesRepository;
+
+    @Autowired
     private CandidateRepository candidateRepository;
+
     @Autowired
     private CandidateNationalityRepository candidateNationalityRepository;
 
@@ -59,43 +64,42 @@ public class CandidateService {
     @Autowired
     private FeignPositionDTO feignPositionDTO;
 
-    public List<CandidateDetails> getCandidateDetailsByPositionId(UUID position_id) {
+    public List<GetCandidateDetailsByPositionIdResponse> getCandidateDetailsByPositionId(UUID position_id) {
         List<CandidateApplicationsEntity> candidateApplicationsList = candidateApplicationsRepository.findByPositionId(position_id);
-        List<CandidateDetails> candidateDetailsList = new ArrayList<>();
+        List<GetCandidateDetailsByPositionIdResponse> responseList = new ArrayList<>();
         for (CandidateApplicationsEntity candidateApplications : candidateApplicationsList) {
-            CandidateDetails candidateDetails = new CandidateDetails();
+            GetCandidateDetailsByPositionIdResponse response = new GetCandidateDetailsByPositionIdResponse();
 //            List<FileInfo> fileInfoList = candidateDocumentsRepository.getFileDetails(candidateApplications.getCandidate_id());
-            String fileUrl=candidateRepository.findById(candidateApplications.getCandidateId()).get().getFile_url();
+            String fileUrl=candidateApplications.getCandidate().getFileUrl();
             List<Long> locationIds= jobPostingLocationRepository.findByPositionId(position_id);
             Location location=locationRepository.findById(locationIds.get(0)).orElse(null);
-            candidateDetails.setLocation_details(Map.of(location.getLocation_id(), location.getLocation_name()));
+            response.setLocation_details(Map.of(location.getLocation_id(), location.getLocation_name()));
             City city= cityRepository.findById(location.getCity_id()).orElse(null);
-            candidateDetails.setCity_details(Map.of(city.getCity_id(), city.getCity_name()));
+            response.setCity_details(Map.of(city.getCity_id(), city.getCity_name()));
             State state = stateRepository.findById(city.getState_id()).orElse(null);
-            candidateDetails.setState_details(Map.of(state.getState_id(), state.getState_name()));
+            response.setState_details(Map.of(state.getState_id(), state.getState_name()));
             Country country = countryRepository.findById(state.getCountry_id()).orElse(null);
-            candidateDetails.setCountry_details(Map.of(country.getCountry_id(), country.getCountry_name()));
-            UUID candidateId=candidateApplications.getCandidateId();
-            Candidates candidates=candidateRepository.findById(candidateApplications.getCandidateId()).get();
+            response.setCountry_details(Map.of(country.getCountry_id(), country.getCountry_name()));
 
-            candidateDetails.setCandidate_id(candidateId);
-            candidateDetails.setFull_name(candidates.getFull_name());
-            candidateDetails.setUsername(candidates.getUsername());
-            candidateDetails.setEmail(candidates.getEmail());
-            candidateDetails.setPhone(candidates.getPhone());
-            candidateDetails.setReservation_category_id(candidates.getReservation_category_id());
-            candidateDetails.setHighest_qualification(candidates.getHighest_qualification_id());
-            candidateDetails.setTotal_experience(candidates.getTotal_experience());
-            candidateDetails.setAddress(candidates.getAddress());
-            candidateDetails.setGender(candidates.getGender());
-            candidateDetails.setSpecial_category_id(candidates.getSpecial_category_id());
-            candidateDetails.setFileUrl(fileUrl);
-            candidateDetails.setApplication_status(candidateApplications.getApplicationStatus());
+            CandidatesEntity candidatesEntity = candidateApplications.getCandidate();
+            response.setCandidate_id(candidatesEntity.getCandidateId());
+            response.setFull_name(candidatesEntity.getFullName());
+            response.setUsername(candidatesEntity.getUsername());
+            response.setEmail(candidatesEntity.getEmail());
+            response.setPhone(candidatesEntity.getPhone());
+            response.setReservation_category_id(candidatesEntity.getReservationCategoryId());
+            response.setHighest_qualification(candidatesEntity.getHighestQualificationId());
+            response.setTotal_experience(candidatesEntity.getTotalExperience());
+            response.setAddress(candidatesEntity.getAddress());
+            response.setGender(candidatesEntity.getGender());
+            response.setSpecial_category_id(candidatesEntity.getSpecialCategoryId());
+            response.setFileUrl(fileUrl);
+            response.setApplication_status(candidateApplications.getApplicationStatus());
 
-            candidateDetailsList.add(candidateDetails);
+            responseList.add(response);
 
         }
-        return candidateDetailsList;
+        return responseList;
     }
 
     public List<Candidates> getDetailsByPositionId(UUID position_id) {
@@ -105,7 +109,7 @@ public class CandidateService {
         }
         List<Candidates> candidatesList = new ArrayList<>();
         for (CandidateApplicationsEntity candidateApplications : candidateApplicationsList) {
-            Candidates candidates = candidateRepository.findById(candidateApplications.getCandidateId()).orElse(null);
+            Candidates candidates = candidateRepository.findById(candidateApplications.getCandidate().getCandidateId()).orElse(null);
             if (candidates != null) {
                 candidatesList.add(candidates);
             }
@@ -342,10 +346,10 @@ public class CandidateService {
                         });
                     });
                 }
-                if(candidateApplications.getCandidateId()==null){
+                if(candidateApplications.getCandidate()==null){
                     continue;
                 }
-                UUID candidateId=candidateApplications.getCandidateId();
+                UUID candidateId=candidateApplications.getCandidate().getCandidateId();
                 Candidates candidates=candidateRepository.findById(candidateId).get();
 
                 candidateDetails.setCandidate_id(candidateId);
@@ -401,10 +405,10 @@ public class CandidateService {
                     });
                 });
             }
-            if(candidateApplications.getCandidateId()==null){
+            if(candidateApplications.getCandidate().getCandidateId()==null){
                 continue;
             }
-            UUID candidateId=candidateApplications.getCandidateId();
+            UUID candidateId=candidateApplications.getCandidate().getCandidateId();
             Candidates candidates=candidateRepository.findById(candidateId).get();
             candidateDetails.setCandidate_id(candidateId);
             candidateDetails.setFull_name(candidates.getFull_name());
@@ -570,7 +574,7 @@ public class CandidateService {
         try {
             CandidateApplicationsEntity candidateApplications = new CandidateApplicationsEntity();
             candidateApplications.setApplicationId(UUID.randomUUID());
-            candidateApplications.setCandidateId(candidateId);
+            candidateApplications.setCandidate(candidatesRepository.findById(candidateId).orElse(null));
             candidateApplications.setPositionId(positionId);
             candidateApplications.setApplicationStatus("Shortlisted");
             LocalDateTime time = LocalDateTime.now();
@@ -596,7 +600,7 @@ public class CandidateService {
         return positionDTOList;
     }
 
-    public CandidatesDTO updateCandidate(CandidatesDTO candidate) {
+    public CandidatesDto updateCandidate(CandidatesDto candidate) {
         try {
             Candidates existingCandidate = candidateRepository.findById(candidate.getCandidate_id())
                     .orElseThrow(() -> new RuntimeException("Candidate not found"));
@@ -624,7 +628,7 @@ public class CandidateService {
             Candidates updatedCandidate = candidateRepository.save(existingCandidate);
 
             // Convert to DTO and return
-            return new CandidatesDTO(updatedCandidate);
+            return new CandidatesDto(updatedCandidate);
 
         } catch (Exception e) {
             e.printStackTrace();

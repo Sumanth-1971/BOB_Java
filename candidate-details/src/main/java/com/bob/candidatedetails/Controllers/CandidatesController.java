@@ -1,5 +1,6 @@
 package com.bob.candidatedetails.Controllers;
 
+import com.bob.candidatedetails.model.GetCandidateDetailsByPositionIdResponse;
 import com.bob.db.entity.Candidates;
 import com.bob.db.entity.Interviews;
 import com.bob.candidatedetails.Service.CalendarService;
@@ -50,17 +51,17 @@ public class CandidatesController {
 
 
     @GetMapping("/details-by-position/{position_id}")
-    public ResponseEntity<ApiResponse<List<CandidateDetails>>> getCandidateDetailsByPositionId(@PathVariable UUID position_id) {
+    public ResponseEntity<ApiResponse<List<GetCandidateDetailsByPositionIdResponse>>> getCandidateDetailsByPositionId(@PathVariable UUID position_id) {
         try {
-            List<CandidateDetails> candidateDetailsList = candidateService.getCandidateDetailsByPositionId(position_id);
+            List<GetCandidateDetailsByPositionIdResponse> candidateDetailsList = candidateService.getCandidateDetailsByPositionId(position_id);
             if (candidateDetailsList.isEmpty()) {
                 throw new Exception("No candidates found for the given position ID.");
             }
-            ApiResponse<List<CandidateDetails>> response = new ApiResponse<>(true, "Candidate details retrieved successfully", candidateDetailsList);
+            ApiResponse<List<GetCandidateDetailsByPositionIdResponse>> response = new ApiResponse<>(true, "Candidate details retrieved successfully", candidateDetailsList);
             return new ResponseEntity<>(response, HttpStatus.OK);
         } catch (Exception e) {
             e.printStackTrace();
-            ApiResponse<List<CandidateDetails>> response = new ApiResponse<>(false, "Couldn't retrieve Candidate details due to: " + e.getMessage(), null);
+            ApiResponse<List<GetCandidateDetailsByPositionIdResponse>> response = new ApiResponse<>(false, "Couldn't retrieve Candidate details due to: " + e.getMessage(), null);
             return new ResponseEntity<>(response, HttpStatus.OK);
         }
     }
@@ -143,9 +144,9 @@ public class CandidatesController {
     }
     //Adding data to candidate table
     @PutMapping("/update_candidate")
-    public ResponseEntity<ApiResponse<?>> createCandidate(@RequestBody CandidatesDTO candidate) {
+    public ResponseEntity<ApiResponse<?>> createCandidate(@RequestBody CandidatesDto candidate) {
         try {
-            CandidatesDTO createdCandidate = candidateService.updateCandidate(candidate);
+            CandidatesDto createdCandidate = candidateService.updateCandidate(candidate);
             ApiResponse<?> response = new ApiResponse<>(true, "Candidate created successfully", createdCandidate);
             return new ResponseEntity<>(response, HttpStatus.CREATED);
         } catch (Exception e) {

@@ -3,6 +3,8 @@ package com.bob.db.entity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
@@ -19,8 +21,10 @@ public class CandidateApplicationsEntity {
     @Column(name = "application_id")
     private UUID applicationId;
 
-    @Column(name = "candidate_id", nullable = false)
-    private UUID candidateId;
+    // One-to-one association to CandidatesEntity using the same candidate_id column
+    @OneToOne
+    @JoinColumn(name = "candidate_id", referencedColumnName = "candidate_id", insertable = false, updatable = false)
+    private CandidatesEntity candidate;
 
     @Column(name = "position_id", nullable = false)
     private UUID positionId;
