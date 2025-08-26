@@ -21,10 +21,13 @@ public class CandidateApplicationsEntity {
     @Column(name = "application_id")
     private UUID applicationId;
 
-    // One-to-one association to CandidatesEntity using the same candidate_id column
     @OneToOne
     @JoinColumn(name = "candidate_id", referencedColumnName = "candidate_id", insertable = false, updatable = false)
     private CandidatesEntity candidate;
+
+    @OneToOne
+    @JoinColumn(name = "position_id", referencedColumnName = "position_id", insertable = false, updatable = false)
+    private PositionsEntity position;
 
     @Column(name = "position_id", nullable = false)
     private UUID positionId;

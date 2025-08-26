@@ -1,5 +1,6 @@
 package com.bob.candidatedetails.model;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -9,41 +10,58 @@ import java.util.UUID;
 @Getter
 @Setter
 public class GetCandidateDetailsByPositionIdResponse {
-    private UUID candidate_id;
 
-    private String full_name;
+    @JsonProperty("candidate_id")
+    private UUID candidateId;
 
+    @JsonProperty("full_name")
+    private String fullName;
+
+    @JsonProperty("username")
     private String username;
 
-    private Map<Long,String> country_details;
+    @JsonProperty("country_details")
+    private Map<Long, String> countryDetails;
 
-    private Map<Long,String> state_details;
+    @JsonProperty("state_details")
+    private Map<Long, String> stateDetails;
 
-    private Map<Long,String> location_details;
+    @JsonProperty("location_details")
+    private Map<Long, String> locationDetails;
 
-    private Map<Long,String> city_details;
+    @JsonProperty("city_details")
+    private Map<Long, String> cityDetails;
 
+    @JsonProperty("email")
     private String email;
 
+    @JsonProperty("gender")
     private String gender;
 
+    @JsonProperty("phone")
     private String phone;
 
-    private Integer reservation_category_id;
+    @JsonProperty("reservation_category_id")
+    private Integer reservationCategoryId;
 
-    private Integer special_category_id;
+    @JsonProperty("special_category_id")
+    private Integer specialCategoryId;
 
-    private Integer highest_qualification;
+    @JsonProperty("highest_qualification")
+    private Integer highestQualification;
 
-    private String total_experience;
+    @JsonProperty("total_experience")
+    private String totalExperience;
 
+    @JsonProperty("address")
     private String address;
 
+    @JsonProperty("comments")
     private String comments;
 
-    private String application_status;
+    @JsonProperty("application_status")
+    private String applicationStatus;
 
+    @JsonProperty("fileUrl")
     private String fileUrl;
 }
-
-
