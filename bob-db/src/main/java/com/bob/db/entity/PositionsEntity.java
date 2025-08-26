@@ -15,14 +15,13 @@ import java.util.UUID;
 public class PositionsEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "position_id", nullable = false, columnDefinition = "uuid")
     private UUID positionId;
 
     @Column(name = "requisition_id")
     private UUID requisitionId;
 
-    @Column(name = "position_title", nullable = false)
+    @Column(name = "position_title")
     private String positionTitle;
 
     @Column(columnDefinition = "text")
@@ -81,4 +80,10 @@ public class PositionsEntity {
 
     @Column(name = "updated_date")
     private LocalDateTime updatedDate;
+
+    @Column(name = "min_salary",precision = 10, scale = 2)
+    private BigDecimal minSalary;
+    @Column(name="max_salary", precision = 10, scale = 2)
+    private BigDecimal maxSalary;
+
 }
