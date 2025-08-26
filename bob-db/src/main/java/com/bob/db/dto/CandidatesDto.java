@@ -3,11 +3,10 @@ package com.bob.db.dto;
 import com.bob.db.entity.Candidates;
 import jakarta.persistence.Column;
 
-import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.UUID;
 
-public class CandidatesDTO {
+public class CandidatesDto {
     private UUID candidate_id;
 
     private String full_name;
@@ -45,10 +44,10 @@ public class CandidatesDTO {
     private String file_url;
     private String education_qualification;
 
-    public CandidatesDTO() {
+    public CandidatesDto() {
     }
 
-    public CandidatesDTO(UUID candidate_id, String full_name, String email, String phone, LocalDate date_of_birth, String gender, String id_proof, Integer nationality_id, Integer reservation_category_id, Integer special_category_id, Integer highest_qualification_id, String total_experience, String address, String comments, String skills, String current_designation, String current_employer, String file_url, String education_qualification) {
+    public CandidatesDto(UUID candidate_id, String full_name, String email, String phone, LocalDate date_of_birth, String gender, String id_proof, Integer nationality_id, Integer reservation_category_id, Integer special_category_id, Integer highest_qualification_id, String total_experience, String address, String comments, String skills, String current_designation, String current_employer, String file_url, String education_qualification) {
         this.candidate_id = candidate_id;
         this.full_name = full_name;
         this.email = email;
@@ -70,7 +69,7 @@ public class CandidatesDTO {
         this.education_qualification = education_qualification;
     }
 
-    public CandidatesDTO(Candidates updatedCandidate) {
+    public CandidatesDto(Candidates updatedCandidate) {
         this.candidate_id = updatedCandidate.getCandidate_id();
         this.full_name = updatedCandidate.getFull_name();
         this.email = updatedCandidate.getEmail();
