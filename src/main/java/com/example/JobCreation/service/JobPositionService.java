@@ -54,6 +54,8 @@ public class JobPositionService{
         positionsDTO.setDescription(positions.getDescription());
         positionsDTO.setRoles_responsibilities(positions.getRoles_responsibilities());
         positionsDTO.setGrade_id(positions.getGrade_id());
+        positionsDTO.setMax_salary(positions.getMax_salary());
+        positionsDTO.setMin_salary(positions.getMin_salary());
         positionsDTO.setEmployment_type(positions.getEmployment_type());
         positionsDTO.setEligibility_age_min(positions.getEligibility_age_min());
         positionsDTO.setEligibility_age_max(positions.getEligibility_age_max());
@@ -114,6 +116,8 @@ public class JobPositionService{
         positionsDTO.setDescription(positions.getDescription());
         positionsDTO.setRoles_responsibilities(positions.getRoles_responsibilities());
         positionsDTO.setGrade_id(positions.getGrade_id());
+        positionsDTO.setMax_salary(positions.getMax_salary());
+        positionsDTO.setMin_salary(positions.getMin_salary());
         positionsDTO.setEmployment_type(positions.getEmployment_type());
         positionsDTO.setEligibility_age_min(positions.getEligibility_age_min());
         positionsDTO.setEligibility_age_max(positions.getEligibility_age_max());
@@ -177,6 +181,8 @@ public class JobPositionService{
         positions.setDescription(positionsDTO.getDescription());
         positions.setRoles_responsibilities(positionsDTO.getRoles_responsibilities());
         positions.setGrade_id(positionsDTO.getGrade_id());
+        positions.setMin_salary(positionsDTO.getMin_salary());
+        positions.setMax_salary(positionsDTO.getMax_salary());
         positions.setEmployment_type(positionsDTO.getEmployment_type());
         positions.setEligibility_age_min(positionsDTO.getEligibility_age_min());
         positions.setEligibility_age_max(positionsDTO.getEligibility_age_max());
@@ -185,7 +191,7 @@ public class JobPositionService{
         positions.setMandatory_experience(positionsDTO.getMandatory_experience());
         positions.setPreferred_experience(positionsDTO.getPreferred_experience());
         positions.setProbation_period(positionsDTO.getProbation_period());
-        positions.setDocument_required(positionsDTO.getDocuments_required());
+        positions.setDocuments_required(positionsDTO.getDocuments_required());
         positions.setMin_credit_score(positionsDTO.getMin_credit_score());
         positions.setPosition_status("Active");
         LocalDateTime time = LocalDateTime.now();
@@ -286,11 +292,12 @@ public class JobPositionService{
         }
         // Update the existing position with new values
         existingPosition.setRequisition_id(jobPositionsDTO.getRequisition_id());
-
         existingPosition.setPosition_title(jobPositionsDTO.getPosition_title());
         existingPosition.setDescription(jobPositionsDTO.getDescription());
         existingPosition.setRoles_responsibilities(jobPositionsDTO.getRoles_responsibilities());
         existingPosition.setGrade_id(jobPositionsDTO.getGrade_id());
+        existingPosition.setMin_salary(jobPositionsDTO.getMin_salary());
+        existingPosition.setMax_salary(jobPositionsDTO.getMax_salary());
         existingPosition.setEmployment_type(jobPositionsDTO.getEmployment_type());
         existingPosition.setEligibility_age_min(jobPositionsDTO.getEligibility_age_min());
         existingPosition.setEligibility_age_max(jobPositionsDTO.getEligibility_age_max());
@@ -299,7 +306,7 @@ public class JobPositionService{
         existingPosition.setMandatory_experience(jobPositionsDTO.getMandatory_experience());
         existingPosition.setPreferred_experience(jobPositionsDTO.getPreferred_experience());
         existingPosition.setProbation_period(jobPositionsDTO.getProbation_period());
-        existingPosition.setDocument_required(jobPositionsDTO.getDocuments_required());
+        existingPosition.setDocuments_required(jobPositionsDTO.getDocuments_required());
         existingPosition.setMin_credit_score(jobPositionsDTO.getMin_credit_score());
         existingPosition.setUpdated_by(""); // Set the updated_by field as needed
         existingPosition.setUpdated_date(LocalDateTime.now()); // Update the timestamp

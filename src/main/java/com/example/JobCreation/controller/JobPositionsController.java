@@ -3,7 +3,7 @@ package com.example.JobCreation.controller;
 import com.example.JobCreation.dto.ApiResponse;
 import com.example.JobCreation.dto.JobPositionsDTO;
 import com.example.JobCreation.dto.ResponseDTO;
-import com.example.JobCreation.model.Positions;
+
 import com.example.JobCreation.service.JobPositionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
