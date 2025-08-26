@@ -11,9 +11,7 @@ import java.util.List;
 @Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface CityMapper {
 
-    @Mapping(source = "cityId", target = "city_id")
-    @Mapping(source = "cityName", target = "city_name")
-    @Mapping(source = "stateId", target = "state_id")
+
     CityDto toDto(CityEntity cityEntity);
 
 

@@ -2,6 +2,7 @@ package com.bob.masterdata.Service;
 
 import com.bob.db.entity.ReservationCategories;
 import com.bob.db.mapper.CityMapper;
+import com.bob.db.mapper.LocationMapper;
 import com.bob.db.mapper.StateMapper;
 import com.bob.db.repository.*;
 //import com.bob.db.dto.MasterDTO;
@@ -23,7 +24,8 @@ public class DisplayService {
     @Autowired
     private CityRepository cityRepository;
 
-
+    @Autowired
+    private LocationMapper locationMapper;
     @Autowired
     private CityMapper cityMapper;
     @Autowired
@@ -80,21 +82,21 @@ public class DisplayService {
         List<StateDto> states=stateMapper.toDtoList(stateRepository.findAll());
         List<CityDto> cities=cityMapper.toDtoList(cityRepository.findAll());
 //        System.out.println(cities.toString());
-        List<LocationDto> locations=locationRepository.getData();
+        List<LocationDto> locations=locationMapper.toDtoList(locationRepository.findAll());
         List<Map<Long,String>> skills=skillRepository.getSkillIdDescriptions();
         List<Map<Long,String>> job_Data=jobGradeRepository.getData();
         List<Map<Long,String>> mandatory= educationalQualificationsRepository.getData();
         List<Map<Long,String>> preferred= educationalQualificationsRepository.getData();
-        getCompleteDataResponse.setPosition_title(position_title);
+        getCompleteDataResponse.setPositionTitle(position_title);
         getCompleteDataResponse.setDepartments(department);
         getCompleteDataResponse.setCountries(countries);
         getCompleteDataResponse.setStates(states);
         getCompleteDataResponse.setCities(cities);
         getCompleteDataResponse.setLocations(locations);
         getCompleteDataResponse.setSkills(skills);
-        getCompleteDataResponse.setJob_grade_data(job_Data);
-        getCompleteDataResponse.setMandatory_qualification(mandatory);
-        getCompleteDataResponse.setPreferred_qualification(preferred);
+        getCompleteDataResponse.setJobGradeData(job_Data);
+        getCompleteDataResponse.setMandatoryQualification(mandatory);
+        getCompleteDataResponse.setPreferredQualification(preferred);
         return getCompleteDataResponse;
 
     }

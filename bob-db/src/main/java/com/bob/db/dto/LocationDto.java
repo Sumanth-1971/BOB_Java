@@ -1,47 +1,19 @@
 package com.bob.db.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
 @Data
 public class LocationDto {
 
-    private Long location_id;
+    @JsonProperty("location_id")
+    private Long locationId;
 
-    private String location_name;
+    @JsonProperty("location_name")
+    private String locationName;
 
-    private Long city_id;
+    @JsonProperty("city_id")
+    private Long cityId;
 
 
-    public LocationDto(Long location_id, String location_name, Long city_id) {
-        this.location_id = location_id;
-        this.location_name = location_name;
-        this.city_id = city_id;
-    }
-
-    public LocationDto() {
-    }
-
-    public Long getLocation_id() {
-        return location_id;
-    }
-
-    public void setLocation_id(Long location_id) {
-        this.location_id = location_id;
-    }
-
-    public String getLocation_name() {
-        return location_name;
-    }
-
-    public void setLocation_name(String location_name) {
-        this.location_name = location_name;
-    }
-
-    public Long getCity_id() {
-        return city_id;
-    }
-
-    public void setCity_id(Long city_id) {
-        this.city_id = city_id;
-    }
 }

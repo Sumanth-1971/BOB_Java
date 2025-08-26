@@ -3,6 +3,7 @@ package com.bob.masterdata.model;
 import com.bob.db.dto.CityDto;
 import com.bob.db.dto.LocationDto;
 import com.bob.db.dto.StateDto;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -13,17 +14,12 @@ import java.util.Map;
 @Setter
 public class GetCompleteDataResponse {
 
-    private List<String> position_title;
+    @JsonProperty("position_title")
+    private List<String> positionTitle;
 
     private List<Map<Long,String>> departments;
 
     private List<Map<Long,String>> countries;
-//
-////    List<Map<Long,String>> states;
-//    private List<Map<Long,Map<String,Long>>> states;
-//    private List<Map<Long,Map<String,Long>>> cities;
-//
-//    private List<Map<Long,String>> locations;
 
     private List<LocationDto> locations;
 
@@ -31,13 +27,15 @@ public class GetCompleteDataResponse {
 
     private List<StateDto> states;
 
-//    private String description;
 
     private List<Map<Long,String>> skills;
 
-    private List<Map<Long,String>> job_grade_data;
+    @JsonProperty("job_grade_data")
+    private List<Map<Long,String>> jobGradeData;
 
-    private List<Map<Long,String>> mandatory_qualification;
+    @JsonProperty("mandatory_qualification")
+    private List<Map<Long,String>> mandatoryQualification;
 
-    private List<Map<Long,String>> preferred_qualification;
+    @JsonProperty("preferred_qualification")
+    private List<Map<Long,String>> preferredQualification;
 }

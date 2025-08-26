@@ -1,14 +1,18 @@
 package com.bob.db.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
 @Data
 public class CityDto {
 
-    private Long city_id;
+    @JsonProperty("city_id")
+    private Long cityId;
 
-    private String city_name;
+    @JsonProperty("city_name")
+    private String cityName;
 
-    private Long state_id;
+    @JsonProperty("state_id")
+    private Long stateId;
 
 }

@@ -11,8 +11,6 @@ import java.util.List;
 
 @Repository
 public interface LocationRepository extends JpaRepository<LocationEntity,Long> {
-    @Query(value = "SELECT dd.location_id,dd.location_name,dd.city_id FROM locations dd", nativeQuery = true)
-    List<LocationDto> getData();
 
     @Query(value = "SELECT * FROM locations WHERE  city_id= :cityId", nativeQuery = true)
     List<LocationEntity> findByCityId(@Param("cityId") Long cityId);
