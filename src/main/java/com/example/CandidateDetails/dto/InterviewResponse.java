@@ -15,4 +15,6 @@ public class InterviewResponse {
     private String candidateName;
     private String candidateSkill;
     private String applicationStatus;
+    private String requisition_code;
+    private String interviewName;
 }
