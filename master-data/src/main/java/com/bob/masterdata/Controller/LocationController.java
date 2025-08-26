@@ -1,7 +1,7 @@
 package com.bob.masterdata.Controller;
 
 
-import com.bob.db.entity.Location;
+import com.bob.db.entity.LocationEntity;
 import com.bob.masterdata.Service.LocationService;
 import com.bob.db.dto.ApiResponse;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,51 +17,51 @@ public class LocationController {
     @Autowired
     private LocationService locationService;
     @GetMapping("/all")
-    public ResponseEntity<ApiResponse<List<Location>>> getAllLocations(){
+    public ResponseEntity<ApiResponse<List<LocationEntity>>> getAllLocations(){
         try{
-            List<Location> cities=locationService.getAllLocations();
-            ApiResponse<List<Location>> response=new ApiResponse<>(true,"DATA FIELDS FETCHED SUCCESSFULLY!",cities);
+            List<LocationEntity> cities=locationService.getAllLocations();
+            ApiResponse<List<LocationEntity>> response=new ApiResponse<>(true,"DATA FIELDS FETCHED SUCCESSFULLY!",cities);
             return new ResponseEntity<>(response, HttpStatus.OK);
         }catch (Exception e){
-            ApiResponse<List<Location>> response=new ApiResponse<>(true,"DATA FIELDS NOT FETCHED!",null);
+            ApiResponse<List<LocationEntity>> response=new ApiResponse<>(true,"DATA FIELDS NOT FETCHED!",null);
             return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
     }
 
     @PostMapping("/add")
-    public ResponseEntity<ApiResponse<Location>> createLocation(@RequestBody Location location){
+    public ResponseEntity<ApiResponse<LocationEntity>> createLocation(@RequestBody LocationEntity location){
 
         try{
-            Location location1=locationService.createLocation(location);
-            ApiResponse<Location> response=new ApiResponse<>(true,"DATA FIELDS CREATED SUCCESSFULLY!",location1);
+            LocationEntity location1=locationService.createLocation(location);
+            ApiResponse<LocationEntity> response=new ApiResponse<>(true,"DATA FIELDS CREATED SUCCESSFULLY!",location1);
             return new ResponseEntity<>(response, HttpStatus.OK);
         }catch (Exception e){
-            ApiResponse<Location> response=new ApiResponse<>(false,"DATA FIELDS NOT CREATED!"+e.getMessage(),null);
+            ApiResponse<LocationEntity> response=new ApiResponse<>(false,"DATA FIELDS NOT CREATED!"+e.getMessage(),null);
             return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
     @PutMapping("/update/{id}")
-    public ResponseEntity<ApiResponse<Location>> updateLocation(@PathVariable Long id,@RequestBody Location location){
+    public ResponseEntity<ApiResponse<LocationEntity>> updateLocation(@PathVariable Long id, @RequestBody LocationEntity location){
         try{
-            Location location1=locationService.updateLocations(id,location);
-            ApiResponse<Location> response=new ApiResponse<>(true,"DATA FIELD UPDATED SUCCESSFULLY!",location1);
+            LocationEntity location1=locationService.updateLocations(id,location);
+            ApiResponse<LocationEntity> response=new ApiResponse<>(true,"DATA FIELD UPDATED SUCCESSFULLY!",location1);
             return new ResponseEntity<>(response, HttpStatus.OK);
         }catch (Exception e){
-            ApiResponse<Location> response=new ApiResponse<>(false,"DATA FIELDS NOT UPDATED!"+e.getMessage(),null);
+            ApiResponse<LocationEntity> response=new ApiResponse<>(false,"DATA FIELDS NOT UPDATED!"+e.getMessage(),null);
             return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
     @DeleteMapping("/delete/{id}")
-    public ResponseEntity<ApiResponse<Location>> deleteLocation(@PathVariable Long id){
+    public ResponseEntity<ApiResponse<LocationEntity>> deleteLocation(@PathVariable Long id){
         try{
-            Location location1=locationService.deleteLocation(id);
-            ApiResponse<Location> response=new ApiResponse<>(true,"DATA FIELD UPDATED SUCCESSFULLY!",location1);
+            LocationEntity location1=locationService.deleteLocation(id);
+            ApiResponse<LocationEntity> response=new ApiResponse<>(true,"DATA FIELD UPDATED SUCCESSFULLY!",location1);
             return new ResponseEntity<>(response, HttpStatus.OK);
         }catch (Exception e){
-            ApiResponse<Location> response=new ApiResponse<>(false,"DATA FIELDS NOT UPDATED! "+e.getMessage(),null);
+            ApiResponse<LocationEntity> response=new ApiResponse<>(false,"DATA FIELDS NOT UPDATED! "+e.getMessage(),null);
             return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
         }
 

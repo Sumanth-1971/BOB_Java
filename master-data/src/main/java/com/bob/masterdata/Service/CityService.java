@@ -1,6 +1,6 @@
 package com.bob.masterdata.Service;
 
-import com.bob.db.entity.City;
+import com.bob.db.entity.CityEntity;
 import com.bob.db.repository.CityRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -14,9 +14,9 @@ public class CityService {
     @Autowired
     private CityRepository cityRepository;
 
-    public City createCity(City city) {
+    public CityEntity createCity(CityEntity city) {
         try {
-            city.setCreated_date(LocalDateTime.now());
+            city.setCreatedDate(LocalDateTime.now());
             cityRepository.save(city);
             return city;
         } catch (Exception e) {
@@ -24,7 +24,7 @@ public class CityService {
         }
     }
 
-    public List<City> getAllCities() throws Exception {
+    public List<CityEntity> getAllCities() throws Exception {
         try {
             return cityRepository.findAll();
         } catch (Exception e) {
@@ -32,12 +32,12 @@ public class CityService {
         }
     }
 
-    public City updateCities(Long id, City city) {
+    public CityEntity updateCities(Long id, CityEntity city) {
         try {
-            City replica=city;
-            Optional<City> existingCity = cityRepository.findById(id);
+            CityEntity replica=city;
+            Optional<CityEntity> existingCity = cityRepository.findById(id);
             if (existingCity.isPresent()) {
-                city.setCity_id(id);
+                city.setCityId(id);
                 cityRepository.save(city);
                 return replica;
             } else {
@@ -48,10 +48,10 @@ public class CityService {
         }
     }
 
-    public City deleteCities(Long id) {
+    public CityEntity deleteCities(Long id) {
         try {
             if (cityRepository.existsById(id)) {
-                City city=cityRepository.findById(id).get();
+                CityEntity city=cityRepository.findById(id).get();
                 cityRepository.deleteById(id);
                 return city;
             } else {

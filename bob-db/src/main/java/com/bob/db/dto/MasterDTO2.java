@@ -18,9 +18,9 @@ public class MasterDTO2 {
 //
 //    private List<Map<Long,String>> locations;
 
-    private List<Locationdto> locations;
+    private List<LocationDto> locations;
 
-    private List<Citydto> cities;
+    private List<CityDto> cities;
 
     private List<StateDto> states;
 
@@ -37,7 +37,7 @@ public class MasterDTO2 {
     public MasterDTO2() {
     }
 
-    public MasterDTO2(List<String> position_title, List<Map<Long, String>> departments, List<Map<Long, String>> countries, List<Locationdto> locations, List<Citydto> cities, List<StateDto> states, List<Map<Long, String>> skills, List<Map<Long, String>> job_grade_data, List<Map<Long, String>> mandatory_qualification, List<Map<Long, String>> preferred_qualification) {
+    public MasterDTO2(List<String> position_title, List<Map<Long, String>> departments, List<Map<Long, String>> countries, List<LocationDto> locations, List<CityDto> cities, List<StateDto> states, List<Map<Long, String>> skills, List<Map<Long, String>> job_grade_data, List<Map<Long, String>> mandatory_qualification, List<Map<Long, String>> preferred_qualification) {
         this.position_title = position_title;
         this.departments = departments;
         this.countries = countries;
@@ -74,19 +74,19 @@ public class MasterDTO2 {
         this.countries = countries;
     }
 
-    public List<Locationdto> getLocations() {
+    public List<LocationDto> getLocations() {
         return locations;
     }
 
-    public void setLocations(List<Locationdto> locations) {
+    public void setLocations(List<LocationDto> locations) {
         this.locations = locations;
     }
 
-    public List<Citydto> getCities() {
+    public List<CityDto> getCities() {
         return cities;
     }
 
-    public void setCities(List<Citydto> cities) {
+    public void setCities(List<CityDto> cities) {
         this.cities = cities;
     }
 

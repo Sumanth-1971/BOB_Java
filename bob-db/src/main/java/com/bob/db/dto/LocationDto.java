@@ -1,6 +1,9 @@
 package com.bob.db.dto;
 
-public class Locationdto {
+import lombok.Data;
+
+@Data
+public class LocationDto {
 
     private Long location_id;
 
@@ -8,13 +11,14 @@ public class Locationdto {
 
     private Long city_id;
 
-    public Locationdto() {
-    }
 
-    public Locationdto(Long location_id, String location_name, Long city_id) {
+    public LocationDto(Long location_id, String location_name, Long city_id) {
         this.location_id = location_id;
         this.location_name = location_name;
         this.city_id = city_id;
+    }
+
+    public LocationDto() {
     }
 
     public Long getLocation_id() {
