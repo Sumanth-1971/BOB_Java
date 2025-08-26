@@ -1,6 +1,6 @@
 package com.bob.masterdata.Service;
 
-import com.bob.db.entity.Location;
+import com.bob.db.entity.LocationEntity;
 import com.bob.db.repository.LocationRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -14,10 +14,10 @@ public class LocationService {
     @Autowired
     private LocationRepository locationRepository;
 
-    public Location createLocation(Location location) {
+    public LocationEntity createLocation(LocationEntity location) {
         try {
 
-            location.setCreated_date(LocalDateTime.now());
+            location.setCreatedDate(LocalDateTime.now());
             locationRepository.save(location);
             return location;
         } catch (Exception e) {
@@ -25,7 +25,7 @@ public class LocationService {
         }
     }
 
-    public List<Location> getAllLocations() throws Exception {
+    public List<LocationEntity> getAllLocations() throws Exception {
         try {
             return locationRepository.findAll();
         } catch (Exception e) {
@@ -33,12 +33,12 @@ public class LocationService {
         }
     }
 
-    public Location updateLocations(Long id,Location location) {
+    public LocationEntity updateLocations(Long id, LocationEntity location) {
         try {
-            Location location1=location;
-            Optional<Location> existingLocation = locationRepository.findById(id);
+            LocationEntity location1=location;
+            Optional<LocationEntity> existingLocation = locationRepository.findById(id);
             if (existingLocation.isPresent()) {
-                location.setLocation_id(id);
+                location.setLocationId(id);
                 locationRepository.save(location);
                 return location1;
             } else {
@@ -49,10 +49,10 @@ public class LocationService {
         }
     }
 
-    public Location deleteLocation(Long id) {
+    public LocationEntity deleteLocation(Long id) {
         try {
             if (locationRepository.existsById(id)) {
-                Location location=locationRepository.findById(id).get();
+                LocationEntity location=locationRepository.findById(id).get();
                 locationRepository.deleteById(id);
                 return location;
             } else {

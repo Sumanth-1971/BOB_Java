@@ -1,6 +1,6 @@
 package com.bob.masterdata.Controller;
 
-import com.bob.db.entity.State;
+import com.bob.db.entity.StateEntity;
 import com.bob.masterdata.Service.StateService;
 import com.bob.db.dto.ApiResponse;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,51 +18,51 @@ public class StateController {
 
 
     @GetMapping("/all")
-    public ResponseEntity<ApiResponse<List<State>>> getAllStates(){
+    public ResponseEntity<ApiResponse<List<StateEntity>>> getAllStates(){
         try{
-            List<State> cities=stateService.getAllStates();
-            ApiResponse<List<State>> response=new ApiResponse<>(true,"DATA FIELDS FETCHED SUCCESSFULLY!",cities);
+            List<StateEntity> cities=stateService.getAllStates();
+            ApiResponse<List<StateEntity>> response=new ApiResponse<>(true,"DATA FIELDS FETCHED SUCCESSFULLY!",cities);
             return new ResponseEntity<>(response, HttpStatus.OK);
         }catch (Exception e){
-            ApiResponse<List<State>> response=new ApiResponse<>(true,"DATA FIELDS NOT FETCHED!",null);
+            ApiResponse<List<StateEntity>> response=new ApiResponse<>(true,"DATA FIELDS NOT FETCHED!",null);
             return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
     }
 
     @PostMapping("/add")
-    public ResponseEntity<ApiResponse<State>> createState(@RequestBody State state){
+    public ResponseEntity<ApiResponse<StateEntity>> createState(@RequestBody StateEntity state){
 
         try{
-            State state1=stateService.createState(state);
-            ApiResponse<State> response=new ApiResponse<>(true,"DATA FIELDS CREATED SUCCESSFULLY!",state1);
+            StateEntity state1=stateService.createState(state);
+            ApiResponse<StateEntity> response=new ApiResponse<>(true,"DATA FIELDS CREATED SUCCESSFULLY!",state1);
             return new ResponseEntity<>(response, HttpStatus.OK);
         }catch (Exception e){
-            ApiResponse<State> response=new ApiResponse<>(false,"DATA FIELDS NOT CREATED!"+e.getMessage(),null);
+            ApiResponse<StateEntity> response=new ApiResponse<>(false,"DATA FIELDS NOT CREATED!"+e.getMessage(),null);
             return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
     @PutMapping("/update/{id}")
-    public ResponseEntity<ApiResponse<State>> updateState(@PathVariable Long id,@RequestBody State state){
+    public ResponseEntity<ApiResponse<StateEntity>> updateState(@PathVariable Long id, @RequestBody StateEntity state){
         try{
-            State state1=stateService.updateState(id, state);
-            ApiResponse<State> response=new ApiResponse<>(true,"DATA FIELD UPDATED SUCCESSFULLY!",state1);
+            StateEntity state1=stateService.updateState(id, state);
+            ApiResponse<StateEntity> response=new ApiResponse<>(true,"DATA FIELD UPDATED SUCCESSFULLY!",state1);
             return new ResponseEntity<>(response, HttpStatus.OK);
         }catch (Exception e){
-            ApiResponse<State> response=new ApiResponse<>(false,"DATA FIELDS NOT UPDATED!"+e.getMessage(),null);
+            ApiResponse<StateEntity> response=new ApiResponse<>(false,"DATA FIELDS NOT UPDATED!"+e.getMessage(),null);
             return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
     @DeleteMapping("/delete/{id}")
-    public ResponseEntity<ApiResponse<State>> deleteState(@PathVariable Long id){
+    public ResponseEntity<ApiResponse<StateEntity>> deleteState(@PathVariable Long id){
         try{
-            State state=stateService.deleteState(id);
-            ApiResponse<State> response=new ApiResponse<>(true,"DATA FIELD UPDATED SUCCESSFULLY!",state);
+            StateEntity state=stateService.deleteState(id);
+            ApiResponse<StateEntity> response=new ApiResponse<>(true,"DATA FIELD UPDATED SUCCESSFULLY!",state);
             return new ResponseEntity<>(response, HttpStatus.OK);
         }catch (Exception e){
-            ApiResponse<State> response=new ApiResponse<>(false,"DATA FIELDS NOT UPDATED! "+e.getMessage(),null);
+            ApiResponse<StateEntity> response=new ApiResponse<>(false,"DATA FIELDS NOT UPDATED! "+e.getMessage(),null);
             return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
         }
 

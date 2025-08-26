@@ -1,12 +1,16 @@
 package com.bob.masterdata.Service;
 
 import com.bob.db.entity.ReservationCategories;
+import com.bob.db.mapper.CityMapper;
+import com.bob.db.mapper.LocationMapper;
+import com.bob.db.mapper.StateMapper;
 import com.bob.db.repository.*;
 //import com.bob.db.dto.MasterDTO;
-import com.bob.db.dto.Citydto;
-import com.bob.db.dto.Locationdto;
+import com.bob.db.dto.CityDto;
+import com.bob.db.dto.LocationDto;
 import com.bob.db.dto.MasterDTO2;
 import com.bob.db.dto.StateDto;
+import com.bob.masterdata.model.GetCompleteDataResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -20,6 +24,10 @@ public class DisplayService {
     @Autowired
     private CityRepository cityRepository;
 
+    @Autowired
+    private LocationMapper locationMapper;
+    @Autowired
+    private CityMapper cityMapper;
     @Autowired
     private CountryRepository countryRepository;
 
@@ -39,6 +47,8 @@ public class DisplayService {
     @Autowired
     private SpecialCategoriesRepository specialCategoriesRepository;
 
+    @Autowired
+    private StateMapper stateMapper;
     @Autowired
     private StateRepository stateRepository;
 
@@ -63,22 +73,32 @@ public class DisplayService {
 
 
 
-    public MasterDTO2 getAllData3(){
+    public GetCompleteDataResponse getAllData3(){
+        GetCompleteDataResponse getCompleteDataResponse =new GetCompleteDataResponse();
         List<String> position_title=departmentsRepository.getDepartmentNames();
         List<Map<Long,String>> department=departmentsRepository.getData();
-
         List<Map<Long,String>> countries=countryRepository.getData();
-        List<StateDto> states=stateRepository.getData();
-        List<Citydto> cities=cityRepository.getData();
-        List<Locationdto> locations=locationRepository.getData();
+//        List<StateDto> states=stateRepository.getData();
+        List<StateDto> states=stateMapper.toDtoList(stateRepository.findAll());
+        List<CityDto> cities=cityMapper.toDtoList(cityRepository.findAll());
+//        System.out.println(cities.toString());
+        List<LocationDto> locations=locationMapper.toDtoList(locationRepository.findAll());
         List<Map<Long,String>> skills=skillRepository.getSkillIdDescriptions();
         List<Map<Long,String>> job_Data=jobGradeRepository.getData();
         List<Map<Long,String>> mandatory= educationalQualificationsRepository.getData();
         List<Map<Long,String>> preferred= educationalQualificationsRepository.getData();
-//        System.out.println(position_title+" "+department+" "+countries+" "+states+" "+locations+" "+skills+" "+job_Data+" "+cities);
-        MasterDTO2 masterDTO2=new MasterDTO2(position_title,department,countries,locations,cities,states,skills,job_Data,mandatory,preferred);
-        System.out.println(masterDTO2.toString());
-        return masterDTO2;
+        getCompleteDataResponse.setPositionTitle(position_title);
+        getCompleteDataResponse.setDepartments(department);
+        getCompleteDataResponse.setCountries(countries);
+        getCompleteDataResponse.setStates(states);
+        getCompleteDataResponse.setCities(cities);
+        getCompleteDataResponse.setLocations(locations);
+        getCompleteDataResponse.setSkills(skills);
+        getCompleteDataResponse.setJobGradeData(job_Data);
+        getCompleteDataResponse.setMandatoryQualification(mandatory);
+        getCompleteDataResponse.setPreferredQualification(preferred);
+        return getCompleteDataResponse;
+
     }
 
 

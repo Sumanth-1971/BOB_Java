@@ -1,6 +1,6 @@
 package com.bob.masterdata.Service;
 
-import com.bob.db.entity.State;
+import com.bob.db.entity.StateEntity;
 import com.bob.db.repository.StateRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -13,16 +13,16 @@ import java.util.Optional;
 public class StateService {
     @Autowired
     private StateRepository stateRepository;
-    public State createState(State state) {
+    public StateEntity createState(StateEntity state) {
         try {
-            state.setCreated_date(LocalDateTime.now());
+            state.setCreatedDate(LocalDateTime.now());
             return state;
         } catch (Exception e) {
             return null;
         }
     }
 
-    public List<State> getAllStates() throws Exception {
+    public List<StateEntity> getAllStates() throws Exception {
         try {
             return stateRepository.findAll();
         } catch (Exception e) {
@@ -30,12 +30,12 @@ public class StateService {
         }
     }
 
-    public State updateState(Long id,State state) {
+    public StateEntity updateState(Long id, StateEntity state) {
         try {
-            State state1=state;
-            Optional<State> existingState = stateRepository.findById(id);
+            StateEntity state1=state;
+            Optional<StateEntity> existingState = stateRepository.findById(id);
             if (existingState.isPresent()) {
-                state.setState_id(id);
+                state.setStateId(id);
                 stateRepository.save(state);
                 return state;
             } else {
@@ -46,10 +46,10 @@ public class StateService {
         }
     }
 
-    public State deleteState(Long id) {
+    public StateEntity deleteState(Long id) {
         try {
             if (stateRepository.existsById(id)) {
-                State state=stateRepository.findById(id).get();
+                StateEntity state=stateRepository.findById(id).get();
                 stateRepository.deleteById(id);
                 return state;
             } else {

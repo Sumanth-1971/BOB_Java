@@ -1,11 +1,12 @@
 package com.bob.candidatedetails.Service;
 
 import com.bob.candidatedetails.Feign.FeignPositionDTO;
+import com.bob.db.entity.CityEntity;
 import com.bob.candidatedetails.model.GetCandidateDetailsByPositionIdResponse;
 import com.bob.db.entity.City;
 import com.bob.db.entity.Country;
-import com.bob.db.entity.Location;
-import com.bob.db.entity.State;
+import com.bob.db.entity.LocationEntity;
+import com.bob.db.entity.StateEntity;
 import com.bob.db.repository.CityRepository;
 import com.bob.db.repository.CountryRepository;
 import com.bob.db.repository.LocationRepository;
@@ -68,6 +69,7 @@ public class CandidateService {
         List<CandidateApplicationsEntity> candidateApplicationsList = candidateApplicationsRepository.findByPositionId(position_id);
         List<GetCandidateDetailsByPositionIdResponse> responseList = new ArrayList<>();
         for (CandidateApplicationsEntity candidateApplications : candidateApplicationsList) {
+
             GetCandidateDetailsByPositionIdResponse response = new GetCandidateDetailsByPositionIdResponse();
             String fileUrl = candidateApplications.getCandidate().getFileUrl();
             List<Long> locationIds = jobPostingLocationRepository.findByPositionId(position_id);
@@ -326,12 +328,12 @@ public class CandidateService {
                 List<Long> locationIds = jobPostingLocationRepository.findByPositionId(position_id);
                 if (!locationIds.isEmpty()) {
                     locationRepository.findById(locationIds.get(0)).ifPresent(location -> {
-                        candidateDetails.setLocation_details(Map.of(location.getLocation_id(), location.getLocation_name()));
-                        cityRepository.findById(location.getCity_id()).ifPresent(city -> {
-                            candidateDetails.setCity_details(Map.of(city.getCity_id(), city.getCity_name()));
-                            stateRepository.findById(city.getState_id()).ifPresent(state -> {
-                                candidateDetails.setState_details(Map.of(state.getState_id(), state.getState_name()));
-                                countryRepository.findById(state.getCountry_id()).ifPresent(country ->
+                        candidateDetails.setLocation_details(Map.of(location.getLocationId(), location.getLocationName()));
+                        cityRepository.findById(location.getCityId()).ifPresent(city -> {
+                            candidateDetails.setCity_details(Map.of(city.getCityId(), city.getCityName()));
+                            stateRepository.findById(city.getStateId()).ifPresent(state -> {
+                                candidateDetails.setState_details(Map.of(state.getStateId(), state.getStateName()));
+                                countryRepository.findById(state.getCountryId()).ifPresent(country ->
                                         candidateDetails.setCountry_details(Map.of(country.getCountry_id(), country.getCountry_name()))
                                 );
                             });
@@ -385,12 +387,12 @@ public class CandidateService {
             List<Long> locationIds = jobPostingLocationRepository.findByPositionId(position_id);
             if (!locationIds.isEmpty()) {
                 locationRepository.findById(locationIds.get(0)).ifPresent(location -> {
-                    candidateDetails.setLocation_details(Map.of(location.getLocation_id(), location.getLocation_name()));
-                    cityRepository.findById(location.getCity_id()).ifPresent(city -> {
-                        candidateDetails.setCity_details(Map.of(city.getCity_id(), city.getCity_name()));
-                        stateRepository.findById(city.getState_id()).ifPresent(state -> {
-                            candidateDetails.setState_details(Map.of(state.getState_id(), state.getState_name()));
-                            countryRepository.findById(state.getCountry_id()).ifPresent(country ->
+                    candidateDetails.setLocation_details(Map.of(location.getLocationId(), location.getLocationName()));
+                    cityRepository.findById(location.getCityId()).ifPresent(city -> {
+                        candidateDetails.setCity_details(Map.of(city.getCityId(), city.getCityName()));
+                        stateRepository.findById(city.getStateId()).ifPresent(state -> {
+                            candidateDetails.setState_details(Map.of(state.getStateId(), state.getStateName()));
+                            countryRepository.findById(state.getCountryId()).ifPresent(country ->
                                     candidateDetails.setCountry_details(Map.of(country.getCountry_id(), country.getCountry_name()))
                             );
                         });
