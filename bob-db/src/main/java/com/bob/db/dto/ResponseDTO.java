@@ -53,10 +53,14 @@ public class ResponseDTO {
 
     private String position_status;
 
+    private BigDecimal min_salary;
+    private BigDecimal max_salary;
+
+
     public ResponseDTO() {
     }
 
-    public ResponseDTO(UUID position_id, UUID requisition_id, String position_title, String position_code, String description, String roles_responsibilities, Integer grade_id, String employment_type, Integer eligibility_age_min, Integer eligibility_age_max, String mandatory_qualification, String preferred_qualification, BigDecimal mandatory_experience, BigDecimal preferred_experience, BigDecimal probation_period, String documents_required, BigDecimal min_credit_score, Integer dept_id, Long location_id, Long country_id, Long city_id, Long state_id, Integer special_cat_id, Integer reservation_cat_id, Integer no_of_vacancies, String selection_procedure, String position_status) {
+    public ResponseDTO(UUID position_id, UUID requisition_id, String position_title, String position_code, String description, String roles_responsibilities, Integer grade_id, String employment_type, Integer eligibility_age_min, Integer eligibility_age_max, String mandatory_qualification, String preferred_qualification, BigDecimal mandatory_experience, BigDecimal preferred_experience, BigDecimal probation_period, String documents_required, BigDecimal min_credit_score, Integer dept_id, Long location_id, Long country_id, Long city_id, Long state_id, Integer special_cat_id, Integer reservation_cat_id, Integer no_of_vacancies, String selection_procedure, String position_status, BigDecimal min_salary, BigDecimal max_salary) {
         this.position_id = position_id;
         this.requisition_id = requisition_id;
         this.position_title = position_title;
@@ -84,7 +88,23 @@ public class ResponseDTO {
         this.no_of_vacancies = no_of_vacancies;
         this.selection_procedure = selection_procedure;
         this.position_status = position_status;
+        this.min_salary = min_salary;
+        this.max_salary = max_salary;
     }
+
+    public BigDecimal getMin_salary() {
+        return min_salary;
+    }
+    public void setMin_salary(BigDecimal min_salary) {
+        this.min_salary = min_salary;
+    }
+    public BigDecimal getMax_salary() {
+        return max_salary;
+    }
+    public void setMax_salary(BigDecimal max_salary) {
+        this.max_salary = max_salary;
+    }
+
 
     public UUID getPosition_id() {
         return position_id;

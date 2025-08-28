@@ -73,7 +73,7 @@ public class JobRequisitionsService {
     public JobRequisitionsEntity createRequisitions(JobRequisitionsEntity jobRequisitions){
         jobRequisitions.setRequisitionCode("JREQ-" +(1000+ jobRequisitionsRepository.count()));
         jobRequisitions.setRequisitionId(UUID.randomUUID());
-        jobRequisitions.setRequisitionStatus("Submitted");
+        jobRequisitions.setRequisitionStatus("New");
         LocalDateTime tme =LocalDateTime.now();
         jobRequisitions.setCreatedDate(tme);
         jobRequisitions.setUpdatedDate(tme);
@@ -84,7 +84,7 @@ public class JobRequisitionsService {
         for (JobRequisitionsEntity jobRequisitions : jobRequisitionsList) {
             jobRequisitions.setRequisitionCode("JREQ-" + (1000 + jobRequisitionsRepository.count()));
             jobRequisitions.setRequisitionId(UUID.randomUUID());
-            jobRequisitions.setRequisitionStatus("Submitted");
+            jobRequisitions.setRequisitionStatus("New");
             jobRequisitions.setCreatedDate(tme);
             jobRequisitions.setUpdatedDate(tme);
         }

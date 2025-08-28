@@ -64,7 +64,8 @@ public class JobPositionService{
         positionsDTO.setProbation_period(positions.getProbationPeriod());
         positionsDTO.setDocuments_required(positions.getDocumentsRequired());
         positionsDTO.setMin_credit_score(positions.getMinCreditScore());
-
+        positionsDTO.setMax_salary(positions.getMaxSalary());
+        positionsDTO.setMin_salary(positions.getMinSalary());
         // position code
         positionsDTO.setPosition_code(positions.getPositionCode());
         // status
@@ -121,6 +122,8 @@ public class JobPositionService{
         positionsDTO.setProbation_period(positions.getProbationPeriod());
         positionsDTO.setDocuments_required(positions.getDocumentsRequired());
         positionsDTO.setMin_credit_score(positions.getMinCreditScore());
+        positionsDTO.setMax_salary(positions.getMaxSalary());
+        positionsDTO.setMin_salary(positions.getMinSalary());
 
         // position code
         positionsDTO.setPosition_code(positions.getPositionCode());
@@ -174,6 +177,8 @@ public class JobPositionService{
         positions.setDescription(positionsDTO.getDescription());
         positions.setRolesResponsibilities(positionsDTO.getRoles_responsibilities());
         positions.setGradeId(positionsDTO.getGrade_id());
+        positions.setMaxSalary(positionsDTO.getMax_salary());
+        positions.setMinSalary(positionsDTO.getMin_salary());
         positions.setEmploymentType(positionsDTO.getEmployment_type());
         positions.setEligibilityAgeMin(positionsDTO.getEligibility_age_min());
         positions.setEligibilityAgeMax(positionsDTO.getEligibility_age_max());
@@ -193,6 +198,7 @@ public class JobPositionService{
         return positions;
 
     }
+
     // save to repo
     @Transactional
     public JobPositionsDTO createPosition(JobPositionsDTO jobPositionsDTO){
@@ -300,6 +306,8 @@ public class JobPositionService{
         existingPosition.setMinCreditScore(jobPositionsDTO.getMin_credit_score());
         existingPosition.setUpdatedBy(""); // Set the updated_by field as needed
         existingPosition.setUpdatedDate(LocalDateTime.now()); // Update the timestamp
+        existingPosition.setMaxSalary(jobPositionsDTO.getMax_salary());
+        existingPosition.setMinSalary(jobPositionsDTO.getMin_salary());
 
         // Save the updated position
         jobPositionsRepository.save(existingPosition);

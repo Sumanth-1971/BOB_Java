@@ -1,12 +1,11 @@
 package com.bob.candidatedetails.Service;
 
 import com.bob.candidatedetails.Mapper.InterviewMapper;
-import com.bob.db.entity.Candidates;
-import com.bob.db.entity.Interviews;
-import com.bob.db.entity.Position;
+import com.bob.db.entity.*;
 import com.bob.db.repository.CandidateRepository;
 import com.bob.db.repository.InterviewsRepository;
-import com.bob.db.repository.PositionRepository;
+import com.bob.db.repository.JobRequisitionsRepository;
+import com.bob.db.repository.PositionsRepository;
 import com.bob.db.dto.InterviewResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -28,7 +27,10 @@ public class CalendarService {
     private CandidateRepository candidateRepository;
 
     @Autowired
-    private PositionRepository positionRepository;
+    private JobRequisitionsRepository jobRequisitionsRepository;
+
+    @Autowired
+    private PositionsRepository positionsRepository;
 
     public List<InterviewResponse> getInterviewSchedulesBetween(long startTimestamp, long endTimestamp) {
         LocalDateTime startDate = LocalDateTime.ofInstant(Instant.ofEpochMilli(startTimestamp), ZoneId.systemDefault());
@@ -54,7 +56,12 @@ public class CalendarService {
         List<Candidates> candidatesList = candidateRepository.findAllById(candidateIds);
 
         //fetch all positions from the position repository
-        List<Position> positionsList = positionRepository.findAllById(positionIds);
+        List<PositionsEntity> positionsList = positionsRepository.findAllById(positionIds);
+
+        List<UUID> requisitionIds = positionsList.stream()
+                .map(PositionsEntity::getRequisitionId)
+                .toList();
+        List<JobRequisitionsEntity> jobRequisitionsList = jobRequisitionsRepository.findAllById(requisitionIds);
 
         interviewsList.forEach(interview -> {
             Candidates candidate = candidatesList.stream()
@@ -62,13 +69,17 @@ public class CalendarService {
                     .findFirst()
                     .orElse(null);
 
-            Position position = positionsList.stream()
-                    .filter(p -> p.getPosition_id().equals(interview.getPositionId()))
+            PositionsEntity position = positionsList.stream()
+                    .filter(p -> p.getPositionId().equals(interview.getPositionId()))
+                    .findFirst()
+                    .orElse(null);
+            JobRequisitionsEntity requisition = jobRequisitionsList.stream()
+                    .filter(r -> r.getRequisitionId().equals(position.getRequisitionId()))
                     .findFirst()
                     .orElse(null);
 
-            if (candidate != null && position != null) {
-                InterviewResponse interviewResponse = InterviewMapper.interviewToInterviewResponse(interview, candidate, position);
+            if (candidate != null && position != null && requisition != null) {
+                InterviewResponse interviewResponse = InterviewMapper.interviewToInterviewResponse(interview, candidate, position,requisition);
                 interviewResponseList.add(interviewResponse);
             }
         });
