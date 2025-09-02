@@ -28,21 +28,29 @@ public class Interviews {
 
     private String interviewer;
 
+    @Column(name = "user_id")
+    private Integer userId;
     public Interviews() {
     }
 
-    public Interviews(int interview_id, UUID candidate_id, UUID position_id, String type, LocalDateTime schedule_at, BigDecimal time, String status, String interviewer) {
+    public Interviews(Integer interview_id, UUID candidate_id, UUID position_id, String type, LocalDateTime scheduled_at, BigDecimal time, String status, String interviewer, Integer userId) {
         this.interview_id = interview_id;
         this.candidate_id = candidate_id;
         this.position_id = position_id;
         this.type = type;
-        this.scheduled_at = schedule_at;
+        this.scheduled_at = scheduled_at;
         this.time = time;
         this.status = status;
         this.interviewer = interviewer;
+        this.userId = userId;
     }
 
-
+    public Integer getUserId() {
+        return userId;
+    }
+    public void setUserId(Integer userId) {
+        this.userId = userId;
+    }
     public int getInterview_id() {
         return interview_id;
     }

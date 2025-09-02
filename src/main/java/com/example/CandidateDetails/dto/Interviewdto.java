@@ -21,16 +21,44 @@ public class Interviewdto {
     private Integer userId;
 
     private UUID position_id;
+    private Integer interviewer_id;
+    private String interviewer_name;
+    private String interviewer_email;
 
     public Interviewdto() {
     }
 
-     public Interviewdto(UUID candidate_id, LocalDate date, LocalTime interview_time, UUID position_id) {
-          this.candidate_id = candidate_id;
-          this.date = date;
-          this.interview_time = interview_time;
-          this.position_id = position_id;
-     }
+    public Interviewdto(UUID candidate_id, LocalDate date, LocalTime interview_time,  UUID position_id, Integer interviewer_id, String interviewer_name, String interviewer_email) {
+        this.candidate_id = candidate_id;
+        this.date = date;
+        this.interview_time = interview_time;
+        this.userId = userId;
+        this.position_id = position_id;
+        this.interviewer_id = interviewer_id;
+        this.interviewer_name = interviewer_name;
+        this.interviewer_email = interviewer_email;
+    }
+
+    public Integer getInterviewer_id() {
+        return interviewer_id;
+    }
+    public void setInterviewer_id(Integer interviewer_id) {
+        this.interviewer_id = interviewer_id;
+    }
+    public String getInterviewer_name() {
+        return interviewer_name;
+    }
+
+    public void setInterviewer_name(String interviewer_name) {
+        this.interviewer_name = interviewer_name;
+    }
+    public String getInterviewer_email() {
+        return interviewer_email;
+    }
+    public void setInterviewer_email(String interviewer_email) {
+        this.interviewer_email = interviewer_email;
+    }
+
 
     public UUID getCandidate_id() {
         return candidate_id;

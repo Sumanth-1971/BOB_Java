@@ -18,8 +18,8 @@ public interface CandidateDocumentsRepository extends JpaRepository<CandidateDoc
     @Query(value = "SELECT cd.document_id, cd.file_name, cd.file_url FROM candidate_documents cd WHERE cd.candidate_id = :candidate_id", nativeQuery = true)
     List<FileInfo> getFileDetails(@Param("candidate_id") UUID candidateId);
 
-    @Query(value = "SELECT application_id FROM candidate_documents WHERE candidate_id = :candidateId AND application_id = :applicationId", nativeQuery = true)
-    UUID findByCandidateIdAndPositionId(@Param("candidateId") UUID candidateId, @Param("applicationId") UUID applicationId);
+    @Query(value = "SELECT * FROM candidate_documents WHERE candidate_id = :candidateId AND application_id = :applicationId", nativeQuery = true)
+    List<CandidateDocuments> findByCandidateIdAndApplicationId(@Param("candidateId") UUID candidateId, @Param("applicationId") UUID applicationId);
 
 
 

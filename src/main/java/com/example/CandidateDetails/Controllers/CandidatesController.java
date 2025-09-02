@@ -6,6 +6,7 @@ import com.example.CandidateDetails.Service.CalendarService;
 import com.example.CandidateDetails.Service.CandidateService;
 import com.example.CandidateDetails.Service.MailService;
 import com.example.CandidateDetails.dto.*;
+import com.example.CandidateDetails.entity.WorkflowApprovalEntity;
 import jakarta.mail.MessagingException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -81,8 +82,8 @@ public class CandidatesController {
     }
 
     @PutMapping("/schedule-interview")
-    public ResponseEntity<String> scheduleInterview(@RequestBody Interviewdto interviewdto){
-        return new ResponseEntity<>(candidateService.scheduleInterview(interviewdto),HttpStatus.OK);
+    public ResponseEntity<String> scheduleInterview(@RequestBody InterviewDetails interviewDetails) throws MessagingException, UnsupportedEncodingException {
+        return new ResponseEntity<>(candidateService.scheduleInterview(interviewDetails), HttpStatus.OK);
     }
 
     @PutMapping("/offer")
@@ -107,7 +108,7 @@ public class CandidatesController {
 
 
     @PostMapping("/interviews")
-    public Interviews getInterviewDetailsByCandidateId(@RequestBody InfoDto infoDto){
+    public InterviewerResponse getInterviewDetailsByCandidateId(@RequestBody InfoDto infoDto) throws Exception {
         return candidateService.getInterviewsByCandidateAndPositionId(infoDto.getCandidate_id(),infoDto.getPosition_id());
     }
 
@@ -116,16 +117,7 @@ public class CandidatesController {
 //        return candidateService.getInterviewDetailsByPositionAndCandidateId(candidate_id, position_id);
 //    }
 //
-    @PutMapping("/update-interview-status")
-    public ResponseEntity<String> updateInterviewStatus(@RequestBody InterviewDetails interviewDetails) {
-        try {
-            candidateService.getStatus(interviewDetails);
-            return new ResponseEntity<>("Interview status updated successfully", HttpStatus.OK);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return new ResponseEntity<>("Error updating interview status: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-    }
+
 
     @PostMapping("/apply/job")
     public ResponseEntity<String> applyInterview(@RequestBody ApplyInterviewdto applyInterviewdto){
@@ -154,6 +146,41 @@ public class CandidatesController {
             return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
+    @PostMapping("/feedback")
+    public ResponseEntity<String> submitFeedback(@RequestBody FeedbackDto feedbackDto) {
+        try {
+            String result = candidateService.submitFeedback(feedbackDto);
+            return new ResponseEntity<>(result, HttpStatus.OK);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ResponseEntity<>("Error submitting feedback: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @GetMapping("/getfeedback")
+    public ResponseEntity<List<?>> getAllFeedback(@RequestParam UUID candidate_id, @RequestParam UUID position_id) {
+        try {
+            List<FeedbackResponse> feedbackList = candidateService.getFeedbackByCandidateAndPositionId(candidate_id, position_id);
+            if (feedbackList.isEmpty()) {
+                return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+            }
+            return new ResponseEntity<>(feedbackList, HttpStatus.OK);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+//    @PutMapping("updatefeedback")
+//    public ResponseEntity<String> updateFeedback(@RequestBody UpdateFeedbackDto updateFeedbackDto) {
+//        try {
+//            String result = candidateService.updateFeedback(updateFeedbackDto);
+//            return new ResponseEntity<>(result, HttpStatus.OK);
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//            return new ResponseEntity<>("Error updating feedback: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+//        }
+//    }
 
 
     @GetMapping("getapplied_postions/{candidate_id}")

@@ -33,7 +33,6 @@ import java.util.TimeZone;
 @SpringBootApplication
 @EnableFeignClients
 public class CandidateDetailsApplication {
-
 	public static void main(String[] args) {
 		TimeZone.setDefault(TimeZone.getTimeZone("Asia/Kolkata")); // Set default timezone to Asia/Kolkata
 		SpringApplication.run(CandidateDetailsApplication.class, args);

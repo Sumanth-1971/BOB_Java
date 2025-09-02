@@ -45,11 +45,13 @@ public class CandidateDetails {
 
     private String fileUrl;
 
+    private String offerLetterUrl;
+
 
     public CandidateDetails() {
     }
 
-    public CandidateDetails(UUID candidate_id, String full_name, String username, Map<Long, String> country_details, Map<Long, String> state_details, Map<Long, String> location_details, Map<Long, String> city_details, String email, String gender, String phone, Integer reservation_category_id, Integer special_category_id, Integer highest_qualification, String total_experience, String address, String comments, String application_status, String fileUrl) {
+    public CandidateDetails(UUID candidate_id, String full_name, String username, Map<Long, String> country_details, Map<Long, String> state_details, Map<Long, String> location_details, Map<Long, String> city_details, String email, String gender, String phone, Integer reservation_category_id, Integer special_category_id, Integer highest_qualification, String total_experience, String address, String comments, String application_status, String fileUrl, String offerLetterUrl) {
         this.candidate_id = candidate_id;
         this.full_name = full_name;
         this.username = username;
@@ -67,7 +69,15 @@ public class CandidateDetails {
         this.address = address;
         this.comments = comments;
         this.application_status = application_status;
-        this.fileUrl=fileUrl;
+        this.fileUrl = fileUrl;
+        this.offerLetterUrl = offerLetterUrl;
+    }
+
+    public String getOfferLetterUrl() {
+        return offerLetterUrl;
+    }
+    public void setOfferLetterUrl(String offerLetterUrl) {
+        this.offerLetterUrl = offerLetterUrl;
     }
 
     public UUID getCandidate_id() {

@@ -8,8 +8,6 @@ public class ApplyInterviewdto {
 
     private UUID position_id;
 
-
-
     public ApplyInterviewdto() {
     }
 
