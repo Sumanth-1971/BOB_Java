@@ -13,7 +13,9 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -93,6 +95,7 @@ public class JobRequisitionsService {
     public JobRequisitions updateRequisitions(JobRequisitions jobRequisitions){
         JobRequisitions jobRequisitions1 = jobRequisitionsRepository.findById(jobRequisitions.getRequisition_id())
                 .orElseThrow(() -> new RuntimeException("Requisition not found with ID: " + jobRequisitions.getRequisition_id()));
+
         jobRequisitions1.setRequisition_id(jobRequisitions.getRequisition_id());
 
         jobRequisitions1.setRequisition_title(jobRequisitions.getRequisition_title());
@@ -131,7 +134,10 @@ public class JobRequisitionsService {
                 }
             }
 
-            String result = jobPostings.getJob_postings().stream().collect(Collectors.joining(","));
+            String result = Optional.ofNullable(jobPostings.getJob_postings())
+                    .orElse(Collections.emptyList())  // if null, use empty list
+                    .stream()
+                    .collect(Collectors.joining(","));
             if( jobPostings.getApproval_status().equals("Direct Approval") ) {
                 for (UUID jobRequisitionsId : jobPostings.getRequisition_id()) {
                     JobRequisitions jobRequisitions = jobRequisitionsRepository.findById(jobRequisitionsId).orElse(null);
