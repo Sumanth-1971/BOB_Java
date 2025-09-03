@@ -1,10 +1,12 @@
 package com.example.CandidateDetails.dto;
 
 import com.example.CandidateDetails.Model.Candidates;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.Column;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 public class CandidatesDTO {
@@ -44,10 +46,17 @@ public class CandidatesDTO {
     private String file_url;
     private String education_qualification;
 
+
+    @JsonProperty("document_url")
+    private String documentUrl;
+
+
+    private Integer rank;
+
     public CandidatesDTO() {
     }
 
-    public CandidatesDTO(UUID candidate_id, String full_name, String email, String phone, LocalDate date_of_birth, String gender, String id_proof, Integer nationality_id, Integer reservation_category_id, Integer special_category_id, Integer highest_qualification_id, String total_experience, String address, String comments, String skills, String current_designation, String current_employer, String file_url, String education_qualification) {
+    public CandidatesDTO(UUID candidate_id, String full_name, String email, String phone, LocalDate date_of_birth, String gender, String id_proof, Integer nationality_id, Integer reservation_category_id, Integer special_category_id, Integer highest_qualification_id, String total_experience, String address, String comments, String skills, String current_designation, String current_employer, String file_url, String education_qualification, String documentUrl, Integer rank) {
         this.candidate_id = candidate_id;
         this.full_name = full_name;
         this.email = email;
@@ -67,6 +76,8 @@ public class CandidatesDTO {
         this.current_employer = current_employer;
         this.file_url = file_url;
         this.education_qualification = education_qualification;
+        this.documentUrl = documentUrl;
+        this.rank = rank;
     }
 
     public CandidatesDTO(Candidates updatedCandidate) {
@@ -89,6 +100,20 @@ public class CandidatesDTO {
         this.current_employer = updatedCandidate.getCurrent_employer();
         this.file_url = updatedCandidate.getFile_url();
         this.education_qualification = updatedCandidate.getEducation_qualification();
+        this.documentUrl = updatedCandidate.getDocumentUrl();
+        this.rank = updatedCandidate.getRank();
+    }
+    public Integer getRank() {
+        return rank;
+    }
+    public void setRank(Integer rank) {
+        this.rank = rank;
+    }
+    public String getDocumentUrl() {
+        return documentUrl;
+    }
+    public void setDocumentUrl(String documentUrl) {
+        this.documentUrl = documentUrl;
     }
 
     public UUID getCandidate_id() {

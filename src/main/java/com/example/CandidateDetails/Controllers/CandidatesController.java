@@ -34,17 +34,17 @@ public class CandidatesController {
 
 
     @GetMapping("/details/{position_id}")
-    public ResponseEntity<ApiResponse<List<Candidates>>> getDetailsByPositionId(@PathVariable UUID position_id) {
+    public ResponseEntity<ApiResponse<List<CandidatesDTO>>> getDetailsByPositionId(@PathVariable UUID position_id) {
         try{
-            List<Candidates> candidateDetailsList = candidateService.getDetailsByPositionId(position_id);
+            List<CandidatesDTO> candidateDetailsList = candidateService.getDetailsByPositionId(position_id);
             if (candidateDetailsList.isEmpty()) {
                 throw new Exception("No candidates found for the given position ID.");
             }
-            ApiResponse<List<Candidates>> response = new ApiResponse<>(true,"Candidate details retrieved successfully", candidateDetailsList);
+            ApiResponse<List<CandidatesDTO>> response = new ApiResponse<>(true,"Candidate details retrieved successfully", candidateDetailsList);
             return new ResponseEntity<>(response, HttpStatus.OK);
         }catch (Exception e) {
             e.printStackTrace();
-            ApiResponse<List<Candidates>> response = new ApiResponse<>(false, "Couldn't retrieve Candidate details due to:"+e.getMessage(), null);
+            ApiResponse<List<CandidatesDTO>> response = new ApiResponse<>(false, "Couldn't retrieve Candidate details due to:"+e.getMessage(), null);
             return new ResponseEntity<>(response, HttpStatus.OK);
         }
     }
@@ -108,9 +108,25 @@ public class CandidatesController {
 
 
     @PostMapping("/interviews")
-    public InterviewerResponse getInterviewDetailsByCandidateId(@RequestBody InfoDto infoDto) throws Exception {
-        return candidateService.getInterviewsByCandidateAndPositionId(infoDto.getCandidate_id(),infoDto.getPosition_id());
+    public ResponseEntity<?> getInterviewDetailsByCandidateId(@RequestBody InfoDto infoDto) {
+        try {
+            InterviewerResponse interviewerResponse = candidateService
+                    .getInterviewsByCandidateAndPositionId(infoDto.getCandidate_id(), infoDto.getPosition_id());
+
+            if (interviewerResponse == null) {
+                return ResponseEntity.status(HttpStatus.NO_CONTENT)
+                        .body("No interviews found for the given candidate ID.");
+            }
+
+            return ResponseEntity.ok(interviewerResponse);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Couldn't retrieve Interview details due to: " + e.getMessage());
+        }
     }
+
 
 //    @GetMapping("/interview/details/{candidate_id}/{position_id}")
 //    public Interviews getInterviewDetailsByCandidateIdAndPositionId(@PathVariable UUID candidate_id, @PathVariable UUID position_id) {

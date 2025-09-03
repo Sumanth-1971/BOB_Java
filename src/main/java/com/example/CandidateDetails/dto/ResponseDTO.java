@@ -14,6 +14,7 @@ public class ResponseDTO {
     private String description;
     private String roles_responsibilities;
     private Integer grade_id;
+    private String grade_name;
     private String employment_type;
     private Integer eligibility_age_min;
     private Integer eligibility_age_max;
@@ -26,7 +27,7 @@ public class ResponseDTO {
     @Column(precision = 4, scale = 1)
     private BigDecimal preferred_experience;
 
-    private Integer probation_period;
+    private BigDecimal probation_period;
 
     private String documents_required;
 
@@ -37,7 +38,10 @@ public class ResponseDTO {
 
     //posting-location - table
     private Integer dept_id;
+    private String dept_name;
     private Long location_id;
+
+    private String location_name;
     private Long country_id;
     private Long city_id;
     private Long state_id;
@@ -53,10 +57,13 @@ public class ResponseDTO {
 
     private String position_status;
 
+    private BigDecimal min_salary;
+    private BigDecimal max_salary;
+
     public ResponseDTO() {
     }
 
-    public ResponseDTO(UUID position_id, UUID requisition_id, String position_title, String position_code, String description, String roles_responsibilities, Integer grade_id, String employment_type, Integer eligibility_age_min, Integer eligibility_age_max, String mandatory_qualification, String preferred_qualification, BigDecimal mandatory_experience, BigDecimal preferred_experience, Integer probation_period, String documents_required, BigDecimal min_credit_score, Integer dept_id, Long location_id, Long country_id, Long city_id, Long state_id, Integer special_cat_id, Integer reservation_cat_id, Integer no_of_vacancies, String selection_procedure, String position_status) {
+    public ResponseDTO(UUID position_id, UUID requisition_id, String position_title, String position_code, String description, String roles_responsibilities, Integer grade_id, String grade_name, String employment_type, Integer eligibility_age_min, Integer eligibility_age_max, String mandatory_qualification, String preferred_qualification, BigDecimal mandatory_experience, BigDecimal preferred_experience, BigDecimal probation_period, String documents_required, BigDecimal min_credit_score, Integer dept_id, String dept_name, Long location_id, String location_name, Long country_id, Long city_id, Long state_id, Integer special_cat_id, Integer reservation_cat_id, Integer no_of_vacancies, String selection_procedure, String position_status, BigDecimal min_salary, BigDecimal max_salary) {
         this.position_id = position_id;
         this.requisition_id = requisition_id;
         this.position_title = position_title;
@@ -64,6 +71,7 @@ public class ResponseDTO {
         this.description = description;
         this.roles_responsibilities = roles_responsibilities;
         this.grade_id = grade_id;
+        this.grade_name = grade_name;
         this.employment_type = employment_type;
         this.eligibility_age_min = eligibility_age_min;
         this.eligibility_age_max = eligibility_age_max;
@@ -75,7 +83,9 @@ public class ResponseDTO {
         this.documents_required = documents_required;
         this.min_credit_score = min_credit_score;
         this.dept_id = dept_id;
+        this.dept_name = dept_name;
         this.location_id = location_id;
+        this.location_name = location_name;
         this.country_id = country_id;
         this.city_id = city_id;
         this.state_id = state_id;
@@ -84,6 +94,48 @@ public class ResponseDTO {
         this.no_of_vacancies = no_of_vacancies;
         this.selection_procedure = selection_procedure;
         this.position_status = position_status;
+        this.min_salary = min_salary;
+        this.max_salary = max_salary;
+    }
+
+    public String getGrade_name() {
+        return grade_name;
+    }
+
+    public void setGrade_name(String grade_name) {
+        this.grade_name = grade_name;
+    }
+
+    public String getDept_name() {
+        return dept_name;
+    }
+
+    public void setDept_name(String dept_name) {
+        this.dept_name = dept_name;
+    }
+
+    public String getLocation_name() {
+        return location_name;
+    }
+
+    public void setLocation_name(String location_name) {
+        this.location_name = location_name;
+    }
+
+    public BigDecimal getMin_salary() {
+        return min_salary;
+    }
+
+    public void setMin_salary(BigDecimal min_salary) {
+        this.min_salary = min_salary;
+    }
+
+    public BigDecimal getMax_salary() {
+        return max_salary;
+    }
+
+    public void setMax_salary(BigDecimal max_salary) {
+        this.max_salary = max_salary;
     }
 
     public UUID getPosition_id() {
@@ -198,14 +250,12 @@ public class ResponseDTO {
         this.preferred_experience = preferred_experience;
     }
 
-    public Integer getProbation_period() {
+    public BigDecimal getProbation_period() {
         return probation_period;
     }
-
-    public void setProbation_period(Integer probation_period) {
+    public void setProbation_period(BigDecimal probation_period) {
         this.probation_period = probation_period;
     }
-
     public String getDocuments_required() {
         return documents_required;
     }

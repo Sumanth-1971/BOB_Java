@@ -61,11 +61,30 @@ public class Candidates {
     @Column(name = "file_url", columnDefinition = "text")
     private String file_url;
     private String education_qualification;
+    @Column(name = "document_url", columnDefinition = "text")
+    private String documentUrl;
 
+    private Integer rank;
     public Candidates() {
     }
 
-    public Candidates(UUID candidate_id, String full_name, String username, String password_hash, String email, String phone, LocalDate date_of_birth, String gender, String id_proof, Integer nationality_id, Integer reservation_category_id, Integer special_category_id, Integer highest_qualification_id, String total_experience, String address, String comments, LocalDateTime created_date, String skills, String current_designation, String current_employer, String file_url, String education_qualification) {
+    public Integer getRank() {
+        return rank;
+    }
+
+    public void setRank(Integer rank) {
+        this.rank = rank;
+    }
+
+    public String getDocumentUrl() {
+        return documentUrl;
+    }
+
+    public void setDocumentUrl(String documentUrl) {
+        this.documentUrl = documentUrl;
+    }
+
+    public Candidates(UUID candidate_id, String full_name, String username, String password_hash, String email, String phone, LocalDate date_of_birth, String gender, String id_proof, Integer nationality_id, Integer reservation_category_id, Integer special_category_id, Integer highest_qualification_id, String total_experience, String address, String comments, LocalDateTime created_date, String skills, String current_designation, String current_employer, String file_url, String education_qualification, String documentUrl, Integer rank) {
         this.candidate_id = candidate_id;
         this.full_name = full_name;
         this.username = username;
@@ -88,6 +107,8 @@ public class Candidates {
         this.current_employer = current_employer;
         this.file_url = file_url;
         this.education_qualification = education_qualification;
+        this.documentUrl = documentUrl;
+        this.rank = rank;
     }
 
     public UUID getCandidate_id() {

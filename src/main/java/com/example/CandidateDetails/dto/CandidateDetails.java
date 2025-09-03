@@ -1,8 +1,10 @@
 package com.example.CandidateDetails.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.criteria.CriteriaBuilder;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -45,13 +47,52 @@ public class CandidateDetails {
 
     private String fileUrl;
 
+    @JsonProperty("document_url")
+    private String documentUrl;
+
     private String offerLetterUrl;
+
+
+
+
+
+
+    private LocalDate date_of_birth;
+
+    private String id_proof;
+
+    private Integer nationality_id;
+
+
+    private Integer highest_qualification_id;
+
+    private String skills;
+
+    private String current_designation;
+
+    private String current_employer;
+
+    private String file_url;
+
+    private String education_qualification;
+
+    private Integer rank;
+
+
+
 
 
     public CandidateDetails() {
     }
 
-    public CandidateDetails(UUID candidate_id, String full_name, String username, Map<Long, String> country_details, Map<Long, String> state_details, Map<Long, String> location_details, Map<Long, String> city_details, String email, String gender, String phone, Integer reservation_category_id, Integer special_category_id, Integer highest_qualification, String total_experience, String address, String comments, String application_status, String fileUrl, String offerLetterUrl) {
+    public Integer getRank() {
+        return rank;
+    }
+    public void setRank(Integer rank) {
+        this.rank = rank;
+    }
+
+    public CandidateDetails(UUID candidate_id, String full_name, String username, Map<Long, String> country_details, Map<Long, String> state_details, Map<Long, String> location_details, Map<Long, String> city_details, String email, String gender, String phone, Integer reservation_category_id, Integer special_category_id, Integer highest_qualification, String total_experience, String address, String comments, String application_status, String fileUrl, String documentUrl, String offerLetterUrl, LocalDate date_of_birth, String id_proof, Integer nationality_id, Integer highest_qualification_id, String skills, String current_designation, String current_employer, String file_url, String education_qualification, Integer rank) {
         this.candidate_id = candidate_id;
         this.full_name = full_name;
         this.username = username;
@@ -70,9 +111,98 @@ public class CandidateDetails {
         this.comments = comments;
         this.application_status = application_status;
         this.fileUrl = fileUrl;
+        this.documentUrl = documentUrl;
         this.offerLetterUrl = offerLetterUrl;
+        this.date_of_birth = date_of_birth;
+        this.id_proof = id_proof;
+        this.nationality_id = nationality_id;
+        this.highest_qualification_id = highest_qualification_id;
+        this.skills = skills;
+        this.current_designation = current_designation;
+        this.current_employer = current_employer;
+        this.file_url = file_url;
+        this.education_qualification = education_qualification;
+        this.rank = rank;
     }
 
+    public LocalDate getDate_of_birth() {
+        return date_of_birth;
+    }
+
+    public void setDate_of_birth(LocalDate date_of_birth) {
+        this.date_of_birth = date_of_birth;
+    }
+
+    public String getId_proof() {
+        return id_proof;
+    }
+
+    public void setId_proof(String id_proof) {
+        this.id_proof = id_proof;
+    }
+
+    public Integer getNationality_id() {
+        return nationality_id;
+    }
+
+    public void setNationality_id(Integer nationality_id) {
+        this.nationality_id = nationality_id;
+    }
+
+    public Integer getHighest_qualification_id() {
+        return highest_qualification_id;
+    }
+
+    public void setHighest_qualification_id(Integer highest_qualification_id) {
+        this.highest_qualification_id = highest_qualification_id;
+    }
+
+    public String getSkills() {
+        return skills;
+    }
+
+    public void setSkills(String skills) {
+        this.skills = skills;
+    }
+
+    public String getCurrent_designation() {
+        return current_designation;
+    }
+
+    public void setCurrent_designation(String current_designation) {
+        this.current_designation = current_designation;
+    }
+
+    public String getCurrent_employer() {
+        return current_employer;
+    }
+
+    public void setCurrent_employer(String current_employer) {
+        this.current_employer = current_employer;
+    }
+
+    public String getFile_url() {
+        return file_url;
+    }
+
+    public void setFile_url(String file_url) {
+        this.file_url = file_url;
+    }
+
+    public String getEducation_qualification() {
+        return education_qualification;
+    }
+
+    public void setEducation_qualification(String education_qualification) {
+        this.education_qualification = education_qualification;
+    }
+
+    public String getDocumentUrl() {
+        return documentUrl;
+    }
+    public void setDocumentUrl(String documentUrl) {
+        this.documentUrl = documentUrl;
+    }
     public String getOfferLetterUrl() {
         return offerLetterUrl;
     }
