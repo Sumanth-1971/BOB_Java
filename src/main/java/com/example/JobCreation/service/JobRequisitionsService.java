@@ -4,7 +4,10 @@ import com.example.JobCreation.dto.JobPositionsDTO;
 import com.example.JobCreation.dto.JobPostingDTO;
 import com.example.JobCreation.dto.JobPostingUpdateDTO;
 import com.example.JobCreation.dto.JobRequisitionDTO;
+import com.example.JobCreation.model.CandidateApplicationsEntity;
 import com.example.JobCreation.model.JobRequisitions;
+import com.example.JobCreation.model.Positions;
+import com.example.JobCreation.repository.CandidateApplicationsRepository;
 import com.example.JobCreation.repository.JobPositionsRepository;
 import com.example.JobCreation.repository.JobRequisitionsRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +25,11 @@ import java.util.stream.Collectors;
 @Service
 public class JobRequisitionsService {
 
+    @Autowired
+    private JobPositionsRepository jobPositionRepository;
+
+    @Autowired
+    private CandidateApplicationsRepository candidateApplicationsRepository;
     private final JobPositionService jobPositionService;
 
     public JobRequisitionsService(@Lazy JobPositionService jobPositionService) {
@@ -35,6 +43,21 @@ public class JobRequisitionsService {
         if (jobRequisitions.isEmpty()) {
             return null;
         }
+        List<UUID> requisitionIds = jobRequisitions.stream()
+                .map(JobRequisitions::getRequisition_id)
+                .collect(Collectors.toList());
+
+        List<Positions> positions = jobPositionRepository.findAll().stream().filter(
+                position -> requisitionIds.contains(position.getRequisition_id())
+        ).collect(Collectors.toList());
+        List<UUID> positionIds = positions.stream()
+                .map(Positions::getPosition_id)
+                .collect(Collectors.toList());
+
+        List<CandidateApplicationsEntity> applications = candidateApplicationsRepository.findAll().stream().filter(
+                application -> positionIds.contains(application.getPositionId())
+        ).collect(Collectors.toList());
+
         List<JobRequisitionDTO> jobRequisitionDTOS = jobRequisitions.stream()
                 .map(jobRequisition -> {
                     JobRequisitionDTO dto = new JobRequisitionDTO(
@@ -58,6 +81,17 @@ public class JobRequisitionsService {
                             .stream()
                             .mapToInt(JobPositionsDTO::getNo_of_vacancies) // convert to IntStream
                             .sum() // sum the no_of_vacancies
+                    );
+                    dto.setFullfillment(
+                            (int) applications.stream()
+                                    .filter(app -> {
+                                        Positions pos = positions.stream()
+                                                .filter(p -> p.getPosition_id().equals(app.getPositionId()))
+                                                .findFirst()
+                                                .orElse(null);
+                                        return pos != null && pos.getRequisition_id().equals(jobRequisition.getRequisition_id());
+                                    })
+                                    .count()
                     );
 
                     return dto;
@@ -197,14 +231,14 @@ public class JobRequisitionsService {
                         jobRequisitions.setUpdated_date(LocalDateTime.now());
                         jobRequisitions.setRequisition_approval_notes(jobPostings.getDescription());
 
-                    } else if (jobPostings.getStatus().equalsIgnoreCase("Approved") && jobPostings.getRole().equals("L1")) {
+                    } else if (jobPostings.getStatus().equalsIgnoreCase("Approved") && (jobPostings.getRole().equals("L1") ||jobPostings.getRole().equals("Admin") && jobRequisitions.getRequisition_status().equals("Pending L1 Approval"))) {
                         // Updating the job posting for L1 approval
                         jobRequisitions.setRequisition_status("Pending L2 Approval");
                         jobRequisitions.setUpdated_by(jobPostings.getUserId());
                         jobRequisitions.setUpdated_date(LocalDateTime.now());
                         jobRequisitions.setRequisition_approval_notes(jobPostings.getDescription());
 
-                    } else if (jobPostings.getStatus().equalsIgnoreCase("Approved") && jobPostings.getRole().equals("L2")) {
+                    } else if (jobPostings.getStatus().equalsIgnoreCase("Approved") && (jobPostings.getRole().equals("L2") ||jobPostings.getRole().equals("Admin") && jobRequisitions.getRequisition_status().equals("Pending L2 Approval"))) {
                         // Updating the job posting for L2 approval
                         jobRequisitions.setRequisition_status("Approved");
                         jobRequisitions.setUpdated_by(jobPostings.getUserId());
@@ -231,6 +265,12 @@ public class JobRequisitionsService {
         } else if (role.equals("L2")) {
             return jobRequisitionsRepository.findByRequisitionStatus("Pending L2 Approval").stream()
                     .filter(jobRequisition -> jobRequisition.getIsactive() == 1).collect(Collectors.toList());
+        } else if (role.equals("Admin")) {
+            return jobRequisitionsRepository.findAll().stream()
+                    .filter(jobRequisition -> jobRequisition.getIsactive() == 1 &&
+                            (jobRequisition.getRequisition_status().equals("Pending L1 Approval") ||
+                             jobRequisition.getRequisition_status().equals("Pending L2 Approval")))
+                    .collect(Collectors.toList());
         } else {
             return List.of(); // Return an empty list for other roles
         }

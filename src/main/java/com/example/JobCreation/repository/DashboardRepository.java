@@ -27,4 +27,9 @@ public class DashboardRepository {
         String json = (String) em.createNativeQuery("SELECT dashboard_queries_json()").getSingleResult();
         return objectMapper.readTree(json);
     }
+
+    public JsonNode getRecruitmentDashboardJson() throws Exception {
+        String json = (String) em.createNativeQuery("SELECT * FROM get_recruitment_dashboard_json();").getSingleResult();
+        return objectMapper.readTree(json);
+    }
 }

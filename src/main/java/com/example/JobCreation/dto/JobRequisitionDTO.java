@@ -21,6 +21,7 @@ public class JobRequisitionDTO {
     private String job_postings;
     private String requisition_approval_notes;
 
+    private Integer fullfillment;
     private Integer count;
     public JobRequisitionDTO() {
     }
@@ -39,7 +40,12 @@ public class JobRequisitionDTO {
         this.job_postings = job_postings;
         this.requisition_approval_notes = requisition_approval_notes;
     }
-
+    public Integer getFullfillment() {
+        return fullfillment;
+    }
+    public void setFullfillment(Integer fullfillment) {
+        this.fullfillment = fullfillment;
+    }
 
 
     public UUID getRequisition_id() {

@@ -56,6 +56,11 @@ public class JobPositionsController {
     @PostMapping("/create_bulk_positions")
     public ResponseEntity<?> createBulkPositions(@RequestBody List<JobPositionsDTO> positionsList) {
         try {
+            for(JobPositionsDTO position : positionsList) {
+                if (position.getRequisition_id() == null) {
+                    throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Requisition ID is required for all positions");
+                }
+            }
             List<JobPositionsDTO> createdPositions = jobPositionsService.createBulkPostions(positionsList);
             ApiResponse<List<JobPositionsDTO>> apiResponse = new ApiResponse<>(true, "Positions created successfully", createdPositions);
             return new ResponseEntity<>(apiResponse, HttpStatus.CREATED);
@@ -127,7 +132,6 @@ public class JobPositionsController {
         );
         return new ResponseEntity<>(apiResponse, HttpStatus.OK);
     }
-
     @GetMapping("/getbyjobtitleandlocation/{job_title}/{location}")
     public ResponseEntity<?> getByJobTitleAndLocation(@PathVariable String job_title, @PathVariable Long location) {
         try {

@@ -3,17 +3,17 @@ package com.example.JobCreation.service;
 import com.example.JobCreation.dto.JobPositionsDTO;
 import com.example.JobCreation.dto.ResponseDTO;
 import com.example.JobCreation.model.*;
+import com.example.JobCreation.repository.DepartmentsRepository;
+import com.example.JobCreation.repository.JobGradeRepository;
 import com.example.JobCreation.repository.JobPositionsRepository;
+import com.example.JobCreation.repository.LocationRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -32,9 +32,17 @@ public class JobPositionService{
     private JobSelectionProcessService jobSelectionProcessService;
 
     @Autowired
+    private JobGradeRepository jobGradeRepository;
+    @Autowired
     private JobVacanciesService jobVacanciesService;
     @Autowired
     private JobPositionsRepository jobPositionsRepository;
+
+     @Autowired
+     private DepartmentsRepository departmentsRepository;
+
+     @Autowired
+     private LocationRepository locationRepository;
 
     //microservices
     private final JobRequisitionsService jobRequisitionsService;
@@ -54,8 +62,16 @@ public class JobPositionService{
         positionsDTO.setRequisition_id(positions.getRequisition_id());
         positionsDTO.setPosition_title(positions.getPosition_title());
         positionsDTO.setDescription(positions.getDescription());
+
         positionsDTO.setRoles_responsibilities(positions.getRoles_responsibilities());
         positionsDTO.setGrade_id(positions.getGrade_id());
+        //grade name seting
+        JobGradeEntity jobGradeOpt = jobGradeRepository.findById((long) positions.getGrade_id()).orElse(null);
+        if (jobGradeOpt != null) {
+            String gradeName = jobGradeOpt.getJobGradeCode() + " (" + (jobGradeOpt.getMinSalary().intValue()) + " - " + (jobGradeOpt.getMaxSalary().intValue()) + ")";
+            positionsDTO.setGrade_name(gradeName);
+        }
+
         positionsDTO.setMax_salary(positions.getMax_salary());
         positionsDTO.setMin_salary(positions.getMin_salary());
         positionsDTO.setEmployment_type(positions.getEmployment_type());
@@ -74,12 +90,25 @@ public class JobPositionService{
         // status
         positionsDTO.setPosition_status(positions.getPosition_status());
 
-        if ((jobPostingLocation ==null) ) {
+        if ((jobPostingLocation == null) ) {
             positionsDTO.setLocation_id(null);
+
             positionsDTO.setDept_id(null);
+
         } else {
+
             positionsDTO.setLocation_id(jobPostingLocation.getLocation_id());
+            Optional<Location> locOpt = locationRepository.findById(positionsDTO.getLocation_id());
+
+            positionsDTO.setLocation_name(locOpt.map(Location::getLocation_name).orElse(null));
             positionsDTO.setDept_id(jobPostingLocation.getDept_id());
+
+            if (positionsDTO.getDept_id() != null) {
+                Optional<DepartmentsEntity> deptOpt = departmentsRepository.findById((long) positionsDTO.getDept_id());
+                positionsDTO.setDept_name(deptOpt.map(DepartmentsEntity::getDepartmentName).orElse(null));
+            } else {
+                positionsDTO.setDept_name(null);
+            }
         }
 
         //job selection process
@@ -118,6 +147,12 @@ public class JobPositionService{
         positionsDTO.setDescription(positions.getDescription());
         positionsDTO.setRoles_responsibilities(positions.getRoles_responsibilities());
         positionsDTO.setGrade_id(positions.getGrade_id());
+        JobGradeEntity jobGradeOpt = jobGradeRepository.findById((long) positions.getGrade_id()).orElse(null);
+        if (jobGradeOpt != null) {
+            String gradeName = jobGradeOpt.getJobGradeCode() + " (" + jobGradeOpt.getMinSalary().intValue() + " - " + jobGradeOpt.getMaxSalary().intValue() + ")";
+            positionsDTO.setGrade_name(gradeName);
+        }
+
         positionsDTO.setMax_salary(positions.getMax_salary());
         positionsDTO.setMin_salary(positions.getMin_salary());
         positionsDTO.setEmployment_type(positions.getEmployment_type());
@@ -145,12 +180,22 @@ public class JobPositionService{
         } else {
             positionsDTO.setLocation_id(jobPostingLocation.getLocation_id());
             positionsDTO.setDept_id(jobPostingLocation.getDept_id());
+
             Long cityId = jobPostingLocationService.findCityBylocationId(jobPostingLocation.getLocation_id());
             long stateId = jobPostingLocationService.findStateByCityId(cityId);
             long countryId = jobPostingLocationService.findCountryByStateId(stateId);
             positionsDTO.setCity_id(cityId);
             positionsDTO.setState_id(stateId);
             positionsDTO.setCountry_id(countryId);
+
+            Optional<Location> locOpt = locationRepository.findById(positionsDTO.getLocation_id());
+            positionsDTO.setLocation_name(locOpt.map(Location::getLocation_name).orElse(null));
+            if (positionsDTO.getDept_id() != null) {
+                Optional<DepartmentsEntity> deptOpt = departmentsRepository.findById((long) positionsDTO.getDept_id());
+                positionsDTO.setDept_name(deptOpt.map(DepartmentsEntity::getDepartmentName).orElse(null));
+            } else {
+                positionsDTO.setDept_name(null);
+            }
         }
 
         //job selection process
@@ -177,7 +222,7 @@ public class JobPositionService{
     private Positions setValues(JobPositionsDTO positionsDTO){
         Positions positions = new Positions();
         positions.setPosition_id(positionsDTO.getPosition_id());
-        positions.setPosition_code("JPOS"+(5000+jobPositionsRepository.count()));
+        positions.setPosition_code(positionsDTO.getPosition_code());
         positions.setRequisition_id(positionsDTO.getRequisition_id());
         positions.setPosition_title(positionsDTO.getPosition_title());
         positions.setDescription(positionsDTO.getDescription());
@@ -206,7 +251,7 @@ public class JobPositionService{
     }
     // save to repo
     @Transactional
-    public JobPositionsDTO createPosition(JobPositionsDTO jobPositionsDTO){
+    public JobPositionsDTO  createPosition(JobPositionsDTO jobPositionsDTO){
         UUID position_id = UUID.randomUUID();
         jobPositionsDTO.setPosition_id(position_id);
 
@@ -397,4 +442,6 @@ public class JobPositionService{
         }
         return filteredPositions;
     }
+
+
 }

@@ -22,4 +22,9 @@ public class DashboardController {
     public JsonNode getQueries() throws Exception {
         return dashboardRepository.getQueriesJson();
     }
+
+    @GetMapping("get_recruitment_dashboard")
+    public JsonNode getRecruitmentDashboard() throws Exception {
+        return dashboardRepository.getRecruitmentDashboardJson();
+    }
 }
