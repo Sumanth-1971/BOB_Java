@@ -8,9 +8,9 @@ import org.springframework.web.bind.annotation.PathVariable;
 
 import java.util.UUID;
 
-@FeignClient(name = "positions-service",url = "https://bobjava.sentrifugo.com:8443/")
+@FeignClient(name = "positions-service",url = "https://bobjava.sentrifugo.com:8443")
 public interface FeignPositionDTO {
 
-    @GetMapping("/api/getByPositionId/{position_id}")
+    @GetMapping("/jobcreation/api/getByPositionId/{position_id}")
     ApiResponse<ResponseDTO> getById(@PathVariable("position_id") UUID positionId);
 }

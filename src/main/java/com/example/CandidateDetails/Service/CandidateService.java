@@ -737,7 +737,7 @@ public class CandidateService {
             ResponseDTO responseDTO=responseDTOS.getData();
             positionDTOList.add(responseDTO);
         }
-        return positionDTOList;
+        return positionDTOList.stream().filter(pos-> pos.getPosition_status().equals("Active")).toList();
     }
 
     public CandidatesDTO updateCandidate(CandidatesDTO candidate) {
