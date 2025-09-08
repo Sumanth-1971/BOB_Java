@@ -11,6 +11,7 @@ import jakarta.mail.MessagingException;
 import jakarta.transaction.Transactional;
 import org.apache.catalina.User;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.io.UnsupportedEncodingException;
@@ -373,6 +374,7 @@ public class CandidateService {
                 candidateDetails.setCurrent_designation(candidate.getCurrent_designation());
                 candidateDetails.setCurrent_employer(candidate.getCurrent_employer());
                 candidateDetails.setFile_url(candidate.getFile_url());
+                candidateDetails.setFileUrl(candidate.getFile_url());
                 candidateDetails.setEducation_qualification(candidate.getEducation_qualification());
                 candidateDetails.setDocumentUrl(candidate.getDocumentUrl());
                 candidateDetails.setRank(candidate.getRank());
@@ -729,15 +731,13 @@ public class CandidateService {
     }
 
 
-    public List<ResponseDTO> getAllDetailsByCandidateId(UUID candidate_id){
+    public List<JobPositionsDTO> getAllDetailsByCandidateId(UUID candidate_id){
         List<CandidateApplications> candidateApplicationsList=candidateApplicationsRepository.findByCandidateIdNative(candidate_id);
-        List<ResponseDTO> positionDTOList=new ArrayList<>();
-        for (CandidateApplications candidateApplications:candidateApplicationsList){
-            ApiResponse<ResponseDTO> responseDTOS=feignPositionDTO.getById(candidateApplications.getPosition_id());
-            ResponseDTO responseDTO=responseDTOS.getData();
-            positionDTOList.add(responseDTO);
-        }
-        return positionDTOList.stream().filter(pos-> pos.getPosition_status().equals("Active")).toList();
+        List<UUID> positionIds=candidateApplicationsList.stream().map(CandidateApplications::getPosition_id).toList();
+
+        ResponseEntity<ApiResponse<List<JobPositionsDTO>>> responseDTOS=feignPositionDTO.getActiveJobs();
+        List<JobPositionsDTO> jobPositionsDTOList=responseDTOS.getBody().getData();
+        return jobPositionsDTOList.stream().filter(jobPositionsDTO -> positionIds.contains(jobPositionsDTO.getPosition_id())).toList();
     }
 
     public CandidatesDTO updateCandidate(CandidatesDTO candidate) {

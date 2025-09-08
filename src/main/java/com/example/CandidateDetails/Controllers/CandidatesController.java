@@ -200,9 +200,9 @@ public class CandidatesController {
 
 
     @GetMapping("getapplied_postions/{candidate_id}")
-    public ResponseEntity<List<ResponseDTO>> getDetailsByCandidateId(@PathVariable UUID candidate_id){
+    public ResponseEntity<List<JobPositionsDTO>> getDetailsByCandidateId(@PathVariable UUID candidate_id){
         try{
-            List<ResponseDTO> positionDTOList=candidateService.getAllDetailsByCandidateId(candidate_id);
+            List<JobPositionsDTO> positionDTOList=candidateService.getAllDetailsByCandidateId(candidate_id);
             return new ResponseEntity<>(positionDTOList,HttpStatus.OK);
         }catch (Exception e){
             return new ResponseEntity<>(null,HttpStatus.INTERNAL_SERVER_ERROR);

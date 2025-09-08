@@ -130,6 +130,7 @@ public class CandidateMapper {
         details.setCurrent_designation(candidate.getCurrent_designation());
         details.setCurrent_employer(candidate.getCurrent_employer());
         details.setFile_url(candidate.getFile_url());
+        details.setFileUrl(candidate.getFile_url());
         details.setEducation_qualification(candidate.getEducation_qualification());
         details.setDocumentUrl(candidate.getDocumentUrl());
         details.setRank(candidate.getRank());
